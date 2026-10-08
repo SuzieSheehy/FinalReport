@@ -1,0 +1,50 @@
+\begin{thebibliography}{7}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Lawrie et~al.(2020)Lawrie, Kennedy, Ellis, and Sanderson]{course}
+William Lawrie, Patrick Kennedy, Joshua Ellis, and Isaac Sanderson.
+\newblock \emph{Complex Systems: {COMP90072}---The Art of Scientific Computing}.
+\newblock School of Physics, University of Melbourne, 2020.
+\newblock Course project handout, 17 August. Supplied with the assignment.
+
+\bibitem[Bak et~al.(1987)Bak, Tang, and Wiesenfeld]{bak1987}
+Per Bak, Chao Tang, and Kurt Wiesenfeld.
+\newblock Self-organized criticality: An explanation of the {$1/f$} noise.
+\newblock \emph{Physical Review Letters}, 59\penalty0 (4):\penalty0 381--384, 1987.
+\newblock \doi{10.1103/PhysRevLett.59.381}.
+
+\bibitem[Dhar(1999)]{dhar1999}
+Deepak Dhar.
+\newblock The {Abelian} sandpile and related models.
+\newblock \emph{Physica A: Statistical Mechanics and its Applications}, 263\penalty0 (1--4):\penalty0 4--25, 1999.
+\newblock \doi{10.1016/S0378-4371(98)00493-2}.
+
+\bibitem[J{\'a}rai(2018)]{jarai2018}
+Antal~A. J{\'a}rai.
+\newblock Sandpile models.
+\newblock \emph{Probability Surveys}, 15:\penalty0 243--306, 2018.
+\newblock \doi{10.1214/14-PS228}.
+
+\bibitem[Clauset et~al.(2009)Clauset, Shalizi, and Newman]{clauset2009}
+Aaron Clauset, Cosma~Rohilla Shalizi, and M.~E.~J. Newman.
+\newblock Power-law distributions in empirical data.
+\newblock \emph{SIAM Review}, 51\penalty0 (4):\penalty0 661--703, 2009.
+\newblock \doi{10.1137/070710111}.
+
+\bibitem[Poghosyan et~al.(2011)Poghosyan, Priezzhev, and Ruelle]{poghosyan2011}
+V.~S. Poghosyan, V.~B. Priezzhev, and P.~Ruelle.
+\newblock Return probability for the loop-erased random walk and mean height in sandpile: a proof.
+\newblock \emph{Journal of Statistical Mechanics: Theory and Experiment}, 2011\penalty0 (10):\penalty0 P10004, 2011.
+\newblock \doi{10.1088/1742-5468/2011/10/P10004}.
+
+\bibitem[De~Menech et~al.(1998)De~Menech, Stella, and Tebaldi]{demenech1998}
+M.~De~Menech, A.~L. Stella, and C.~Tebaldi.
+\newblock Rare events and breakdown of simple scaling in the {Abelian} sandpile model.
+\newblock \emph{Physical Review E}, 58\penalty0 (3):\penalty0 R2677--R2680, 1998.
+\newblock \doi{10.1103/PhysRevE.58.R2677}.
+
+\end{thebibliography}
