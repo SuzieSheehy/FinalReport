@@ -1,33 +1,24 @@
-\documentclass[a4paper, 10.5pt, oneside]{report}
-%------------PREAMBLE
-\include{preamble}
+\documentclass[a4paper,10pt,oneside]{report}
+\input{preamble}
 \usepackage{morefloats}
-%---------------------------
-                                          
+
 \begin{document}
-
-%---------------------------TITLE PAGE
 \include{cover}
-%---------------------------
-
-%---------------------------TABLE OF CONTENTS
+\pagenumbering{roman}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\textit{To be completed after the methods and results have been verified.}
+\clearpage
 \tableofcontents
-%---------------------------
-
-%---------------------------MAIN BODY
+\clearpage
+\pagenumbering{arabic}
 \input{chapter1}
-%---------------------------
-
-%---------------------------APPENDICES
 \begin{appendices}
- \input{appendix1}
+\input{appendix1}
 \end{appendices}
-%---------------------------
-
-%---------------------------BIBLIOGRAPHY
+\clearpage
+\phantomsection
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliographystyle{abbrv}
 \bibliography{biblio}
-%---------------------------
-
 \end{document}
