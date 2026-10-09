@@ -1,6 +1,6 @@
 \documentclass[a4paper, 10.5pt, oneside]{report}
 %------------PREAMBLE
-\include{preamble}
+\input{preamble}
 \usepackage{morefloats}
 %---------------------------
                                           
@@ -15,19 +15,59 @@
 %---------------------------
 
 %---------------------------MAIN BODY
-\input{chapter1}
-%---------------------------
 
-%---------------------------APPENDICES
-\begin{appendices}
- \input{appendix1}
-\end{appendices}
-%---------------------------
+\chapter{Introduction}
+In which we talk about granaries and justify the importance of the question
 
-%---------------------------BIBLIOGRAPHY
-\addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{abbrv}
-\bibliography{biblio}
-%---------------------------
+
+\chapter{Background}
+In which we cover basic queueing theory, classify our problem and mention
+the closed form results that are going to be important for verification.
+
+
+\chapter{Models}
+In which we discuss the three models of a granary we're going to be using
+
+First the shared infrastructure of a simple queue and a single deterministic server
+
+- An open loop with Markov modulated Poisson arrival
+
+- A closed loop with an abstracted truck fleet and an abstracted grain supply
+
+- A simulation of all the farms in the catchment each with their own trucks
+
+
+\chapter{Implementation}
+In which we discuss the implementation in python. Discuss the initial simpy profiling,
+and the subsequent handmade simulation with a queue using a deque and a priority
+queue of upcoming events using a heapq. Discuss parallelisation with joblib - embarassingly parallel
+
+
+\chapter{Validation}
+Out come the closed form results, most useful for model 1. In correct regimes
+model 2 and 3 should converge to something like those results as well
+
+
+\chapter{Experiments}
+How do mean and tail waiting times change as we increase weather variance?
+
+How does overtime increase as we increase weather variance?
+
+How do the models compare to one another?
+
+Report on parallelisation efficiency
+
+
+\chapter{Results and Discussion}
+When models are tuned to be similar, do the tunings make sense analytically?
+
+Where do models disagree when tuned to be similar?
+
+
+\chapter{Conclusion}
+
+
+
+
 
 \end{document}
