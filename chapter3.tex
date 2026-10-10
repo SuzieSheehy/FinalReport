@@ -1,0 +1,158 @@
+\chapter{The stationary state}\label{ch:stationary}
+
+A drop adds one grain and the avalanche that follows removes some; over a long run the
+board settles into a state in which macroscopic quantities stop drifting while the
+configuration keeps changing. This chapter describes that state: which configurations
+it consists of, what the mean height is, and what is known and expected about the
+distributions of the four avalanche observables of \eqref{eq:observables}.
+
+\section{Recurrent configurations and the uniform measure}\label{sec:recurrent}
+
+Not every stable configuration is reachable once the board has been driven for a while.
+The states the dynamics returns to form the set of \emph{recurrent} configurations
+$\mathcal{R}$; the rest are transient in the sense that after enough drops they are
+never visited again. On $\mathcal{R}$ the two ways of sampling a system agree.
+Sampling \emph{over time} means recording the configurations visited by one long run;
+sampling an \emph{ensemble} means drawing them independently from the stationary
+distribution. These differ while the initial condition still influences the run, which
+is what the burn-in of §\ref{sec:burnin} removes, and they differ if the chain is not
+ergodic. Drop-and-relax is irreducible and aperiodic on $\mathcal{R}$ --- every
+recurrent configuration is reachable from every other, and the chain does not cycle ---
+so the stationary distribution there is unique, and the time average along a single run
+converges to the ensemble average.
+
+That measure is the uniform one. Every recurrent configuration carries the same weight
+$1/\absR$, and the number of them is
+\begin{equation}\label{eq:recurrentcount}
+  \absR = \det(-\D),
+\end{equation}
+by the matrix--tree theorem, since $\det(-\D)$ counts the spanning trees of the wired
+graph obtained by attaching a sink to every off-board direction
+\cite{dhar1999,jarai2018,klivans2019}. The uniformity is what makes the mean height an
+exactly computable number rather than a fitted one, and it is the reason a measurement
+of $\meanh$ is a sharp check of the whole implementation.
+
+The set $\mathcal{R}$ also carries an algebraic structure: the addition operators
+generate a finite abelian group acting on it, the sand pile group, whose order is
+$\absR$ \cite{dhar1995}. Beyond the count \eqref{eq:recurrentcount} nothing in this
+report depends on that structure, but the group order is computed separately in
+Chapter~\ref{ch:hexagonal}.
+
+\section{The mean height}\label{sec:meanheight}
+
+The mean height is the average of the height function over the stationary measure,
+\begin{equation}\label{eq:meandef}
+  \meanh = \frac{1}{L^2}\sum_{\bm{x}} p(\bm{x}) ,
+\end{equation}
+where the average is taken both over sites and over the ensemble. A first guess is that
+the four stable heights $0,1,2,3$ are equally likely, giving $1.5$. That guess ignores a
+constraint that the recurrent configurations carry: two neighbouring sites cannot both
+be empty. The constraint comes from the burning algorithm, in which a site of height
+zero can be burnt only after all of its neighbours, so that neither of two adjacent
+empty sites could ever be burnt and the configuration would not be recurrent. Counting
+the configurations subject to that restriction gives the exact value
+\begin{equation}\label{eq:meanh}
+  \meanh = \frac{17}{8} = 2.125 ,
+\end{equation}
+which is already well above the uniform guess.
+
+The individual height probabilities are known exactly as well. Priezzhev computed them
+for the square lattice \cite{priezzhev1994}, and the closed forms were later reduced by
+Jeng, Piroux and Ruelle \cite{jeng2006} to
+\begin{align}
+  p(0) &= \tfrac{2}{\pi^2} - \tfrac{4}{\pi^3} = 0.0736, &
+  p(1) &= \tfrac{1}{4} - \tfrac{1}{2\pi} - \tfrac{3}{\pi^2} + \tfrac{12}{\pi^3} = 0.1739,
+  \notag \\[2pt]
+  p(2) &= \tfrac{3}{8} + \tfrac{1}{\pi} - \tfrac{12}{\pi^3} = 0.3063, &
+  p(3) &= \tfrac{3}{8} - \tfrac{1}{2\pi} + \tfrac{1}{\pi^2} + \tfrac{4}{\pi^3} = 0.4462 ,
+  \label{eq:heightprobs}
+\end{align}
+and $\sum_i i\,p(i)$ reproduces $2.125$; the single integral those formulas contain was
+later evaluated and proved to take the value that makes this true
+\cite{poghosyan2011,levine2014}. The four probabilities and the mean are the sharpest
+available test of the simulator: they involve no fitting, no cut-off and no assumption
+about a tail, so a disagreement is a defect rather than a shortage of samples. They also
+give the exact relation between the threshold and the mean height that
+Chapter~\ref{ch:hexagonal} needs, since they show that $\meanh$ is a property of the
+lattice and not a constant.
+
+\section{The avalanche distributions}\label{sec:distributions}
+
+For each avalanche the record holds the four integers of \eqref{eq:observables}, and the
+question is what distribution each of them follows. In the power-law regime the
+complementary cumulative distribution of a size $X$ behaves as
+\begin{equation}\label{eq:ccdf}
+  P(X \ge x) \sim x^{-(\tau-1)} ,
+\end{equation}
+so the slope of the straight part on log--log axes gives $\tau - 1$. The exponent is
+better estimated by maximum likelihood than by fitting a histogram, since a histogram
+depends on the binning and the likelihood does not:
+\begin{equation}\label{eq:mle}
+  \hat{\tau} = 1 + \frac{n}{\sum_i \ln(x_i / x_{\min})},
+\end{equation}
+where the sum runs over the $n$ events with $x_i \ge x_{\min}$. The two conventions ---
+probability density $x^{-\tau}$ and complementary cumulative $x^{-(\tau-1)}$ --- differ
+by one, and a table of exponents is meaningless unless the convention is stated.
+
+For the toppling number the model has a conjectured exact exponent. The
+two-dimensional undirected sand pile is equivalent to the $q \to 0$ limit of the Potts
+model \cite{majumdar1992}, and the exponents read off from that equivalence are
+$\tau_s = 6/5$, $\tau_d = 5/4$ and $\tau_t = 7/5$ for topplings, distinct sites and
+duration, in the probability-density convention \cite{dhar1999,ivashkevich1998}. In the
+cumulative convention of \eqref{eq:ccdf} these correspond to slopes $0.2$ and $0.25$,
+which is why the distributions are so flat that they can be mistaken for a cut-off over
+the range a small board can reach.
+
+Two properties of the measurement follow from the finiteness of the board and belong in
+the analysis from the start. An avalanche cannot exceed the board, so the distribution is cut off at a scale set by $L$, and an estimate of the
+exponent taken with a lower cut-off near that scale describes the steep edge of the
+cut-off rather than the power law, returning a value that is too high. The remedy is not
+a better estimator but a range of sizes: the cumulative distributions of several boards
+are plotted together, and the exponent is read from a straight section that is common to
+all of them and lies before the cut. Second, the length $R$ is a geometric quantity
+bounded by the board and is not expected to be a pure power law at all; it belongs in a
+finite-size collapse, $s/N^{D}$ for a cut-off exponent $D$, rather than in a fit of its
+own. If the collapsed curves fail to overlap, $D$ is the first thing to adjust.
+
+\begin{pending}
+  \pendingtag The exponents $\tau_s$ and $\tau_d$ have not been measured. Doing so
+  requires a run whose usable tail holds on the order of $10^3$ events or more at each
+  of at least three board sizes, so that the collapse described above can be checked
+  before any exponent is quoted.
+\end{pending}
+
+\section{Correlations between the four observables}\label{sec:correlations}
+
+The four observables are not independent, and the expected relations follow from their
+definitions in \eqref{eq:observables}.
+
+\emph{Topples against area.} The area counts sites toppled at least once and the toppling
+number counts all topplings, so $s \ge s_d$, with equality exactly when no site topples
+twice. In a small avalanche that is the typical case and the two are proportional; in a
+large avalanche sites near the drop point topple repeatedly, so $s$ grows faster than
+$s_d$ and one expects $s \sim s_d^{\gamma}$ with $\gamma > 1$. The relation is visible
+directly as a rising mean of the ratio $s/s_d$ with $s_d$.
+
+\emph{Area against length.} The area of an avalanche is related to its radius by a
+fractal dimension, $s_d \sim R^{D_f}$. If avalanches filled their bounding region then
+$D_f$ would be $2$; a value below $2$ means the cluster is ramified, with a perimeter
+comparable to the area.
+
+\emph{Loss against length.} This relation is a threshold, not a power law, and it is the
+sharpest of the four. Loss requires a boundary site to topple, so $l = 0$ for every
+avalanche that does not reach the boundary; once $R$ exceeds the distance from the drop
+site to the nearest boundary, loss begins and grows quickly with $R$. A linear
+correlation coefficient is the wrong summary here, because it averages the exact zeros
+below the threshold with the growing values above it and reports a weak relation where
+the relation is in fact deterministic in shape. The appropriate summary is the
+conditional mean $E[l \mid R]$ after binning by $R$, which reproduces the threshold as a
+corner at the boundary distance.
+
+\emph{Loss against topples.} Weak, for the same reason: most topplings are interior and
+conserve sand, so a large avalanche that stays away from the boundary loses nothing.
+
+\begin{pending}
+  \pendingtag The correlation coefficients and the binned conditional mean $E[l \mid R]$
+  have not been computed. The recorded columns are sufficient for both; the work is
+  post-processing of the avalanche record rather than further simulation.
+\end{pending}

@@ -1,0 +1,94 @@
+\chapter{Data and algorithm}\label{ch:algorithm}
+
+\section{What has to be kept, and how much that is}\label{sec:sparsity}
+
+Two things have to be kept: the current board, $L^2$ heights, and the record of every
+avalanche, four integers each. Everything else --- the toppling matrix, the
+recurrent-configuration count, the fitted exponents --- is either derived on the fly or
+produced afterwards from the record.
+
+The toppling matrix is the interesting case: it is $N \times N$ with $N = L^2$, but
+\eqref{eq:delta} gives each row only five non-zero entries, so of the $N^2$ places only
+about $5N$ carry information.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Size of $\D$ against the number of entries it actually uses.}
+\label{tab:sparsity}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Board} & \textbf{Sites $N = L^2$} & \textbf{Places in $\D$: $N^2$}
+  & \textbf{Non-zero} \\
+\midrule
+$L = 3$    & $9$           & $81$            & $37$ \\
+$L = 50$   & $2\,500$      & $6.25\times10^{6}$ & $1.25\times10^{4}$ \\
+$L = 1000$ & $10^{6}$      & $10^{12}$       & $5\times10^{6}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At $L = 1000$ the table has a trillion places and five million useful ones. Storing it
+would be absurd, and it is unnecessary, because $\D$ is not data: it is a \emph{function}
+of the pair $(\bm{x},\bm{y})$, given in closed form by \eqref{eq:delta}. Looking up one
+entry means asking whether $\bm{x} = \bm{y}$ and, if not, whether the two sites are
+neighbours --- a constant number of comparisons, so no table is stored and the function
+is evaluated where it is needed. The five entries of row $\bm{x}$ are then exactly
+the diagonal subtraction and the four neighbour increments of \texttt{topple\_once}, and
+the two representations are checked against each other so that they cannot drift apart.
+The dense matrix is formed only for small boards and algebraic checks such as
+$\det(-\D)$ (Appendix~\ref{app:matrix}).
+
+\section{Storage and the main loop}\label{sec:storage}
+
+The board is a one-dimensional array of length $L^2$ flattened in row-major order,
+$\mathrm{idx}(\bm{x}) = iL + j$. One index rather than two is a correctness argument
+rather than a micro-optimisation: toppling touches the four neighbours constantly, and
+adding one to a single index is easier to verify than changing a pair of indices,
+especially in the boundary test where an unsigned underflow would silently index the
+wrong site. Each avalanche appends four integers in order with no summary column,
+because the later binning, fitting and correlation analysis all need the raw rows.
+
+\begin{lstlisting}[caption={Main loop: burn-in, sampling, writing the four columns.}]
+SandPile<BtwMatrix> pile(L, L, seed);
+for (std::uint64_t t = 0; t < 2 * L * L; ++t) pile.drop_sand();   // burn-in
+pile.clear_history();
+std::ofstream out{"avalanches.csv"};
+out << "t,s,area,loss,length\n";
+for (std::uint64_t t = 1; t <= drops; ++t) {
+  pile.drop_sand();
+  const AvalancheStats& st = pile.history().back();
+  out << t << ',' << st.topples << ',' << st.area << ','
+      << st.loss << ',' << st.length << '\n';
+}
+\end{lstlisting}
+
+Randomness enters in one place only, the uniformly drawn drop site, so the avalanche is
+deterministic and a fixed seed reproduces a run exactly. That matters for
+Chapter~\ref{ch:hexagonal}, where the difference between two lattices must not be a
+difference between two random streams. The cost of a drop is $O(1)$ plus $O(s)$ for the
+avalanche, so runtime is proportional to the number of topplings, which is the quantity
+being measured.
+
+\section{Burn-in}\label{sec:burnin}
+
+The early part of a run has to be discarded. The board starts empty, so large avalanches
+are rare while it fills, and including that stage depresses the tail of the distribution
+and biases any exponent fitted from it upward. The run is therefore driven for $2L^2$
+drops and the history cleared before sampling begins.
+
+Whether the board is in the stationary state is checked by quantities that need no
+fitting and no choice of cut-off: the mean height against the exact value $17/8 = 2.125$
+of \eqref{eq:meanh}, and the mean number of grains lost per drop against $1$, which is
+the input--output balance of §\ref{sec:noneq}. Both are sensitive to the two errors that
+would invalidate everything downstream --- a wrong boundary test and a wrong threshold
+--- which is why they are checked before any avalanche statistic is recorded.
+
+\begin{pending}
+  \pendingtag The runs whose statistics are reported in Chapter~\ref{ch:stationary} have
+  not yet been carried out. What is needed is a set of runs at three or more board sizes
+  with a common seed policy and a common burn-in, each long enough that the usable tail
+  of the toppling distribution holds on the order of $10^3$ events; the record is then
+  sufficient for both the exponent fitting of §\ref{sec:distributions} and the
+  conditional means of §\ref{sec:correlations}.
+\end{pending}
