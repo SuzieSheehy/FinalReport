@@ -1,0 +1,105 @@
+\chapter{Implementation of the model}
+
+\section{Testing}
+
+Start by testing the avalanche:
+
+\begin{verbatim}
+Test Sandpile 1:
+[[3 3 3]
+ [3 4 3]
+ [3 3 3]]
+After avalanche:
+[[1 3 1]
+ [3 0 3]
+ [1 3 1]]
+Topples:  10  Area:  9  Total Loss:  12  Length:  2.8284271247461903
+
+Test Sandpile 2:
+[[4 3 3 3 3]
+ [3 0 3 0 3]
+ [3 3 0 0 3]
+ [0 0 0 0 3]
+ [0 0 0 0 0]]
+After avalanche:
+[[2 2 2 1 1]
+ [2 0 1 3 1]
+ [1 1 2 1 1]
+ [1 1 0 1 0]
+ [0 0 0 0 1]]
+Topples:  13  Area:  13  Total Loss:  12  Length:  5.0
+
+The resulting sandpile and avalanche statistics are correct (they 
+match the calculations which one can do by hand).
+\end{verbatim}
+
+\newpage
+Run some test simulations:
+
+\begin{lstlisting}[
+    style=pythonstyle,
+    caption={Test simulation},
+    label={lst:sandpile}
+]
+start = time.time()
+test_simulation(5, 5, 1000, np.random.default_rng(seed=103))
+elapsed = time.time() - start
+print("Elapsed time: ", elapsed, " seconds for a 5x5 grid with 1000 time steps")
+
+start = time.time()
+test_simulation(5, 5, 20000, np.random.default_rng(seed=103))
+elapsed = time.time() - start
+print("Elapsed time: ", elapsed, " seconds for a 5x5 grid with 20000 time steps")
+
+start = time.time()
+test_simulation(50, 50, 20000, np.random.default_rng(seed=103))
+elapsed = time.time() - start
+print("Elapsed time: ", elapsed, " seconds for a 50x50 grid with 20000 time steps")
+\end{lstlisting}
+
+
+
+
+\begin{verbatim}
+Elapsed time:  0.055567  seconds for a 5x5 grid with 1000 time steps
+Elapsed time:  1.081542  seconds for a 5x5 grid with 20000 time steps
+Elapsed time:  18.475989  seconds for a 50x50 grid with 20000 time steps
+\end{verbatim}
+
+The model works, but we see that it scales poorly with the size of the grid. We repeatedly call \begin{verbatim}
+    np.argwhere(pile >= unstable_height)
+\end{verbatim}
+We can improve this by only checking the sites which have been changed by a topple. We also need to optimise the way we find the avalanche area/length, as the current method is inefficient.
+
+% There are other inefficiencies we will improve
+
+
+
+\section{Base Model}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/area0.png}
+    \caption{ area vs  frequency}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/length0.png}
+    \caption{ length vs  frequency}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/loss0.png}
+    \caption{ loss vs  frequency}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/topples0.png}
+    \caption{log topples vs log frequency}
+\end{figure}
+
+
+\section{Extension}

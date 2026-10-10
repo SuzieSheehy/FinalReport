@@ -1,0 +1,103 @@
+\chapter{Introduction}\label{ch:introduction}
+
+This project is based on the ``Complex Systems'' project outline \cite{comsys}.
+
+\section{Self-Organised Criticality and Scale Invariance}
+
+\begin{enumerate}
+    \item The concept of \emph{self-organised criticality} (\soc) was introduced in 1987 by Bak, Tang and Wiesenfeld \cite{BTW87,BTW88}.
+    \item If we add a grain of sand to the pile, the sand pile can either remain stable or produce an avalanche. The microscopic phenomena is the same in both cases. The size of an avalanche depends on the configuration of the pile, not just the initial disturbance by the dropped grain of sand.
+    \item The \emph{Gutenberg-Richter law} \cite{GR44} describes how, for a given region, the number of earthquakes $N$ of a magnitude $M$ are related by \[N=10^{a-bM}\] for some constants $a$ and $b$. Since magnitude is a logarithmic measure of earthquake size (i.e., seismic energy $E$ is related to magnitude by a relationship of the form $E\propto c^{dM}$ for some constants $c$ and $d$), it follows that the number of earthquakes is a power law in the energy of the earthquake.
+\end{enumerate}
+
+
+\begin{question}
+    Why is it that a system exhibiting scale invariance will have phenomena which are described by a power law?
+\end{question}
+
+
+\section{Aim}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{comment}
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{ l l l c l}\hline
+\textbf{description}  & \textbf{} & \textbf{value} \\ \hline
+electronic charge & $e$ & $1.6021766 \times 10^{-19} \coulomb$ \\
+proton mass            & $m_{p}$ & $1.6726218 \times 10^{-27} \kilo\gram$ &  
+ or & $938.27203 \mega\electronvolt\per c^{2}$ \\
+electron mass          & $m_{e}$ & $9.1093822 \times 10^{-31} \kilo\gram$ & or & $510.99891 \kilo\electronvolt\per c^{2}$ \\
+permittivity of vacuum & $\epsilon_{0}$ & $8.8541878 \times 10^{-12} \farad\per\meter $ \\
+permeability of vacuum & $\mu_{0}$         & $1.2566371 \times 10^{-6} \; \henry\per\meter$ & 
+ or & $4 \pi \times 10^{-7} \henry\per\meter $ \\
+speed of light in vacuum & $c$               & $2.9979246 \times 10^{+8} \; \meter\per\second $ \\ 
+electrostatic constant   & $k_{e}$ & $8.9875518 \times 10^{+9} \; \meter\per\farad$ & 
+ or & $1/4 \pi \epsilon_{0}$ \\
+Planck constant        & $h$ & $6.6260696 \times 10^{-34} \; \joule\cdot\second$ & 
+ or & $4.1356675 \times 10^{-15} \electronvolt\cdot\second$ \\
+reduced Planck constant        & $\hbar$ & $1.0545717 \times 10^{-34} \; \joule\cdot\second$ & 
+ or & $6.5821193 \times 10^{-16} \electronvolt\cdot\second$ \\
+\hline
+\end{tabular}
+\end{center}
+\caption{A table of measured constants.}
+\label{tab:measuredconstants}
+\end{table}
+
+\begin{lstlisting}
+      FUNCTION PINEWT(N)
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+C**********************************************************************C
+C     PINEWT EVALUATES THE INFINITE SERIES REPRESENTATION              C
+C     FOR PI AS A TRUNCATED SUM.                                       C
+C**********************************************************************C
+C
+C     ENSURE N IS A LEGAL VALUE
+      IF(N.LT.0) THEN
+        WRITE(6,*) 'In PINEWT: illegal value for N.',N
+        RETURN
+      ELSEIF(N.EQ.0) THEN
+        PINEWT = 2.0D0
+      ENDIF
+C
+C     INITIALISE SOME COUNTERS
+      TWOPOW = 1.0D0
+      FACKNM = 1.0D0
+      FACKDM = 1.0D0
+      PINEWT = TWOPOW*FACKNM*FACKNM/FACKDM
+C
+C     LOOP OVER SERIES ORDER N TIMES, ADDING EACH TERM TO TOTAL
+      DO I=1,N
+        TWOPOW = 2.0D0*TWOPOW
+        FACKNM = DFLOAT(I)*FACKNM
+        FACKDM = DFLOAT(2*I+1)*DFLOAT(2*I)*FACKDM
+        PINEWT = PINEWT + TWOPOW*FACKNM*FACKNM/FACKDM
+      ENDDO
+C
+C     DOUBLE THE RESULT (SEE WIKIPEDIA FORMULA)
+      PINEWT = 2.0D0*PINEWT
+C
+      RETURN
+      END
+\end{lstlisting}
+
+\end{comment}

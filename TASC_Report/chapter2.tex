@@ -1,0 +1,134 @@
+\chapter{Bak-Tang-Wiesenfeld Model}
+
+\begin{question}
+    In what ways does the \btw\ model satisfy the properties required for a system to exhibit \soc?
+\end{question}
+
+\begin{question}
+    Why is it important for the table to have finite boundaries? What if we had an infinite lattice, but dropped the sand on only a (finite) subset of the lattice?
+\end{question}
+
+\begin{question}
+    We can define the average height of each pile to be
+    \[ p_t\coloneq \frac{1}{NM}\sum_{i,j}p_t(i,j)\]
+    Without simulating anything, what might you expect this to be once the system has reached a steady state (if it ever does so)? Compare your initial expectation to what your simulation does.
+\end{question}
+
+\begin{question}
+    Explain the difference between: a steady state, a statistically stationary state, and an equilibrium state. Do you expect the btw model reach an equilibrium state or statistically stationary state? In terms of system observables, how might we characterize this state?
+\end{question}
+
+\begin{question}
+    Is there a difference between sampling a system over time and sampling an ensemble of systems? If so, under what circumstances? Hint: Look up the property of ergodicity and argue whether or not you believe the btw model is ergodic.
+\end{question}
+
+\begin{question}
+    Record the frequency with which avalanches have a specific number of topples, area, loss and length. What kind of distribution do you get for each? If possible, can you find a fit for the distribution? (E.g. for a Gaussian, find the mean and width of the distribution; for a power law, find the exponent.)
+\end{question}
+
+\begin{question}
+    Do you expect any correlation between the four properties we are recording for the avalanche? Justify why/why not, then verify this with your simulation.
+\end{question}
+
+
+
+\section{Abelian Property}
+
+In this section, we will show that the topples of the \btw\ model are \emph{abelian}. This means that in an unstable state, the order in which the unstable sites are toppled does change the final stable configuration.
+
+Let $L\subseteq \ZZ^d$ be the \emph{sand pile lattice}, where $d\ge 1$ is the dimension of the lattice. Corresponding to a configuration of the sand pile $p$, we define a function $p: L\rightarrow \ZZ_{\ge 0}$, where $p(x)$ is the number of grains of sand on the lattice point $x$ in the configuration $p$. Define $k$ to be the \emph{stability threshold} (i.e., the pile topples when a lattice point is of height at least $k$). Then $p$ is a \emph{stable} configuration if $p(x)<k$ for all $x\in L$, and it is \emph{unstable} if $p(x)\ge k$ for at least one $x\in L$.
+
+We define the \emph{toppling matrix} $\Delta$, which has rows and columns indexed by $L$. For $x,y\in L$, the entry $\Delta(x,y)$ describes the change in height of site $y$ when there is a toppling at site $x$. The matrix $\Delta$ must satisfy the following conditions:
+
+\begin{align}
+    \forall x,y\in L \text{ where } x\ne y, \quad &\Delta(x,y)=\Delta(y,x) \ge 0 \label{eq:delta1} \\
+    \forall x\in L, \quad & \Delta(x,x) < 0 \label{eq:delta2}\\
+    \forall x\in L, \quad & \sum_{y\in L}\Delta(x,y) \le 0 \label{eq:delta3}\\
+    & \sum_{x,y\in L}\Delta(x,y) < 0 \label{eq:delta4}
+\end{align}
+
+
+
+\begin{question}
+    For Equation \ref{eq:delta1} to \ref{eq:delta4}, explain the significance and justify its necessity.
+\end{question}
+
+Equation~\ref{eq:delta1} demands that when a site topples, no other site loses any grains. This is consistent with how we defined toppling. Equation~\ref{eq:delta1} also insists that there is some symmetry in how toppling works, in the sense that the number of grains that go to a site $y$ when $x$ is toppled should be the same as the number of grains that go to $x$ when $y$ is toppled. 
+
+Equation~\ref{eq:delta2} means that a site should lose grains when it is toppled. If Equation~\ref{eq:delta2} does not hold for a site $x$, then when the height at $x$ reaches $k$ (which it eventually will do with probability $1$), the pile will never be able to reach a stable configuration. 
+
+Equation~\ref{eq:delta3} can be written as $-\Delta(x,x) \ge \sum_{y\in L\setminus \{x\}}\Delta(x,y)$ for all $x\in L$, meaning that when a site $x$ is toppled, the number of grains gained by other sites is no more than the number of grains which are lost by $x$ (i.e., we are not creating new grains when toppling). 
+
+Equation~\ref{eq:delta4} demands that there is at least one site where toppling will result in at least one grain leaving the pile. If Equation~\ref{eq:delta4} does not hold, the pile will end up enough grains that it can never reach a stable configuration. 
+
+In the \btw\ model, the toppling matrix is defined as follows:
+
+\[
+\Delta_{\btw}(x,y)=\begin{cases}
+    -2d \quad & x=y\\
+    1 & \text{$x$ and $y$ are nearest neighbours}\\
+    0 & \text{else}
+\end{cases}
+\]
+
+
+\begin{question}
+    Explain and justify the definition of the toppling matrix in the btw model and verify that it satisfies Equation \ref{eq:delta1} to \ref{eq:delta4}.
+    What is the stability threshold k?
+\end{question}
+
+The \btw\ toppling matrix $\Delta_{\btw}$ removes $2d$ grains from a toppled site $x$ and adds $1$ grain to each nearest neighbour of $x$. It is also a symmetric matrix, so it clearly satisfies Equation \ref{eq:delta1} and \ref{eq:delta2}. Each site in the interior of the pile has $2d$ nearest neighbours, and each site on the boundary of the pile has less than $2d$ nearest neighbours. Therefore for each $x\in L$,
+\begin{align*}
+    \sum_{y\in L}\Delta_{\btw}(x,y) &= \Delta_{\btw}(x,y) +  \sum_{y\in L\setminus \{x\}} \Delta_{\btw}(x,y) \\
+    & = -2d + \#\{\text{nearest neighbours of x}\} \\
+    & \le 0
+\end{align*}
+Hence $\Delta_{\btw}$ also satisfies Equation \ref{eq:delta3}. Since at least one site is on the boundary of the pile, we have
+\[ \sum_{x,y\in L}\Delta_{\btw}(x,y) = \sum_{x\notin \partial L}\sum_{y\in L\setminus \{x\}} \Delta_{\btw}(x,y) + \sum_{x\in \partial L}\sum_{y\in L\setminus \{x\}} \Delta_{\btw}(x,y) < 0 \]
+so $\Delta_{\btw}$ also satisfies Equation~\ref{eq:delta4}. The stability threshold is $k=2d$.
+
+For each $x\in L$, we then define the toppling operator $T_x$, which maps a configuration $p$ to a new configuration $T_xp$, by
+
+\[
+(T_xp)(y)=\begin{cases}
+    p(y) + \Delta_{\btw}(x,y) \quad & p(x)\ge k\\
+    p(y) & \text{else}
+\end{cases}
+\]
+
+\begin{question}
+    Show that $T_x$ and $T_{x'}$ commute for an unstable configuration $p$.
+\end{question}
+
+\begin{proof}
+Let $x,x'\in L$ be distinct unstable sites and let $y\in L$ be any site. Then $p(x)\ge k$ and $p(x') \ge k$. It follows that for any $y\in L$, we have 
+
+\begin{align*}
+    (T_{x'}p)(y)& = p(y) + \Delta_{\btw}(x',y) \\
+    (T_{x'}p)(x)& =p(x) + \Delta_{\btw}(x',x) \\
+    (T_{x}p)(y)& =p(y) + \Delta_{\btw}(x,y) \\
+    (T_{x}p)(x')& =p(x') + \Delta_{\btw}(x,x')
+\end{align*}
+Since $x\ne x'$, and $p(x)$ and $p(x')$ are both at least $k$, it follows that $p(x) + \Delta_{\btw}(x',x) \ge k$ and $p(x') + \Delta_{\btw}(x,x') \ge k$.
+Therefore,
+
+\begin{align*}
+    (T_xT_{x'}p)(y) & = 
+    \begin{cases}
+        (T_{x'}p)(y) + \Delta_{\btw}(x,y) \quad & (T_{x'}p)(x)\ge k\\
+        (T_{x'}p)(y) & \text{else}
+    \end{cases}\\
+    & = (T_{x'}p)(y) + \Delta_{\btw}(x,y) \\
+    & = p(y) + \Delta_{\btw}(x',y) + \Delta_{\btw}(x,y) \\
+    & = (T_{x'}T_xp)(y) \qedhere
+\end{align*} 
+\end{proof}
+
+
+
+
+\begin{question}
+    Show that T is well defined. In other words, show that given some unstable configuration $p,p'=\TT p$ is unique (you can’t end with two different stable configurations). This is equivalent to the sequence of $T_{x_i}$ required is unique up to re-ordering. Hint: Read the original papers for hints as to how this can be done.
+\end{question}
+
+
