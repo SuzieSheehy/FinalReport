@@ -1,0 +1,62 @@
+\chapter{Conclusions}\label{ch:conclusions}
+
+\section{What the model turned out to be}\label{sec:conc1}
+
+The BTW sand pile is usually introduced as a rule about four grains and four neighbours.
+The useful object is not the rule but the table it defines. Once the rule is written as
+the toppling matrix $\D$ of \eqref{eq:delta}, four separate claims --- that topplings
+commute, that an avalanche ends, that its endpoint is unique, and that the number of
+recurrent configurations is $\det(-\D)$ --- all follow from four sign conditions on that
+table, each constraining one part of the dynamics. The chain runs \eqref{eq:4a}
+$\Rightarrow$ commutativity, \eqref{eq:4c} and \eqref{eq:4d} $\Rightarrow$ termination
+and uniqueness, and \eqref{eq:4a} and \eqref{eq:4c} $\Rightarrow$ the graph-Laplacian
+reading that makes the algebra possible. Nothing in the chain refers to squares.
+
+That reframing is what made the extension cheap. The hexagonal lattice of
+Chapter~\ref{ch:hexagonal} needs a new matrix, threshold and distance, but no new proof
+of the Abelian property, because the existing proof never uses the lattice. The general
+statements in the literature --- the model on an arbitrary directed graph
+\cite{dhar1999} and on an arbitrary finite multigraph with the degree as threshold
+\cite{jarai2018} --- say the same at the level of generality where the question does not
+arise. The corresponding rule for later work is that two things must be checked, and
+neither is geometric: the instability test must involve the height of the site alone, and
+a toppling must never remove sand from another site. Changes of geometry, degree,
+boundary shape or dimension preserve both; changes of \emph{rule} may not. Randomness
+alone is not the problem --- the Manna model \cite{manna1990} is still Abelian
+\cite{dhar1999} --- which shows that Abelianity and shared exponents are separate
+properties.
+
+The stationary state is correspondingly well characterised. The recurrent configurations
+carry a uniform measure with weight $1/\absR$, where $\absR = \det(-\D)$ counts the
+spanning trees of the wired graph, and that measure fixes the mean height exactly:
+$\meanh = 17/8$ on the square lattice, with the four height probabilities known in closed
+form. Those are the quantities against which any implementation is checked, because they
+involve no fitting, no cut-off and no assumption about a tail.
+
+\section{What the hexagonal comparison settled}\label{sec:conc2}
+
+The comparison was carried out for everything that follows from the two toppling matrices
+alone, and it splits cleanly. \emph{Universal}: the exponents $\tau_s = 6/5$ and
+$\tau_d = 5/4$, since their derivation routes through the $q \to 0$ Potts model and the
+two-dimensional conformal field theory with $c = -2$ \cite{majumdar1992,dhar1999}, which
+is sensitive to the dimension and not to the coordination number.
+\emph{Lattice-specific and derivable}: the threshold is forced to $6$ by \eqref{eq:4c};
+the row-sum classes become $\{0,-2,-3\}$; the mean height becomes $(5+\loopc_{\hx})/2$,
+with $17/8$ the case $\loopc = 5/4$; and the sand pile group grows at a different
+exponential rate, $h_{\hx} \approx 1.62$ against $4G/\pi = 1.16624$.
+\emph{Lattice-specific and affecting the analysis rather than the physics}: the $3/2$
+ball-size ratio puts the finite-size cut-off elsewhere, so the collapse variable must be
+chosen with care and the two lattices must be compared at matched sizes.
+
+Two features of the change of threshold follow directly from the row sums and are easy to
+get wrong. A hexagonal boundary is deeper, not shallower: its six vertices lose three
+grains per toppling against two for a square corner, and at equal $N$ the deepest class
+carries $30\%$ more of the total loss. Only the relative spread of the per-toppling loss
+is narrower. What the hexagonal boundary does have is isotropy --- constant graph
+distance from the centre in all six directions, where a square boundary is at $L/2$ along
+an axis and $L/\sqrt{2}$ along a diagonal --- and isotropy, not evenness of loss, is the
+property that bears on the shape of large avalanches and on the cut-off.
+
+The measurements that would test the universal-exponent prediction are listed in
+Table~\ref{tab:hexplan}. The single most informative number is the mean height, since by
+\eqref{eq:zetahex} it determines the looping constant of the triangular lattice.

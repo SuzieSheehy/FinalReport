@@ -1,0 +1,344 @@
+\chapter{The model and the Abelian property}\label{ch:toppling}
+
+\section{Sand on a grid, and the toppling rule as a table}\label{sec:model}
+
+Sand grains sit on an $L \times L$ square grid. The state at time $t$ is the height
+function
+\begin{equation}\label{eq:height}
+  p_t(\bm{x}) \in \mathbb{N}_0, \qquad
+  \bm{x} = (i,j) \in \bm{L} = \{1,\dots,L\}^2 ,
+\end{equation}
+and the list of all $L^2$ heights is the \emph{configuration}. Time does not advance
+during an avalanche: a drop is instantaneous and the whole rearrangement it triggers
+belongs to the same time step \cite{handbook2020}. A configuration is \emph{stable}
+when every site is below the threshold $k$, and \emph{unstable} otherwise.
+
+An unstable site gives one grain to each of its four nearest neighbours and loses four
+grains itself:
+\begin{equation}\label{eq:rule}
+  p(\bm{x}) \gets p(\bm{x}) - 4, \qquad
+  p(\bm{x} \pm \bm{e}_k) \gets p(\bm{x} \pm \bm{e}_k) + 1, \quad k = 1,2 .
+\end{equation}
+The rule has the four features required for self-organised criticality. The driving is
+slow: one grain per drop, at a rate far below the relaxation rate. The threshold is
+local: the test $p(\bm{x}) \ge k$ involves one site only. The redistribution is local:
+the grains reach the four neighbours and no other site. And the system dissipates: the
+grains that would leave the board are deleted. All four are properties of the rule
+rather than of a parameter value, so no quantity has to be tuned for the critical state
+to appear.
+
+This changes five sites at once, which is awkward to reason about, so it is better
+recorded as how much each site $\bm{y}$ changes when $\bm{x}$ topples once. That table
+is the \emph{toppling matrix}
+\begin{equation}\label{eq:delta}
+  \D(\bm{x},\bm{y}) =
+  \begin{cases}
+    -4, & \bm{x} = \bm{y}, \\
+    \phantom{-}1, & \bm{x},\bm{y} \text{ are nearest neighbours}, \\
+    \phantom{-}0, & \text{otherwise},
+  \end{cases}
+\end{equation}
+and the rule is recovered by reading row $\bm{x}$: the diagonal entry is what the
+toppling site loses, the four non-zero off-diagonal entries are what its neighbours
+gain, and the zeros are the sites that do not notice. Summing row $\bm{x}$,
+\begin{equation}\label{eq:rowsum}
+  \sum_{\bm{y}} \D(\bm{x},\bm{y})
+  = -4 + \#\{\text{neighbours of } \bm{x} \text{ inside the board}\} ,
+\end{equation}
+so the row sum reports conservation and loss in the same number: $0$ for an interior
+site, $-1$ at an edge, $-2$ at a corner.
+
+The row sum is negative exactly at the sites that have a neighbour outside the board,
+and nowhere else, so the boundary is the only exit for sand and the only reason the
+total stays bounded. Without it, on an infinite lattice or with grains that rebound
+instead of leaving, every row sum would be zero: the total sand would grow by one with
+every drop, no input--output balance would be possible, and both the total mass and the
+front of an avalanche would grow without bound, leaving no stationary state and
+therefore no exponents. The boundary does not
+have to be far away for this to work --- any finite board will do --- which is why an
+$L = 50$ board already shows the critical statistics.
+
+\subsection{The four conditions on \texorpdfstring{$\D$}{Delta}}\label{sec:fourconditions}
+
+The handbook isolates four conditions for the dynamics to be well posed
+\cite{handbook2020}; they are its equations (4a)--(4d), numbered here
+\begin{subequations}\label{eq:fourconditions}
+\begin{align}
+  \forall \bm{x} \neq \bm{y}: \quad & \D(\bm{x},\bm{y}) = \D(\bm{y},\bm{x}) \ge 0,
+    \label{eq:4a} \\[2pt]
+  \forall \bm{x}: \quad & \D(\bm{x},\bm{x}) < 0, \label{eq:4b} \\[2pt]
+  \forall \bm{x}: \quad & \sum_{\bm{y}} \D(\bm{x},\bm{y}) \le 0, \label{eq:4c} \\[2pt]
+  & \sum_{\bm{x},\bm{y}} \D(\bm{x},\bm{y}) < 0 . \label{eq:4d}
+\end{align}
+\end{subequations}
+Each condition constrains one part of the dynamics. Condition~\eqref{eq:4a} says sand
+moves between sites without a preferred direction: the non-negativity is what makes
+topplings commute (§\ref{sec:commute}), and the symmetry makes $\D$ a real symmetric
+matrix, so that $-\D$ is a grounded graph Laplacian and $\det(-\D)$ counts the spanning
+trees of the wired graph by the matrix--tree theorem. Condition~\eqref{eq:4b} says a
+toppling removes sand from the site that topples; without a strictly negative diagonal
+there would be no toppling at all, only redistribution, and the threshold would not be
+defined by the matrix. Condition~\eqref{eq:4c} says a toppling never creates sand: it is
+\eqref{eq:rowsum} restated, and it is what bounds the total mass. Condition~\eqref{eq:4d}
+says at least one place loses sand, which makes $-\D$ a nonsingular $M$-matrix and
+therefore makes $\D$ invertible, $\sigma$ unique by \eqref{eq:firing} and every avalanche
+finite (Proposition~\ref{prop:termination}).
+
+All four hold for the matrix of \eqref{eq:delta}, and they can be read off it directly.
+The off-diagonal entry is $1 \ge 0$ and the neighbour relation is symmetric, so
+\eqref{eq:4a} holds. The diagonal entry is $-4 < 0$, so \eqref{eq:4b} holds, and the
+threshold is fixed rather than chosen:
+\begin{equation}\label{eq:threshold}
+  k = -\D(\bm{x},\bm{x}) = 4 .
+\end{equation}
+The row sum of \eqref{eq:rowsum} takes the values $0$, $-1$ and $-2$ for interior, edge
+and corner sites, so \eqref{eq:4c} holds; and since boundary rows are strictly negative
+while the board has a boundary, the total in \eqref{eq:4d} is negative. The threshold is
+a consequence of conservation, not a free parameter: if the rule sent a number of grains
+different from the number of neighbours, the interior row sum would no longer be zero
+and \eqref{eq:4c} would fail. That is the constraint which forces the threshold of the
+hexagonal lattice from $4$ to $6$ in Chapter~\ref{ch:hexagonal}.
+
+Note the convention: Dhar writes the rule as $z_{\bm{y}} \to z_{\bm{y}} -
+\D(\bm{x},\bm{y})$ \cite{dhar1990,dhar1999}, so his $\D$ is the negative of ours and his
+conditions are these three with the sign flipped. The sign has to be checked whenever an
+exponent is taken from the literature.
+
+\subsection{The nine-site example}\label{sec:example9}
+
+When $L = 3$ the board has nine sites and $\D$ is a $9 \times 9$ table. Numbering sites
+row-major, $(i,j) \mapsto 3i+j$, and filling row by row from \eqref{eq:delta}:
+\begin{equation}\label{eq:matrix9}
+\D =
+\begin{array}{c|ccccccccc}
+ & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\\hline
+ 0 & -4 &  1 &  0 &  1 &  0 &  0 &  0 &  0 &  0 \\
+ 1 &  1 & -4 &  1 &  0 &  1 &  0 &  0 &  0 &  0 \\
+ 2 &  0 &  1 & -4 &  0 &  0 &  1 &  0 &  0 &  0 \\
+ 3 &  1 &  0 &  0 & -4 &  1 &  0 &  1 &  0 &  0 \\
+ 4 &  0 &  1 &  0 &  1 & -4 &  1 &  0 &  1 &  0 \\
+ 5 &  0 &  0 &  1 &  0 &  1 & -4 &  0 &  0 &  1 \\
+ 6 &  0 &  0 &  0 &  1 &  0 &  0 & -4 &  1 &  0 \\
+ 7 &  0 &  0 &  0 &  0 &  1 &  0 &  1 & -4 &  1 \\
+ 8 &  0 &  0 &  0 &  0 &  0 &  1 &  0 &  1 & -4
+\end{array}
+\end{equation}
+with the site indices written outside. Row $4$, the centre, is $(-4,+1,+1,+1,+1)$: the
+site takes $-4$ in column $4$, its neighbours $+1$ in columns $1,3,5,7$, the corners
+$0$, and the sum is zero as \eqref{eq:rowsum} requires. Row $0$ is a corner, with sum
+$-2$, so two grains leave the board whenever it topples.
+
+\subsection{Program: one local function}
+
+Equation~\eqref{eq:rule} is a local function of constant cost whose return value answers
+two questions at once: whether the toppling happened, and how many grains left the
+board.
+
+\begin{lstlisting}[caption={One toppling. Every line is one entry of row $\bm{x}$ of
+\eqref{eq:delta}.}]
+ToppleOutcome topple_once(Site x) {
+  const Threshold k = mat_.threshold();            // k = 4 = -Delta(x,x)   (2.5b)
+  if (h_[idx(x)] < k) return {false, 0};           // stable: T_x is the identity
+  h_[idx(x)] -= k;                                 // the diagonal entry
+  LossCount loss = 0;
+  for (const auto& d : kFourDirections) {
+    const auto ni = (long long)x.i + d[0], nj = (long long)x.j + d[1];
+    if (ni < 0 || nj < 0 || ni >= n_ || nj >= m_) ++loss;   // row sum < 0 here
+    else h_[idx({(std::size_t)ni, (std::size_t)nj})] += 1;  // the +1 entries
+  }
+  return {true, loss};
+}
+\end{lstlisting}
+
+The correspondence is item by item: \texttt{mat\_.threshold()} is
+$-\D(\bm{x},\bm{x})$, the early return is the branch in which $T_{\bm{x}}$ is the
+identity, the subtraction is the diagonal entry, and the loop visits exactly the four
+non-zero off-diagonal entries, incrementing \texttt{loss} whenever a neighbour falls
+outside the board. So \texttt{loss} is exactly $-\sum_{\bm{y}} \D(\bm{x},\bm{y})$: the
+same integer as \eqref{eq:rowsum}, computed the other way round. The two are computed
+independently and compared, so that a mistake in the boundary test --- an unsigned index
+that wraps around instead of reporting ``outside'' --- cannot corrupt both silently.
+
+\section{Order of toppling, and the stable state}\label{sec:abelianchapter}
+
+An avalanche is the chain of topplings a drop sets off, and it has an order, because the
+dynamics says which sites are unstable but never which one to topple next. The rest of
+this chapter shows that the choice does not matter and isolates which hypothesis does
+the work.
+
+\subsection{The toppling operator, and commutativity}\label{sec:commute}
+
+Write ``topple once at $\bm{x}$'' as an operator:
+\begin{equation}\label{eq:Tx}
+  (\Tx p)(\bm{y}) =
+  \begin{cases}
+    p(\bm{y}) + \D(\bm{x},\bm{y}), & p(\bm{x}) \ge k , \\[2pt]
+    p(\bm{y}), & p(\bm{x}) < k .
+  \end{cases}
+\end{equation}
+It touches $\bm{x}$ and its four neighbours and acts only when the site should topple;
+otherwise it is the identity. Toppling $\bm{x}$ $n$ times adds row $\bm{x}$ $n$ times,
+$\Tx^{\,n} p = p + n\,\D(\bm{x},\cdot)$, and a whole avalanche is a product
+$\stab = \prod_i T_{\bm{x}_i}$ in the order the topplings happened.
+
+\begin{lemma}\label{lem:commute}
+  Let $\bm{x}_1 \neq \bm{x}_2$ satisfy $p(\bm{x}_1) \ge k$ and $p(\bm{x}_2) \ge k$.
+  Then both $T_{\bm{x}_2} T_{\bm{x}_1} p$ and $T_{\bm{x}_1} T_{\bm{x}_2} p$ are defined,
+  and they are equal.
+\end{lemma}
+
+\begin{proof}
+  Put $q = T_{\bm{x}_1} p$. By \eqref{eq:4a}, $\D(\bm{x}_1,\bm{x}_2) \ge 0$, so
+  $q(\bm{x}_2) = p(\bm{x}_2) + \D(\bm{x}_1,\bm{x}_2) \ge p(\bm{x}_2) \ge k$: toppling
+  $\bm{x}_1$ cannot calm $\bm{x}_2$ down, because a toppling only adds sand to other
+  sites. Hence the branch $q(\bm{x}_2) \ge k$ applies and
+  $\bigl(T_{\bm{x}_2} T_{\bm{x}_1} p\bigr)(\bm{y}) = p(\bm{y}) + \D(\bm{x}_1,\bm{y})
+  + \D(\bm{x}_2,\bm{y})$. The same computation with the roles exchanged has the same
+  right-hand side, because addition of integers in $\mathbb{Z}^{\bm{L}}$ is
+  commutative.
+\end{proof}
+
+The proof uses $\D(\bm{x}_1,\bm{x}_2) \ge 0$ and nothing else: not the symmetry half of
+\eqref{eq:4a}, not the row sums, not the number of neighbours, not the shape of the site
+set. That is why the result survives a change of lattice. It is not the only hypothesis
+at work, however.
+
+\begin{remark}\label{rem:withdrawal}
+  Equation~\eqref{eq:Tx} asks two things of a rule: that the instability test at
+  $\bm{x}$ involves the height of $\bm{x}$ alone, and that a toppling only adds sand to
+  other sites. The handbook's gradient rule fails the first, since $\bm{x}$ is unstable
+  when it exceeds a neighbour by $k$ and the trigger therefore involves $p(\bm{y})$; a
+  rule that may \emph{take} a grain from a neighbour fails the second. Neither property
+  is equivalent to determinism, and random rules are not excluded: the Manna model
+  \cite{manna1990}, which hands grains to randomly chosen neighbours, is still Abelian
+  \cite{dhar1999}, because the randomness is attached to each site in advance. Randomness
+  drawn \emph{at the moment of toppling} is different, and Dhar's non-Abelian variant
+  \cite{dhar1999} loses the property that way.
+\end{remark}
+
+\subsection{Termination and uniqueness}\label{sec:termination}
+
+\begin{proposition}\label{prop:termination}
+  Let $\D$ satisfy \eqref{eq:4a}--\eqref{eq:4d} on the finite board $\bm{L}$. Then every
+  legal sequence of topplings from $p$ has at most $\bm{1}^{\!\top}(-\D)^{-1}p$ terms.
+\end{proposition}
+
+\begin{proof}
+  Let $v_t \ge 0$ count the topplings in the first $t$ steps; then $p_t = p +
+  \D^{\!\top} v_t$, and since height is non-negative, $(-\D)v_t \le p$ using the
+  symmetry $\D^{\!\top} = \D$. Now $-\D$ has positive diagonal by \eqref{eq:4b},
+  non-positive off-diagonal by \eqref{eq:4a} and non-negative row sums by \eqref{eq:4c},
+  strictly positive for at least one row by \eqref{eq:4d}, with the off-diagonal pattern
+  of the connected grid graph. It is therefore irreducibly diagonally dominant, hence a
+  nonsingular $M$-matrix \cite{berman1994}, so $(-\D)^{-1} \ge 0$ entrywise and
+  $0 \le v_t \le (-\D)^{-1}p$ for every $t$. Each toppling increases
+  $\sum_{\bm{x}} v_t(\bm{x})$ by one, so the number of steps is bounded by the stated
+  constant, which depends only on the starting configuration.
+\end{proof}
+
+\begin{theorem}[Abelian lemma]\label{thm:abelianlemma}
+  Let $v$ be the count vector of a legal sequence taking $p$ to a stable configuration,
+  and let $w \ge 0$ be any integer vector with $p + \D^{\!\top} w$ stable. Then
+  $v \le w$ componentwise.
+\end{theorem}
+
+\begin{proof}
+  Suppose not, and let $t$ be the first step at which some site topples for the
+  $(w(\bm{x})+1)$-st time. Before step $t$ every site has toppled at most $w$ times, so
+  $v_{t-1} \le w$ with equality at $\bm{x}$. Step $t$ is legal, so
+  $p_{t-1}(\bm{x}) \ge k$; but
+  \begin{equation}\label{eq:contradiction}
+    p_{t-1}(\bm{x})
+      = p(\bm{x}) + w(\bm{x})\D(\bm{x},\bm{x})
+        + \sum_{\bm{y} \neq \bm{x}} v_{t-1}(\bm{y})\, \D(\bm{y},\bm{x})
+      \le p(\bm{x}) + \bigl(\D^{\!\top} w\bigr)(\bm{x}) \ \le\ k-1 ,
+  \end{equation}
+  since $\D(\bm{y},\bm{x}) \ge 0$ for $\bm{y} \neq \bm{x}$ lets $v_{t-1} \le w$ be
+  pushed through the sum term by term, and $p + \D^{\!\top}w$ is stable. That
+  contradiction proves $v \le w$.
+\end{proof}
+
+\begin{theorem}\label{thm:unique}
+  Every complete legal sequence from $p$ produces the same final configuration and the
+  same toppling-count vector.
+\end{theorem}
+
+\begin{proof}
+  Every sequence is finite by Proposition~\ref{prop:termination}. For two complete
+  sequences with count vectors $v, v'$, Theorem~\ref{thm:abelianlemma} applied to $v$
+  with $w = v'$ gives $v \le v'$, and applied to $v'$ with $w = v$ gives $v' \le v$.
+  Hence $v = v'$ and the endpoints, being $p + \D^{\!\top}v$, coincide.
+\end{proof}
+
+So the stabilisation map $p \mapsto p^\circ$ is well defined, an avalanche has a
+definite size, and the simulation may topple in whatever order is convenient. The count
+vector is determined by the endpoints alone,
+\begin{equation}\label{eq:firing}
+  p^\circ = p + \D^{\!\top}\sigma
+  \qquad\Longleftrightarrow\qquad
+  \sigma = \bigl(\D^{-1}\bigr)^{\!\top} \bigl(p^\circ - p\bigr),
+\end{equation}
+with no sink vertex or row deletion needed, since \eqref{eq:4d} already makes $\D$
+invertible. This is the \emph{least action principle} \cite{fey2010,klivans2019}:
+$\sigma$ is the pointwise smallest non-negative integer vector for which
+$p + \D^{\!\top}\sigma$ is stable.
+
+\subsection{Four observables, and the program}\label{sec:observables}
+
+Once $\sigma$ is known the avalanche is completely described, and the four quantities
+the handbook asks for \cite{handbook2020} are four summaries of it:
+\begin{align}
+  \text{topples } s &= \sum_{\bm{x}} \sigma(\bm{x}), &
+  \text{area } s_d &= \abs{\{\bm{x} : \sigma(\bm{x}) > 0\}}, \notag \\[2pt]
+  \text{loss } l &= \sum_{\bm{x}} \sigma(\bm{x}) \Bigl(-\sum_{\bm{y}}\D(\bm{x},\bm{y})\Bigr), &
+  \text{length } R &= \max_{\bm{y}:\,\sigma(\bm{y})>0} d(\bm{x}_0, \bm{y}) .
+  \label{eq:observables}
+\end{align}
+The first two count topplings with and without repetition, so $s_d \le s$, with equality
+exactly when no site topples twice. The loss can only be positive if the avalanche
+reached the boundary, since an interior toppling has row sum zero. The length is the
+graph distance from the drop site to the farthest site that toppled; because
+\eqref{eq:rule} only moves grains along the four grid directions, that distance is the
+Manhattan distance
+\begin{equation}\label{eq:manhattan}
+  R = \max_{\bm{y}:\,\sigma(\bm{y})>0}
+      \bigl(\abs{i_{\bm{y}} - i_0} + \abs{j_{\bm{y}} - j_0}\bigr).
+\end{equation}
+The choice of metric belongs to the geometry, not to the reporting: $R$ counts steps, so
+the metric must be the one the grains actually walk, and on the hexagonal lattice of
+Chapter~\ref{ch:hexagonal} it is not the Manhattan distance.
+
+``Topple until stable'' is a queue loop: unstable sites enter, are toppled one at a
+time, and any site made unstable by a toppling enters in turn.
+
+\begin{lstlisting}[caption={One drop and the relaxation. The order inside the queue is
+arbitrary by Theorem~\ref{thm:unique}.}]
+void drop_sand_at(Site s, std::uint32_t n = 1) {
+  h_[idx(s)] += n;
+  if (h_[idx(s)] >= mat_.threshold()) stabilize(s);   // avalanche
+  else history_.push_back(AvalancheStats{});          // no avalanche: zeros
+}
+
+AvalancheStats stabilize(Site start) {
+  std::deque<Site> q{start};
+  std::vector<char> in_q(n_ * m_, 0);                 // dedup on entry
+  in_q[idx(start)] = 1;
+  ToppleCount s = 0; LossCount loss = 0; std::size_t area = 0, R = 0;
+  while (!q.empty()) {
+    const Site x = q.front(); q.pop_front(); in_q[idx(x)] = 0;
+    if (h_[idx(x)] < k) continue;                     // already absorbed
+    loss += topple_once(x).loss; ++s;
+    for (const auto& d : kFourDirections) { /* push unstable neighbours */ }
+  }
+  for (const Site y : fired_list_) R = std::max(R, dist_l1(y, start));
+  return {s, area, loss, R};
+}
+\end{lstlisting}
+
+Three details of the loop bear on the theorems. The height of a site is tested again
+when it leaves the queue, because a neighbour's toppling may have added sand to it while
+it waited; this is simpler than maintaining the invariant that every queued site is
+unstable, and it is safe because by \eqref{eq:4a} an unstable site stays unstable until
+it is toppled. Deduplication on entry changes only the queue length. And replacing the
+queue by a stack or by a random order changes nothing about the result: that is the
+Abelian property, and the two-order comparison is the cheapest test of it.

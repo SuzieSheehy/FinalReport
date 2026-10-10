@@ -1,15 +1,89 @@
-\chapter{Program flowchart}\label{app:flowchart}
+\chapter{Types, signatures and the matrix layer}\label{app:sigs}
 
-A flowchart is a conceptual aid which highlights input and output that a program should have, as well as the consequences of any decisions that it must make. Sometimes, these will include \textit{pseudocode}, which mimics some of the more common coding structures in a universal way. (For instance, you might say `loop over all array addresses'.)\\
+\section{Core types and function signatures}
 
-This particular flowchart indicates a program that reads three numbers from the terminal, and then produces the largest of the numbers back to the terminal. The colour scheme is not mandatory, but helps the reader to know what is going on at a glance.\\
+The type layer is organised so that an illegal state cannot be represented. The clearest
+instance is the split between \texttt{Height} and \texttt{DeltaVal}: a number of grains
+cannot be negative, and a matrix entry must be able to be, because \eqref{eq:4b} requires
+$\D(\bm{x},\bm{x}) < 0$. Making that difference a property of the type means ``$-1$
+grain'' and ``a positive diagonal entry'' cannot be written down at all, and the compiler
+reports the mistake instead of the simulation producing wrong statistics.
 
-This flowchart was drawn with the free `Lucidcharts' extension to Google Docs, from which the result was exported as an \texttt{svg} file, and any unnecessary features were then cropped out with Inkscape. Choose any method you wish to create your own flowchart!
+\begin{lstlisting}[caption={Basic types, the toppling matrix contract, and the sand pile
+class. The comments are the mathematical definitions.}]
+using Height    = std::uint32_t;   // grains on a site; (2.1); negative counts unrepresentable
+using DeltaVal  = std::int32_t;    // Delta(x, y); the only signed quantity, because of (2.5b)
+using Threshold = std::uint32_t;   // k = -Delta(x, x) = 4
+using ToppleCount = std::uint64_t; // a large avalanche can exceed 32 bits
+using LossCount   = std::uint64_t;
 
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=0.50\linewidth]{figures/flowchart.pdf}
-\end{center}
-\caption{A flowchart for the determination of the largest of three user-selected numbers.}
-\label{fig:flowchart}
-\end{figure} 
+struct Site { std::size_t i{}, j{}; constexpr bool operator==(const Site&) const = default; };
+
+struct ToppleOutcome {
+  bool      fired = false;   // did T_x topple, or act as the identity?      (2.9)
+  LossCount loss  = 0;       // grains leaving the system = -(row sum),      (2.4)
+};
+
+struct AvalancheStats {
+  ToppleCount topples{};   // s   : total topplings, counting repeats      (2.15)
+  std::size_t area{};      // s_d : distinct sites toppled, s_d <= s       (2.15)
+  LossCount   loss{};      // l   : grains lost at the boundary            (2.15)
+  std::size_t length{};    // R   : graph radius from the drop site        (2.16)
+};
+
+template <typename M>
+concept TopplingMatrix = requires(const M m, Site x, Site y) {
+  { m.threshold() }  -> std::convertible_to<Threshold>;
+  { m.delta(x, y) }  -> std::convertible_to<DeltaVal>;   // (2.3)
+  { m.row_sum(x) }   -> std::convertible_to<DeltaVal>;   // (2.4)
+  { m.verify_all() } -> std::convertible_to<bool>;       // (2.5a)-(2.5d)
+};
+
+class BtwMatrix {                       // the square lattice, z = 4, k = 4
+ public:
+  DeltaVal  delta(Site x, Site y) const noexcept;    // the pure function of (2.3)
+  DeltaVal  row_sum(Site x) const;                   // 0 / -1 / -2
+  bool      verify_all() const;                      // (2.5a)-(2.5d), small boards
+  Eigen::MatrixXi dense() const;                     // small boards only, for det(-Delta)
+};
+
+template <TopplingMatrix Matrix = BtwMatrix>
+class SandPile {
+ public:
+  SandPile(std::size_t n, std::size_t m, std::uint64_t seed = 42);
+  void      drop_sand(std::uint32_t n = 1);          // uniform random site
+  ToppleOutcome topple_once(Site x);                 // one application of T_x, (2.9)
+  AvalancheStats stabilize(Site start);              // the queue loop of 2.9
+  double    mean_height() const;                     // <h> = mass / (N M)
+  void      clear_history();                         // discard the burn-in
+  bool operator==(const SandPile& o) const;          // compare two toppling orders
+};
+\end{lstlisting}
+
+The \texttt{TopplingMatrix} concept is the contract that makes the lattice a parameter: a
+class satisfies it if it can be constructed from a size, reports its threshold, answers
+$\D(\bm{x},\bm{y})$ and the row sum, and verifies the four conditions on small boards. A
+hexagonal lattice is a second class satisfying the same concept, and \texttt{SandPile} is
+instantiated on either, so Chapter~\ref{ch:hexagonal} is a recompilation rather than a
+second simulator. Two further details are load-bearing rather than stylistic:
+\texttt{DeltaVal} being signed lets one function return both the $+1$ of a neighbour
+increment and the $-4$ of the diagonal subtraction; and \texttt{operator==} on
+\texttt{SandPile} exists so that the same configuration can be stabilised in two orders
+and the boards compared site by site, which is the executable form of
+Theorem~\ref{thm:unique}.
+
+\section{The matrix layer}\label{app:matrix}
+
+\texttt{BtwMatrix} stores only its two dimensions. It does not store $\D$, because $\D$ is
+a closed-form function of the pair $(\bm{x},\bm{y})$ and §\ref{sec:sparsity} is the
+argument that materialising it is impossible at $L = 1000$. The lookups are therefore the
+definitions: \texttt{delta(x, y)} is \eqref{eq:delta} verbatim, with asserted
+preconditions that compile away in a release build; \texttt{row\_sum(x)} is
+\eqref{eq:rowsum} and is the only place the board boundary appears;
+\texttt{check\_4a()} through \texttt{check\_4d()} are \eqref{eq:4a}--\eqref{eq:4d} as
+executable predicates at cost $O(N^2)$, used on small boards; and \texttt{dense()} exports
+$\D$ as an \texttt{Eigen::MatrixXi} for checks needing a real matrix, such as
+$\det(-\D) = 192$ on a $2\times2$ board, which is the one third-party dependency and a
+compile-time-only one. A \texttt{static\_assert(TopplingMatrix<BtwMatrix>)} at the end of
+the header pins the contract down, so that a later change to the signature fails the
+build rather than letting a simulation use the wrong rule.
