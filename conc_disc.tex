@@ -3,34 +3,59 @@
 \section{Result Discussion and Conclusion}
 \subsection{Peak Detection Algorithm}
 We developed a basic algorithm model for identifying QRS complexes based upon a Processing Phase, and then 
-Identification Phase using a adaptive threshold, we tested the performance of this algorithm against the QRS annotation 
+Identification Phase using a adaptive height threshold based upon a minimum numbers of peaks to be identified (i.e peaks per sec), we tested the performance of this algorithm against the QRS annotation 
 files, noting that different time interval thresholds worked for different datasets. We then produced extensions of this algorithm to improve 
 the performance, concluding with a Jump Detection Based Algorithm that produces the best performance, at the sacrifice 
-of time complexity. 
+of time complexity. Its important to note that the performance of all algorithms were evaluated against 
+annotation files that may themselves have error. Further due to the sheer size of the data, any errors or issues 
+with the algorithm identified are hard to diagnose as it likely requires visual inspection to see what the algorithm 
+is picking up, however we can only visually inspect small piece of ECG signal at a time, limiting the ability to 
+troubleshoot issues. 
+
 \subsection{Respiratory Rate Methods}
 We evaluated the RSA and RPA Respiratory Rate estimation methods, using spectrograms as the predomiant tool with the goal 
 of identifying a dominate frequency, that persitted across time. We began by evaluating two methods 
 for spectrum analysis of the non-uniform time series, a Discrete Fourier Transform with interpolation and LombScargle. 
-We saw that the interpolation was very accurate, and due to the error involved in the LombScargle method along 
-with time complexity, that the FFT based method was better for producing Spectrograms. We saw that the RPA method 
-produced a stronger dominate frequency when it was able to detect one, however the RSA method was more robust across 
-the datasets, however neither performed very well at all, with 7 of the 8 tested datasets not having a visually obvious pattern 
-in the Spectrogram. 
+We saw that the interpolation appeared to be very accurate, however as mentioned above we were limited in our ability 
+to test this due to requiring visual confirmation and that only small snippets of ECG signal that can be viewed at a 
+time. Due to the error involved in the LombScargle method along 
+with time complexity, the FFT based method was focused on as it was better for producing Spectrograms, however 
+we note this is based on the assumption of the effectivity of the interpolation which is hard to truly verify.
+ We saw that the RPA method produced a stronger dominate frequency when it was able to detect one, however the RSA method was able to 
+ pick up on sections of dominate frequencies in samples that RPA was unable. 7 of the 8 tested datasets did not having a visually obvious pattern 
+in the Spectrogram, indicating that these methods are at the very least limited by the effectivity of the 
+QRS complex identification algorithm, noting that the datasets that had distinguishable dominate frequencies were also those such that 
+the QRS identification algorithm was most reliable. Further as ECG signals are sensitive to noise, 
+and artificats this would then pushforward 
+onto the Respiratory waveform creating noise in this wave where the analyse is being done,  possibly 
+hiding the Respiratory rate frequency. It seems that both methods require cleaner data and more precise QRS identification algorithms 
+then was used in this project, indicating the importance of 
+robust QRS complex identification and clear ECG signals. 
+ Despite this, we saw promising signs for the effectiveness
+of these methods as we saw that the methods were able to pick up on a dominate frequency pattern 
+on the dataset where the QRS algorithm was most precise; with the RSA method appearing to be the viable option due to its ability to detect dominate 
+frequencies with less precise data. 
 \section{Area for future research}
-We suggeset the following directions for extending the work of this Project. \\
+Its clear this project has encounter a number of issues that are common when exploring 
+ECG data for estimation of Respiratory rates, specifically ECGs sensitivity to noise and the reliability of QRS complex identification. 
+We suggest the following directions for extending the work of this Project, focusing on addressing these issues and validating assumptions made in this 
+project. \\
+
 Peak Detection Algorithm:
 \begin{itemize}
         \item Implement statistical methods to determine false detection or missed detection of 
-        RR peaks, by identifying small or large gaps in RR peak intervals based off the average interval size. 
+        RR peaks, by identifying small or large gaps in RR peak intervals based off the median interval size. 
         When detected remove, or adjust threshold. 
+        \item Investigate Machine learning classification  algorithms, this is especially viable given the label annotations file meaning 
+        there is a training set available. Initial research suggest random forests to begin with. 
 \end{itemize}
 Respiratory Rate Methods:
 \begin{itemize}
-        \item Adjust Spectrogram increments and window sizes to see if this improves ability 
-        to detect signals.
         \item Estimate Error of the interpolation method to provide further validity of this FFT based 
         method.
-        \item Testing Methods with other known QRS complex algorithms, e.g Pan Tompkins.
+        \item Testing Methods with other known QRS complex algorithms, e.g Pan Tompkins. Focusing on the RSA method implemented with FFT as that showed the most 
+        promise in this project. 
         \item Implement unsupervised learning techniques to identify patterns in the Spectrogram that may 
         correspond to Respiratory Rate that aren't visually apparent. 
 \end{itemize}
+

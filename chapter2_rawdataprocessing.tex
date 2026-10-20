@@ -3,7 +3,7 @@ The data used in this project is sourced from the Apnea-ECG dataset
  \cite{penzel2000apnea}, \cite{pollard_physionet_2026}. There are
  75 datasets each corresponding to the sleep of an individual, they contain
  an ECG signal with amplitude in millivolts, along with annotation files. Every dataset
- has a QRS annotation file that contain time annotations for the occurence of QRS Complexes, whilst 
+ has a QRS annotation file that contains time annotations for the occurence of QRS Complexes, whilst 
  35 of the files contain a further annotation file indicating the presense of Apnea in minute increments
  \cite{penzel2000apnea}. The data is stored using WFDB conventions.\\
 
@@ -61,30 +61,40 @@ Figure~\ref{fig:data_process} summarises how each data form is read.
 As we are working with ECG signals, the amplitudes and time intervals differ across time and samples due 
 to morphological differences in humans, along with noise and artifacts picked up in the data collection 
 process \cite{valerian2026respiratory}. We now illustrate a few samples that show these differences, these samples will give a basis
-of data to check our algorithms for robustness. 
+of data to test our algorithms robustness. \\
+
+Figure~\ref{fig:ecg-amp-signal} shows how the amplitude of the QRS complex 
+ can vary signficantly across datasets, a12's QRS complexes have very small amplitude whilst a13s has 
+ large amplitudes. This can be due to a range of biological facts such as age and gender, as well as 
+ measurement factors such as noise \cite{20081}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/Vary_amp_ECG.pdf}
-    \caption{ECG datasets illustrating differing amplitude magnitudes.}
+    \caption{ECG signals illustrating differing amplitude magnitudes of QRS complexes across datasets.}
     \label{fig:ecg-amp-signal}
 \end{figure}
+Figure~\ref{fig:ecg-time-signal} illustrates
+that the time between QRS complexes occurence also varies, which along with other factors corresponds 
+to variation in heartrate. In x04 the time between complexes varies between 1.08 to 1.26 secs, 
+in a03 its between 0.93 - 1.00s and in b01 0.68 - 0.74secs ignoring the region of noise. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/Vary_time_ECG.pdf}
-    \caption{ECG datasets illustrating differing time intervals between QRS 
-    Complexes.}
+    \caption{ECG signals illustrating differing time intervals between QRS 
+    Complexes across datasets.}
     \label{fig:ecg-time-signal}
 \end{figure}
+Figure~\ref{fig:ecg-noise-signal} highlights the existence of noise and artifacts in some datasets. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/noise_ECG.pdf}
     \caption{ECG datasets illustrating the existence of noise and artifacts in the data.}
     \label{fig:ecg-noise-signal}
 \end{figure}
-Figure~\ref{fig:ecg-amp-signal} shows how the amplitude of the QRS signal can vary signficantly across datasets, Figure~\ref{fig:ecg-time-signal} illustrates
-that the time between QRS complexes also varies, and Figure~\ref{fig:ecg-noise-signal} highlights the existence of noise and artifacts in some datasets. 
-Further, we can also see in the following (Figure \ref{fig:ecg-amp-single-signal}) that within a data set the QRS complex amplitude can be only slightly
-larger than the amplitude of other peaks in the data. 
+Figure \ref{fig:ecg-amp-single-signal} illustrates a particularly 
+important behaviour that within a data set the QRS complex amplitude can be only slightly
+larger than the amplitude of other peaks (T, P) in the data, this is especially important 
+in section 3 where the amplitudes of QRS complexes play a role in their identification. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.50\textwidth]{figures/Close_amp_ECG.pdf}

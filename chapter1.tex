@@ -15,7 +15,8 @@ not performed routinely in the healthcare setting, which may be due to the lack 
 Respiratory Monitoring technology \cite{nicolo2020importance}. One area of critical importance 
 in Respiratory Rate Estimation is finding a low-cost, consistent and robust method for measuring 
 Respiratory Rate, this is most critical in rural, low income areas where the lack of accurate, easy 
-to obtain measurements may led to patients being incorrectly sent home \cite{valerian2026respiratory}, \cite{nicolo2020importance}.
+to obtain measurements may led to patients being incorrectly diagnosed, leading to ill 
+patients receiving inappropriate care or no care at all \cite{valerian2026respiratory}, \cite{nicolo2020importance}.
 This issue is pertintent to diagnosis of Pneumonia, especially in children; Pneumonia is responsible for 14\% of all deaths of children 
 under 5, despite pneumonia being  easily treatable with widely available oral medication, indicating the importance of being able to 
 effectively diagnose in settings where resources are scarce \cite{who2022pneumonia}. Respiratory Rate can be an indicator of severe pneumonia, 
@@ -24,12 +25,16 @@ further illustrating the criticality of determining reliable methods for measure
 
 
 An area of active research is developing a method for reliably estimating  Respiratory Rate via electrocardiogram (ECG) signals.
-ECGs are a non-invasive, widely available tool used in healthcare that measures the electrical activity of the heart, specifically 
-volatage over time. Electrodes (typically 10) are placed on a person lying down, these electrodes measure the magnitude
-of the electric potential from 12 different angles - this is called a 12 lead ECG \cite{wikipedia_electrocardiography}. 
+ECGs measures the electrical activity of the heart, specifically 
+voltage over time, electrodes (typically 10) are placed on a person lying down, these electrodes measure the magnitude
+of the electric potential from 12 different angles - this is called a 12 lead ECG \cite{wikipedia_electrocardiography}. ECGS are are a non-invasive, 
+widely available tool used in healthcare, indicating 
+that if a reliable method to measure Respiratory Rate from ECG signals can be developed, that it could be implemented 
+as a diagnosis tool for respiratory illness, especially in low income areas where other healthcare tools aren't readily available.
+
  A normal ECG signal is made up of 3 parts, the P-wave, QRS complex and T wave associated to 
  different activities of the hearts beating cycle \cite{wikipedia_electrocardiography}. Figure~\ref{fig:sinus} illustrates 
-the characteristics of each part. 
+the signal characteristics of each part. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.50\textwidth]{figures/SinusRhythmLabels.pdf}
@@ -38,23 +43,25 @@ the characteristics of each part.
 \end{figure}
 Of interest to this project is the QRS complex characterised by large short peaks on the ECG signal, it corresponds to repolarisation of the 
 ventricles, that is the contraction of the heart to pump out blood \cite{wikipedia_electrocardiography}. There are two commonly used methods 
-that use waveforms create by these peaks (sometimes refered to as RR peaks), to estimate Respiratory Rate providing a potential 
-low-cost widely available methods for measuring Respiratory Rate. The first challenge will thus be, being able to robustly
-identify the location of QRS complexes in an ECG signal, which poses a challenge due to the sensitivity of ECG signals 
-to noise and artifacts. 
+to estimate Respiratory Rate, that use data from these peaks (sometimes refered to as RR peaks) providing a potential 
+low-cost widely available methods for measuring Respiratory Rate. \\
 
-\newpage
+The predominant goal of this project is too progress towards estimating 
+Respiratory Rate from an ECG signal. We investigate methods that are based upon spectral 
+analysis of QRS complex 
+data, specifically the time between QRS complexes 
+and the amplitude of QRS complexes, 
+thus its first pertinent to develop a robust algorithm for identifying these complexes. Identifying QRS complexes can often present a number of challenges 
+and this project spent a large amount of its time devoted towards this challenge as its the first crucial step in developing a method to reliably estimate 
+Respiratory Rate, we explore 
+this in
+section 3. As the morphology of an ECG signal can vary based upon both biological and measurement
+factors, its important to gain an understanding of the varying behaviour to expect so we are able 
+to test the robustness of algorithms against these varied behaviours, this is explored 
+in section 2. 
 
 \section{Research Methodology}
-The predominant Goal of this project is two fold, firstly we develop a method for identifying 
-QRS complexes on an ECG signal, from which we use this algorithm to evalute methods for estimating Respiratory Rate from 
-different waveforms that stem from patterns in the QRS complexes occurence and amplitude.
-The methods we will evaluate analyse characteristics of the waveform namely how the 
-time between QRS complexs varies - refered to as the RSA method or how the amplitude 
-of the waveform varies - refered to as the RPA method. We will employ spectrum associated methods (Fast Fourier Transform or Lomb-Scargle) 
-to try an identify a dominate, roughly consistent frequency in the expected Respiratory Rate range that 
-will become the estimated Respiratory Rate. \\
-Our Methodology will go as follows:
+The research approach of this project is; 
 \begin{enumerate}
         \item Investigate ECG signals, identifying datasets with distinct varying behaviour to test the Robustness of our algorithms.
         This is described in Section 2.
