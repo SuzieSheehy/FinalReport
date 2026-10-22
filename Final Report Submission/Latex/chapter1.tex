@@ -1,0 +1,20 @@
+\chapter{Introduction}\label{ch:introduction}
+
+Physical models of systems such as the Ising model of ferromagnetics and entropic models for system evolutions have long existed inside the realm of statistical physics. These models have been highly successful in describing macroscopic phenomena based on key assumptions and simplifications about the microscopic nature of the physical world. Throughout the past century, many of these principles have been applied to non-physical systems. Great success has been found especially in describing economics, even being given the name "econophysics" \cite{DEAREALEAOPEREIRA2017251}. More recently, these principles have also been applied to the study of how opinions disseminate throughout a population. This field has adopted the name of "opinion dynamics", which aim to describe how opinions (whether discrete or continuous) change throughout a population depending on how agents communicate with one another. While this report focuses on a system that may most resemble how a continuous political ideology changes throughout the system, these principles from opinion dynamics are also applicable to other social dynamics such as language and cultural dynamics.
+
+In opinion dynamics there are many different models that one can consider. One of the simplest is the voter model \cite{Choi_2025}. Agents in a lattice (or network for a slightly more complicated system) take one of a discrete value (typically one of two values), and agents either change or don't change their value based on a rule (typically dependent on the values of the neighbours). For example, an agent may change their value if two or more of its neighbours have a different value. While this model is fairly simple to implement, it makes many approximations and assumptions that fail to reflect its real-world inspiration. Values of agents are typically more nuanced than a simple discrete value (such as a simple "yes" or "no" to an opinionated question). Instead, one can allow for a continuity of opinion (this can be represented as a bounded interval, such as from 0 to 1 or from -1 to +1) to encapsulate agents' opinions not being binary, but only allow for agents to communicate to their neighbours a binary opinion. This is known as a CODA (continuous opinion, discrete action) model. While this better reflects its real-world inspiration, it still fails to encapsulate how agents may strongly or weakly communicate agreement or disagreement, and also how agents may not communicate at all if difference in opinion is too great.
+
+The Deffuant model (sometimes also referred to as the Deffuant-Weisbuch model) \cite{doi:10.1142/S0219525900000078} aims to implement these into opinion dynamics. The Deffuant model is known as a bounded confidence model \cite{castellano2009statistical} Typically, analysis for this model is conducted in a network but for this report a two dimensional lattice will be used. The Deffuant model encodes agents' opinions into a bounded interval (for this report we will take this bound as being from 0 to 1 inclusive). Given a random agent and a random neighbour of the agent, the two communicate via the rule
+
+\begin{eqnarray}\label{UpdateRule}
+x_{i}(t+1) = x_{i}(t) + \mu [x_{j}(t)-x_{i}(t)] \label{UpRuleA} \\
+x_{j}(t+1) = x_{j}(t) + \mu [x_{i}(t)-x_{j}(t)] \label{UpRuleB}
+\end{eqnarray}
+
+where $x_{i}$ is a random agent, $x_{j}$ is a random neighbour of the agent and $\mu$ is called the convergence parameter, and is based on a compromise strategy \cite{castellano2009statistical}. There is also an added requirement that
+
+\begin{equation}\label{CommRequirement}
+|x_{i}(t) - x_{j}(t)| \leq r
+\end{equation}
+
+where r is a threshold whereby agents won't communicate unless the above is satisfied and will be referred to as the range  \cite{doi:10.1142/S0219525900000078}.
