@@ -1,14 +1,24 @@
 %---------------------------PREAMBLE
 %\documentclass[a4paper,10.5pt,oneside]{report} %book 
 %format on A4 paper with size 12 font
-\usepackage[margin=2.0cm]{geometry}
+\usepackage[margin=2cm]{geometry}
 \usepackage{amsmath,amssymb}            %a fairly generic package for mathematical output
 %\usepackage{a4wide}                    %stretch the page margins
 \usepackage{fancyhdr}                   %to customise the header and footer
 %\usepackage{pxfonts}                   %use my usual font style
 %\usepackage{abstract}                  %putting an abstract somewhere
 \usepackage[usenames,dvipsnames]{color} %needs no justification
-%\usepackage{titlesec}                  %change the properties of titles
+\usepackage{titlesec}  
+\titleformat{\chapter}[display]
+    {\normalfont\huge\bfseries}
+    {\chaptertitlename\ \thechapter}
+    {8pt}
+    {\Huge}
+
+\titlespacing*{\chapter}
+    {0pt}{0pt}{15pt}
+
+%change the properties of titles
 \usepackage[titletoc]{appendix}         %customise appendices
 \usepackage{pdfpages}                   %insert other pdfs into the document
 \usepackage{enumerate}                  %gives the enumerate environment an optional argument
@@ -53,7 +63,13 @@
 %\setcounter{chapter}{-1}               %change the chapter seed
 \let\endtocpage\relax                   %no new page after table of contents
 \usepackage{tocloft}
-
+\usepackage{microtype}
+\usepackage{float}
+\usepackage{placeins}
+% Paragraph formatting
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 1pt}
+\linespread{1.10}
 %-----------MATH MODE SHORTCUTS
 \newcommand{\vect}[1]{\boldsymbol{#1}}                   %bold vector
 \newcommand{\mtx}[1]{\smash{\underline{\underline{\mathbf{#1}}}}} %matrix
@@ -83,10 +99,13 @@
 
 %-----------HYPERLINKS
 \usepackage{hyperref}
+\definecolor{linkblue}{RGB}{0,85,185}
+
 \hypersetup{
-  colorlinks,
-  citecolor=black,
-  filecolor=black,
-  linkcolor=black,
-  urlcolor=black
+    colorlinks=true,
+    citecolor=linkblue,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=linkblue,
+    pdfborder={0 0 0}
 }
