@@ -1,0 +1,243 @@
+\chapter{QRS Complex Identification}
+
+In this section we develop and evaluate methods for identifying QRS complexes otherwise known as RR peaks in ECG data.
+The method we develop is inspired by the Pan-Tompkin Algorithm \cite{pan1985real}. The Pan-Tompkins algorithm is widely used in 
+literature for ECG analysis, \cite{fariha2020analysis}, hence why we use it as inspiration in this project. 
+We implement simplifications of the process whose performance we evaluate against the QRS annotations 
+supplied, which indicate the occurence of a QRS complex.  
+
+\section{Filtering and Pre-Processing}
+ECG signals are prone to noise, and variation in the data, so its important to filter and pre-process before attempting 
+to locate QRS peaks. The filtering is based off literature values for ECG signals, specifically 
+we expect to be locating frequencies associated within the range of 5 - 15 Hz \cite{pan1985real}. 
+Figure~\ref{fig:freq_filter} illustrates an example waveform before and after filtering in different frequency ranges, employing 
+a Fourier Transform before removing frequencies and inverting back. \\
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/Freq_filter.pdf}
+    \caption{Frequency Filters applied in different ranges, blue indicating 
+    the raw data and orange the filtered.}
+    \label{fig:freq_filter}
+\end{figure}
+We can see that a frequency filter cleans up the waveform to better resemble a ECG signal, whilst retaining 
+the QRS complexes, Figure~\ref{fig:freq_filter} suggests that a range of 5-35 Hz mantains 
+amplitude of the QRS complex along with the ECG signal shape, this is the frequency range used in this project.\\
+
+Once we restrict ourselves to a filtered waveform, we implement a pre-processing method heavily influenced by \cite{pan1985real}. The idea 
+is that QRS peaks are associated with large inclines and declines in the wave form, so we want to use derivatives, and square them to highlight and 
+exhausterbate this difference, before a moving integration window converts the derivative back into a smooth signal with a large peak 
+associated with the QRS peaks whilst minimising the effect of the other smaller peaks. The process is specifically, 
+\begin{enumerate}
+        \item Differentiate the waveform.
+        \item Square the differentiated waveform, to ensure all values are positive, additionally the steeper incline and decline , 
+        associated with the peaks will now be amplified helping to distinguish against the smaller peaks. 
+        \item A moving integration window on the squared differentiated waveform, produces a signal that amplifies the QRS peak (nearby it), and minimises 
+        the other smaller peaks. 
+\end{enumerate}
+Figure~\ref{fig:Pre-Process} illustrates how the waveform is transformed over this process, note in the overlap
+the processed waveform has been scaled to highlight how the peaks are close to each other. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/Pre-Processing.pdf}
+    \caption{Illustration of the Pre-Processed Waveform}
+    \label{fig:Pre-Process}
+\end{figure}
+
+\section{Basic Algorithm}
+We can see in Figure~\ref{fig:Pre-Process} that the processed waveform has large peaks close to (but just after) the location of the QRS peaks in the Signal. The idea 
+of our algorithm is to,
+\begin{enumerate}
+        \item Locate the peaks on the processed waveform which are clear and can be done using an inbuilt python peaking finding function (sp.signal.find\_peaks).
+        \item In a small search window  around the location of these peaks, move back onto the original waveform and in this interval identify the largest value
+and the time associated with it, this is what the algorithm identifies as a peak.
+\end{enumerate} 
+The search window is chosen 
+as 0.25 secs, this is not too large as the normal heart rate is between 60-100 bpm corresponding to 
+0.6 - 1sec between QRS time complexes \cite{victorchang_resting_heart_rate}. When implementing the inbuilt function, we need to prescribe a
+size threshold for what we expect a peak in the integrated waveform to be above. As we have seen that amplitudes can vary significantly, the
+idea of our algorithms is to then start with a high size threshold value, we choose 1000 as the dataset with the largest amplitudes we identified (a13)
+was roughly 700 (note the scaling is 1/200 in Figure~\ref{fig:Pre-Process}), so 1000 was chosen as a buffer. Starting from the high size threshold we see how many peaks are identified, 
+if not enough peaks are identified with respect to some time interval threshold (i.e number of peaks per sec) we gradually decrease the size threshold until the
+number of peaks identified is above the minimum number we expect to identify.
+This is the basic idea of the algorithms developed in this section,
+ Figure~\ref{fig:alg_flowchart} summaries the process, 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth,trim={0cm 8cm 0cm 1cm},clip]{figures/algo_flowchart.pdf}
+    \caption{Flowchart illustrating basic algorithm process.}
+    \label{fig:alg_flowchart}
+\end{figure}
+Figure~\ref{fig:alg_summary} provides a visual description, the orange crosses indicate the peaks located on the Processed Signal, the blue windows 
+illustrating the search window for which we look to locate peaks on the ECG signal, with the red crosses the peaks located. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figures/Algo_summary.pdf}
+    \caption{Plot illustrating the basic idea of the peak finding algorithms developed in this paper}
+    \label{fig:alg_summary}
+\end{figure}
+
+The pseudocode below summarises the basis idea for implementing the base algorithm.
+
+\begin{center}
+\begin{algorithm}
+\caption{Basic Algorithm form}
+\begin{algorithmic}
+
+    \State $\text{filter\_signal} \gets \operatorname{Filter}(\text{signal})$
+    \State $\text{processed\_signal} \gets \operatorname{Preprocessing}(\text{filter\_signal})$
+    \State $\text{threshold} \gets 1000$
+    \State $\text{length\_peaks} \gets 0$
+
+    \While{$\text{length\_peaks} < (\text{end\_time}-\text{start\_time})\text{time\_interval\_threshold}$}
+        \State $\text{peaks} \gets \operatorname{find_peaks}(\text{processed\_signal}, \text{threshold})$
+        \State $\text{length\_peaks} \gets \text{length}(\text{peaks})$
+        \State threshold $=$ threshold $- 10$
+    \EndWhile
+    \For{$i = 1,\ldots,\operatorname{length}(\text{peaks})$}
+    \State $\text{region} \gets \text{filter\_signal}[\text{search\_range}(i)]$
+    \State peaks\_indices$[i]$ $\gets \operatorname{argmax}(\text{region})$
+    \EndFor
+
+\end{algorithmic}
+\end{algorithm}
+\end{center}
+
+
+\section{Algorithm Evaluation}
+In Figure~\ref{fig:alg_summary} we can see that with a time interval threshold of 1.2 peaks per second that a peak has been missed. To test 
+which threshold is most effective, we test the number of QRS complexes each algorithm identifies against the number of QRS annotations as a preliminary 
+evaluation metric, this 
+is summarised by Table~\ref{tab:threshold-results}.
+
+\begin{table}[H]
+    \centering
+    \caption{Proportion of peaks detected for different threshold values between 0.8 and 1.4 in the first hour of data.}
+    \label{tab:threshold-results}
+
+    \csvautobooktabular{results_threshold_percentage.csv}
+
+\end{table}
+
+We can see that different time interval ratios are better than others, namely between 0.90 and 1.0, investigating between 0.90 to 1.0, we have:
+\begin{table}[H]
+    \centering
+    \caption{Proportion of peaks detected for different threshold values between 0.9 and 1.0 in the first hour of data.}
+    \label{tab:threshold-results_0.90}
+
+    \csvautobooktabular{results_threshold_percentage_0.90_1.0.csv}
+
+\end{table}
+
+So the optimal number of QRS peaks per second threshold value seems to be 0.90. We do a more in-depth analysis into 0.90, noting that above 
+only compared number of peaks identified, not locations. Table~\ref{tab:threshold-results_0.90_indepth} investigates locations, specifically the proportion of matching peaks, 
+along with the peaks hallucinated and peaks missed.  
+\begin{table}[H]
+    \centering
+    \caption{In depth analysis into 0.90 threshold, proportion of peaks found, peaks hallucinated and peaks 
+    missed}
+    \label{tab:threshold-results_0.90_indepth}
+
+    \csvautobooktabular{results_threshold_indepth_0.90.csv}
+
+\end{table}
+Its clear that the algorithm isn't perfect, especially looking at x05 it can hallucinate i.e identifies
+peaks that aren't peak, and looking at the missed column it still misses a lot of peaks as well.  
+
+\section{Algorithm Extensions}
+The problem with a fixed time interval threshold is the variability in the time between QRS complexes across
+datasets. The following extensions of the algorithm described above attempt to get around this problem 
+in different ways. \\
+
+One way we could is by noticing that a large jump often occurs from values that are close to the estimated correct
+number of peaks to a number far higher, intuitively this is because we are now factoring in other peaks (T, P for example).
+The first extension algorithm detects this jump, and then chooses the peaks identified from the 
+time interval threshold before that jump. When detecting this jump we test time interval thresholds between 
+0.5 to 1.6 as the results indicate these capture all jumps we expect. Table~\ref{tab:jump-results} summarises the performance of this 
+algorithm. 
+\begin{table}[H]
+    \centering
+    \caption{Performance of the jump based algorithm.}
+    \label{tab:jump-results}
+    \csvautobooktabular{results_threshold_jump_indepth.csv}
+\end{table}
+Its clear from this table that this algorithm performs far better than any of 
+the fixed time interval threshold based algorithms, with the proportion of matching QRS complexes located being considerably closer 
+to 1 in every dataset, outside of b02 the proportion ranges from 0.967 - 1.0. 
+However, it still isn't perfect with still large amount of hallucination in x04, whilst it still
+misses considerably many peaks in some datasets such as b02. We saw in section 2, that the b02 sample has very small 
+difference in QRS complex amplitude compared to other peaks, indicating the sensitivity of this kind of algorithm to relative 
+magnitude differences of QRS complex amplitude and T, P peak amplitudes.
+The sacrifice with this algorithm is that the increased complexity reduces the efficiency 
+of the algorithm. Table~\ref{tab:time-results} illustrates that the run time over an hour of data increases 
+up to about 15 times. 
+\begin{table}[H]
+    \centering
+    \caption{Time Comparison (sec) for running each algorithm over an hour of data}
+    \label{tab:time-results}
+    \csvautobooktabular{results_time.csv}
+\end{table}
+
+ In the basic algorithm the while loop gets replaced with the following, its clear how the time 
+ complexity increases. 
+\begin{algorithm}
+\caption{Jump Based Modification to location of Processed Signals Peaks}
+\begin{algorithmic}
+
+    \State $\text{threshold} \gets 1000$
+    \State $\text{initialise arrays to store peaks (peaks\_list) and
+     number of peaks identified (peaks\_size)}$
+    \For{$i = 5,\ldots,16$}
+        \State $\text{time\_interval\_threshold} \gets i \times 0.1$
+        \State $\text{length\_peaks} \gets 0$
+        \State current\_threshold $\gets$ threshold
+        \While{$\text{length\_peaks} < (\text{end\_time}-\text{start\_time})\text{time\_interval\_threshold}$}
+                \State $\text{peaks} \gets \operatorname{\text{find\_peaks}}(\text{processed\_signal}, \text{threshold})$
+                \State $\text{length\_peaks} \gets \text{length}(\text{peaks})$
+                \State current\_threshold $=$ current\_threshold $-10$
+        \EndWhile
+        \State peaks\_list$[i-5]$ $\gets$ peaks
+        \State peaks\_size$[i-5]$ $\gets$ length(peaks)
+    \EndFor
+    \State found $\gets$ False
+    \For{$j = 1, \dots, \text{length(\text{peaks\_size})} - 1$}
+        \If{peaks\_size$[j + 1]$ / peaks\_size$[j] \geq 2$ }
+                \State peaks $=$ peaks\_list$[j]$
+                \State found $\gets$ True
+                \State break
+        \EndIf
+    \EndFor
+    \If{found $=$ False}
+        peaks $=$ peaks\_list$[-1]$
+    \EndIf
+
+\end{algorithmic}
+\end{algorithm}
+
+
+Another improvement that is only relevant to the data sets used in this project, is by 
+basing the time interval threshold as a factor of the number of QRS annotations, this is clearly not 
+a very viable algorithm however as it can't be used on other datasets but is worthwhile 
+evaluating as is if its robust on these datasets it may be a good candidate when 
+we test Respiratory Rate estimation methods. Tables~\ref{tab:QRS-results}
+ summarise the performance of this algorithm. 
+\begin{table}[H]
+    \centering
+    \caption{Performance of the annotation based algorithm with factor 0.90 and 0.95}
+    \label{tab:QRS-results}
+    \csvautobooktabular{results_threshold_qrs_indepth.csv}
+\end{table}
+We can see that this algorithm definitely has potential, especially with a factor of 0.90 
+avoiding large hallucinations, however it misses many peaks in each dataset, with a factor of 0.95
+doing similarily except for b02 which has significant hallucination.
+ Here the algorithm is almost 
+identical to the basic algorithm form with the modification that:
+\[
+\text{time interval threshold}
+= \text{factor} \times
+\frac{\text{number of annotations}}
+{\text{end time} - \text{start time}}.
+\] 
+
+
+
+

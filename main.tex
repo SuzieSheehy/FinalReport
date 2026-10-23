@@ -1,10 +1,11 @@
-\documentclass[a4paper, 10.5pt, oneside]{report}
+\documentclass[a4paper,10.5pt,oneside]{report}
 %------------PREAMBLE
-\include{preamble}
-\usepackage{morefloats}
+\input{preamble}
 %---------------------------
                                           
 \begin{document}
+
+
 
 %---------------------------TITLE PAGE
 \include{cover}
@@ -16,17 +17,24 @@
 
 %---------------------------MAIN BODY
 \input{chapter1}
+\input{chapter2_rawdataprocessing}
+\input{chapter3_peakidentification}
+\input{chapter4_RRestimationmethods}
+\input{ml}
+\input{conc_disc}
+
 %---------------------------
 
 %---------------------------APPENDICES
-\begin{appendices}
- \input{appendix1}
-\end{appendices}
+%
+%\begin{appendices}
+% \input{appendix1}
+%\end{appendices}
 %---------------------------
 
 %---------------------------BIBLIOGRAPHY
 \addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{abbrv}
+\bibliographystyle{abbrvurl}
 \bibliography{biblio}
 %---------------------------
 
