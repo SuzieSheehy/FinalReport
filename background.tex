@@ -1,0 +1,20 @@
+\section{Background}
+We begin by providing background on the standard KF; its optimality and time complexity. We will present the theory in the case of linear regression by taking a special case of the original construction of \cite{kalman1960}. Equation \ref{eq:stateprocess} is the state process equation which governs the dynamics of the unobserved state $\bm{\beta}_t \in \RR^p$. Equation \ref{eq:obsprocess} is the measurement process, which describes the relationship between measurement $y_t \in \RR$ and the observations $\bm{x}_t\in \RR^p$.
+\begin{equation}\label{eq:stateprocess}
+    \bm{\beta}_t=\bm{\beta}_{t-1}+\bm{\veps}_t
+\end{equation}
+\begin{equation}\label{eq:obsprocess}
+    y_t=\bm{\beta}_t^T\bm{x}_t+u_t
+\end{equation}
+where $\bm{\veps}_t \sim N(0, \bm{Q})$, and $u_t \sim N(0, R)$. Here, $\bm{Q}\in \RR^{p\times p}$ is the state noise covariance matrix, and $R$ is the measurement noise (co)variance, both of which are assumed to be fixed over time in this project.
+
+We denote the current estimate of $\bm{\beta}_{t}$ as of time $s\le t$ as $\hat{\bm{\beta}}_{t|s}$. Further, we assume we have an initial state estimate $\bm{\beta}_{0|0}$; we describe a method of estimating this in Section \ref{sec:dynamicfk}. Define $\bm{P}_{t|s}=\EE[(\bm{\beta}_t-\bm{\beta}_{t|s})(\bm{\beta}_t-\bm{\beta}_{t|s})^T] \in \RR^{p \times p}$ to be the estimate error covariance.
+
+At time $t$, we predict $\bm{\beta}_{t|t-1} = \bm{\beta}_{t-1|t-1}$, and $\bm{P}_{t|t-1} = \bm{P}_{t-1|t-1} + \bm{Q}$, then estimate what $\bm{y}_t$ would be under this state, given $\bm{x}_t$;
+\[
+\hat{y}_{t} = \bm{\beta}_{t|t-1} \bm{x}_t    
+\]
+then calculate the innovation: $\tilde{y}_t = y_t - \hat{y}_t$. The central idea of the KF is that we assume $\bm{\beta}_{t|t}=\bm{\beta}_{t|t-1} + \bm{K}_t \tilde{y}_t$ where $\bm{K}_t$ is the \textit{Kalman gain} at time $t$. Specifically, $\bm{K}_t$ is chosen to minimise $\EE(\|\bm{\beta}_t - \bm{\beta}_{t|t}\|^2)$, and has closed form. Furthermore, we also update $\bm{P}_{t|t}$.
+
+Indeed, a single prediction-update step for the standard KF has cubic time complexity in the state dimension, $p$ \cite{schmidt2024rankreducedkalmanfilterapproximate}.  As such, if $p$ is large, this motivates the idea of perfoming our filtering in a $q$-dimensional space, where $q\ll p$, and then try to recover our state estimates in the original $p$-dimensional space.
+ Indeed, the idea of running the KF in reduced-dimension PCA space is a proven method, as described in a recent review by \textcite{Li_Li_Gao_Gao_2026}. 

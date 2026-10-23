@@ -1,15 +1,50 @@
-\chapter{Program flowchart}\label{app:flowchart}
+\section*{Appendix: Reproducing results}\label{app:reproduce}
+The simulations were run with the following hardware:
+\begin{itemize}
+    \item \textbf{CPU}: Intel Core i7-12700KF (12 cores / 20 threads)
+    \item \textbf{RAM}: 2 x 16 GB DDR4-3200
+    \item \textbf{OS}: Windows 11 Pro (build 23600)
+\end{itemize}
 
-A flowchart is a conceptual aid which highlights input and output that a program should have, as well as the consequences of any decisions that it must make. Sometimes, these will include \textit{pseudocode}, which mimics some of the more common coding structures in a universal way. (For instance, you might say `loop over all array addresses'.)\\
+Note that in the following scripts, the seed is $123$ by default (the same one used to generate the results). A seed can be set manually for `rotation\_test.py' and `run\_simulations.py' via the `--seed' argument.
 
-This particular flowchart indicates a program that reads three numbers from the terminal, and then produces the largest of the numbers back to the terminal. The colour scheme is not mandatory, but helps the reader to know what is going on at a glance.\\
+Figure \ref{fig:propvar} can be reproduced via the following command:
 
-This flowchart was drawn with the free `Lucidcharts' extension to Google Docs, from which the result was exported as an \texttt{svg} file, and any unnecessary features were then cropped out with Inkscape. Choose any method you wish to create your own flowchart!
+\begin{lstlisting}[style=terminal]
+    python rotation_test.py --n 20000 --p 200 --burn 400 --prop 0.80 --max-angle 0.005 --ts
+\end{lstlisting}
 
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=0.50\linewidth]{figures/flowchart.pdf}
-\end{center}
-\caption{A flowchart for the determination of the largest of three user-selected numbers.}
-\label{fig:flowchart}
-\end{figure} 
+Figures \ref{fig:rmseprop} and \ref{fig:rmsechain} can be reproduced by first running the following simulation commands:
+
+\begin{lstlisting}[style=terminal]
+    python run_simulation.py --n 2500 --p 200 --burn 500 --n-iters 200 --rotation-angle 0.0002 --rotate-cov --ts --prop x
+\end{lstlisting}
+for $x\in \{0.2, 0.4, 0.6, 0.8\}$, and the following for the chain/no-chain test,
+\begin{lstlisting}[style=terminal]
+    python run_simulation.py --n 2500 --p 200 --burn 500 --n-iters 50 --prop 0.90 --rotation-angle 0.0002 --rotate-cov --ts --prop 0.9
+\end{lstlisting}
+\begin{lstlisting}[style=terminal]
+    python run_simulation.py --n 2500 --p 200 --burn 500 --n-iters 50 --prop 0.90 --chain --chain-every 10 --rotation-angle 0.0002 --rotate-cov --ts --prop 0.9
+\end{lstlisting}
+Then to generate the four plots, run:
+\begin{lstlisting}[style=terminal]
+    python get_sim_plots.py
+\end{lstlisting}
+
+The data for Table \ref{tab:label} can be generated via running the following commands individually:
+\begin{lstlisting}[style=terminal]
+    python run_simulation.py --n 2000 --p 50 --burn 400 --prop 0.80 --rotation-angle 0.001 --rotate-cov --time --outfolder "data/time_benchmarks" --n-iters 5
+    python run_simulation.py --n 2000 --p 100 --burn 400 --prop 0.80 --rotation-angle 0.001 --rotate-cov --time --outfolder "data/time_benchmarks" --n-iters 5
+    python run_simulation.py --n 2000 --p 200 --burn 400 --prop 0.80 --rotation-angle 0.001 --rotate-cov --time --outfolder "data/time_benchmarks" --n-iters 5
+    python run_simulation.py --n 2000 --p 300 --burn 400 --prop 0.80 --rotation-angle 0.001 --rotate-cov --time --outfolder "data/time_benchmarks" --n-iters 5
+\end{lstlisting}
+
+The data for the block diagonal comparison can be generated via the following command, and it prints to the terminal:
+\begin{lstlisting}[style=terminal]
+    python run_simulation.py --n 3000 --p 200 --burn 400 --prop 0.80 --rotation-angle 0.001 --rotate-cov --time --outfolder "data/time_benchmarks" --n-iters 1 --bench
+\end{lstlisting}
+
+Figures \ref{fig:innovbyq} - \ref{fig:acf} are generated with the following command:
+\begin{lstlisting}[style=terminal]
+    python run_simulation.py --n 2000 --p 200 --burn 400 --prop 0.80 --rotate-cov --rotation-angle 0.0001 --store-cov --get-additional-plots
+\end{lstlisting}

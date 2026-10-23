@@ -1,0 +1,36 @@
+\section{Dynamic PCA-KF}\label{sec:dynamicfk}
+In this section we will outline the main model in which we combine PCA, KF, and projection chaining.
+
+To initialise, we first run an initial projection, $U_0$, with PCA on some burn data, then calculate the reduced observations: $\bm{z}=\bm{x}U_0$. On these reduced $q$-dimensional observations, we estimate $\bm{\beta}'$ (the reduced state) to be the OLS estimate via the burn data: $\bm{\beta}'_{0|0}=(\bm{z}^T\bm{z})^{-1}\bm{z}^T \bm{y}$, then the measurement noise: $R = \frac{1}{n_{burn}}\sum_{t=1}^{n_{burn}}(y_t-\bm{\beta}_{0|0}^T \bm{z}_t)^2$, and by default, $\bm{P}_{0|0} = R(\bm{z}^T \bm{z})^{-1}$ (OLS estimate error covariance). Finally, we estimate the state noise covariance $\bm{Q}$ to be $\alpha I_q$ for some $\alpha$ chosen on a desired grid. We run ours on $\alpha\in \{10^{-9}, 10^{-8}, \dots, 10^{-1}\}$ to span a wide gamut of scales.
+
+This applies the previous projection chaining apporach to the PCA-KF algorithm. The algorithm is given as follows, and is run on every initialisation from the $\alpha$ grid:
+\begin{enumerate}
+    \item \textbf{Predict:}
+    \begin{enumerate}
+        \item $\bm{P}_{t|t-1} = \bm{P}_{t-1|t-1}+\bm{Q}_{t-1|t-1}$
+        \item $\bm{\beta}_{t|t-1}' = \bm{\beta}_{t-1|t-1}'$
+    \end{enumerate}
+    \item \textbf{Project (if not first iteration):}
+    \begin{enumerate}
+        \item Acquire the new PCA loadings $\bm{U}_t$.
+        \item Acquire the pushforward map: $\bm{V}_t=\bm{U}_{t-1}^T\bm{U}_t$
+        \item $\bm{P}_{t|t-1}\leftarrow \bm{V}_t^T\bm{P}_{t|t-1}\bm{V}_t$
+        \item $\bm{Q}_{t|t-1}\leftarrow \bm{V}_t^T\bm{Q}_{t|t-1}\bm{V}_t$
+        \item $\bm{\beta}_{t|t-1}' \leftarrow \bm{\beta}_{t|t-1}'\bm{V}_t$
+        \item $\bm{z}_t\leftarrow \bm{z}_{t}\bm{V}_t$: transform reduced observation vector.
+        \item $\bm{C}_t \leftarrow \bm{C}_t \bm{V}_t$; keep track of the accumulated projection.
+    \end{enumerate}
+    \item \textbf{Update:}
+    \begin{enumerate}
+        \item $\delta_t=y_t-\bm{\beta}_{t|t-1}'^T\bm{z}_t$: $\quad$ innovation
+        \item $S_t= \bm{z}_t^T \bm{P}_{t|t-1}\bm{z}_t + R$: $\quad$ innovation covariance
+        \item $\bm{K}_t = S_t^{-1}\bm{P}_{t|t-1}\bm{z}_t$: $\quad$ Kalman gain
+        \item $\bm{\beta}_{t|t}' \leftarrow \bm{\beta}_{t|t-1}' + \delta_t\bm{K}_t$: $\quad$ $\RR^q$ state estimate, $q\le p$.
+        \item $\bm{\beta}_{t|t} \leftarrow \bm{\beta}_{t|t}' \bm{C}_t^T$;  $\quad$ $\RR^p$ state estimate.
+        \item $\bm{P}_{t|t} \leftarrow (I-\bm{K}_t \bm{z}_t^T)\bm{P}_{t|t-1}(I-\bm{K}_t \bm{z}_t^T)^T+R\bm{K}_t\bm{K}_t^T$: $\quad$ Joseph Update
+    \end{enumerate}
+\end{enumerate} 
+We note that the predict and project steps can be swapped to no effect. The predict and update steps are generic to the KF algorithm when using the Joseph form of the update. We use Joseph form due to enhanced numerical accuracy compared to simpler forms of the update step \cite{Zanetti_DeMars_2013}. 
+
+To pick the best value of $\alpha$ from the grid, we first note that we should expect $S_t^{-\frac{1}{2}}\delta_t \sim N(0,1)$  under correct recovery of the state. So we pick the $\alpha$ which resulted in the process $(S_t^{-\frac{1}{2}}\delta_t)_t$ which is closest to being normally distributed, measured by the Shapiro-Wilk statistic\footnote[1]{https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.shapiro.html} being closest to 1.
+

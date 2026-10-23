@@ -1,0 +1,32 @@
+\section{Dynamic Projections}
+In this section, we introduce the notion of projection chaining; a method by which we can map a state estimate in a given reduced space to an estimate in another reduced space, without requiring the ground-truth in the larger (native) space.
+
+Suppose we wish to update our PCA loadings as we progress through the iterations. This is a reasonable feature since the loadings estimates may become stale if we keep them static after initialisation. However, one issue arises from this; if we change our projection, then the usual update equations do not adapt to this. For example, the update $P_{k+1}=P_k+Q_k$ assumes the representation given by the $k$-th projection, likewise for updating the state estimate. 
+
+The first problem arises if we have a state $\bm{\beta}$, and assume we have an estimate of it in projected space: $\hat{\bm{\beta}}^U \approx \bm{\beta}U$, for $U \in \RR^{p \times q}$, $q<p$. Then, suppose we wish to find the estimate in a different projected space, say, $\hat{\bm{\beta}}^V \approx \bm{\beta}V$, for $V\in \RR^{p \times q'}$, $q' < p$. Additionally, suppose $U$ and $V$ arise from PCA so that $U^TU = I_q$ and $V^T V = I_{q'}$. Since we never observe $\bm{\beta}$ (or indeed, any estimate in the unprojected space), then we need an `optimal' mapping from $\hat{\bm{\beta}}^U$ to $\hat{\bm{\beta}}^V$. We formalise this by the following optimisation problem:
+
+\[
+\min_{W\in \RR^{q\times q'}}\|\bm{\beta}^UW-\bm{\beta}^V\|_2    
+\]
+
+This is precisely a least squares problem, and the solution is 
+\begin{align*}
+    W &= ((\bm{\beta}^U)^T\bm{\beta}^U)^{-1}(\bm{\beta}^U)^T \bm{\beta}^V \\
+    &= (U^T \bm{\beta}^T \bm{\beta} U)^{-1} U^T \bm{\beta}^T\bm{\beta} V \\
+    &= U^T V
+\end{align*}
+So the least-square optimal state representation in $V$ space is $\hat{\bm{\beta}}^V = \bm{\hat{\beta}}^U U^T V$. One can intuitively think of this as a mapping chain from $\RR^q \stackrel{(1)}{\longrightarrow} \RR^p \stackrel{(2)}{\longrightarrow} \RR^{q'}$, where $(1=U^T)$ tries to optimally `undo' PCA and reconstruct the native space state, then $(2=V)$ maps to $\RR^{q'}$ via PCA.
+
+We note that every time we apply an approximate projection, we permanently lose information in the direction of the bases lost in the prior projection. As such, we anticipate that this approach should not be chained for an extended number of iterations if the gross shift in the PCA loadings is expected to be very large.
+\subsection{Rotating Covariance}\label{sec:rotcov}
+We propose a modification to the usual structure by allowing the PCA-loadings of the $\bm{x}$ data to rotate over time, while keeping the component variances (eigenvalues) constant. We can do this by using a block-rotation matrix $R$ with reasonably small angles, and then we create the new covariance matrix via,
+\[
+\Sigma' = R\Sigma R^T    
+\]
+Observe that implicitly we are rotating the PCA loadings since $R\Sigma R^T = RQ\Lambda Q^TR^T = Q'\Lambda (Q')^T$, where $Q' = RQ$. To be more precise, $R$ is constructed as $R=\mathrm{diag}(R(\theta_1),\dots, R(\theta_k))$ for $k=p/2$ if $p$ is even, else $R = \mathrm{diag}(1, R(\theta_1), \dots, R(\theta_{\lfloor p/2 \rfloor}))$; see \cite{386513}. Hence, to rotate the data incrementally, we can start with some covariance matrix $\Sigma_0$, then define:
+\[\Sigma_n = R^n \Sigma_0 (R^n)^T\]
+An important property of this transformation is that because the eigenvalues stay intact, the number of components which explain a given proportion of variance stays constant. In the algorithm, we commute $R$ to produce some $R' = ORO^T$ for a random $O\in \RR^{p \times p}$ orthogonal, thus randomising the planes for which we rotate about. 
+
+There is a question of how to best optimise this for a large dataset. One can directly construct $R^n$ for each $n$ by replacing $R(\theta_j)$ with $R(n \theta_j)$ for each $j=1,\dots,k$, hence eliminating the need to compute the matrix power. From there, we can batch multiply to calculate the entire sequence $(\Sigma_1,\dots, \Sigma_N)$ simulataneously, provided memory constraints are respected. The construction of the block-diagonal rotation matrix can be computationally expensive if done individually for every $n$ (i.e., every observation), so in the code we implement a more efficient version with numpy.einsum.
+
+In context of the projection chaining apporach, perhaps it is viable if the accumulated subspace rotation across the dataset is small.
