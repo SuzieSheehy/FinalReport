@@ -1,33 +1,32 @@
 \documentclass[a4paper, 10.5pt, oneside]{report}
-%------------PREAMBLE
-\include{preamble}
+\input{preamble}
 \usepackage{morefloats}
-%---------------------------
-                                          
+\graphicspath{{figures/}}
+
 \begin{document}
 
-%---------------------------TITLE PAGE
 \include{cover}
-%---------------------------
 
-%---------------------------TABLE OF CONTENTS
+\input{chapters/00_abstract}
+
 \tableofcontents
-%---------------------------
 
-%---------------------------MAIN BODY
-\input{chapter1}
-%---------------------------
+\clearpage\chapterbreakfalse
+\input{chapters/01_introduction}
+\input{chapters/02_methods}
+\input{chapters/03_validation}
+\input{chapters/04_results}
+\input{chapters/05_discussion}
 
-%---------------------------APPENDICES
+\clearpage\chapterbreaktrue
 \begin{appendices}
  \input{appendix1}
+ \input{appendix2}
+ \input{appendix3}
 \end{appendices}
-%---------------------------
 
-%---------------------------BIBLIOGRAPHY
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliographystyle{abbrv}
 \bibliography{biblio}
-%---------------------------
 
 \end{document}

@@ -1,0 +1,72 @@
+\chapter{Reproducing the Results}\label{app:reproduce}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{p{3.0cm}p{4.3cm}p{4.3cm}p{3.7cm}}
+\toprule
+Report item & Notebook / script & Section & Output file \\
+\midrule
+Fig.~\ref{fig:seg} & \texttt{01\_extract\_traces.ipynb} & 4. Segment every frame with Cellpose & \texttt{data\_segmentation} \\
+Fig.~\ref{fig:tracking} & \texttt{01\_extract\_traces.ipynb} & 5. Track cells across frames & \texttt{data\_tracking} \\
+Fig.~\ref{fig:sup-published} & \texttt{01\_extract\_traces.ipynb} & 7. Check against the authors' published traces & \texttt{data\_vs\_published} \\
+Fig.~\ref{fig:drift} & \texttt{05\_hiv\_inference.ipynb} & Background & \texttt{data\_background\_drift} \\
+\midrule
+Table~\ref{tab:sim-validation}, Fig.~\ref{fig:bd} & \texttt{02\_simulator.ipynb} & Model 1: birth--death; Taking steady-state snapshots; Model 2: telegraph; Exact results for the telegraph model & \texttt{sim\_birthdeath\_poisson}, \texttt{supp\_birthdeath\_trajectory} \\
+Fig.~\ref{fig:sim} & \texttt{02\_simulator.ipynb} & Exact results for the telegraph model; How promoter switching controls the noise & \texttt{sim\_telegraph\_exact}, \texttt{sim\_fano\_vs\_kon} \\
+Fig.~\ref{fig:sup-simvsreal} & \texttt{02\_simulator.ipynb} & What the published control wells look like & \texttt{supp\_sim\_vs\_real} \\
+\midrule
+Baseline ABC (Section~\ref{sec:syn-baseline}) & \texttt{03\_abc\_baseline.ipynb} & Did it find the true rates?; More than one set of true rates & printed \\
+Fig.~\ref{fig:syn-baseline} & \texttt{04\_abc\_diagnostics.ipynb} & Baseline rejection ABC & \texttt{abc\_baseline\_posterior} \\
+Figs.~\ref{fig:syn-regex}, \ref{fig:syn-each} & \texttt{04\_abc\_diagnostics.ipynb} & Summary statistics and regression adjustment & \texttt{abc\_regression\_example}, \texttt{abc\_posteriors\_each\_change} \\
+Fig.~\ref{fig:sup-nsims} & \texttt{04\_abc\_diagnostics.ipynb} & Reference-table size & \texttt{supp\_abc\_table\_size} \\
+Fig.~\ref{fig:syn-exact} & \texttt{04\_abc\_diagnostics.ipynb} & Exact-likelihood benchmark & \texttt{abc\_exact\_likelihood} \\
+Fig.~\ref{fig:syn-coverage} & \texttt{04\_abc\_diagnostics.ipynb} & Coverage test & \texttt{abc\_coverage} \\
+Prior sensitivity & \texttt{04\_abc\_diagnostics.ipynb} & Prior sensitivity & printed \\
+Table~\ref{tab:widths} & \texttt{04\_abc\_diagnostics.ipynb} & Interval widths after each change; Exact-likelihood benchmark (last row) & printed \\
+Reference table (100k sims) & \texttt{build\_reference\_table.py --model gillespie} (EC2) & -- & \texttt{results/diagnostics/} \\
+\midrule
+Table~\ref{tab:ln-check} & \texttt{05\_hiv\_inference.ipynb} & Model: telegraph model for large molecule numbers & printed \\
+Reference table (200k sims) & \texttt{build\_reference\_table.py --model fluorescence} & -- & \texttt{results/hiv/} \\
+Table~\ref{tab:runtime} & \texttt{results/*/run\_metadata.json}; \texttt{01} (section 4 notes); \texttt{03} (Prior and simulations); \texttt{tests/} & -- & printed \\
+Fig.~\ref{fig:res-coverage} & \texttt{05\_hiv\_inference.ipynb} & Coverage test on the new model; Recovery at the posterior median & \texttt{hiv\_coverage} \\
+Table~\ref{tab:posterior}, Fig.~\ref{fig:res-posterior} & \texttt{05\_hiv\_inference.ipynb} & Posterior for well K16 & \texttt{hiv\_posterior} \\
+Fig.~\ref{fig:res-ppc} & \texttt{05\_hiv\_inference.ipynb} & Posterior predictive check & \texttt{hiv\_ppc} \\
+Table~\ref{tab:sensitivity} & \texttt{05\_hiv\_inference.ipynb} & Sensitivity analysis & printed \\
+Figs.~\ref{fig:sup-cellsplit}, \ref{fig:sup-timesplit} & \texttt{05\_hiv\_inference.ipynb} & Cell split; Time split & \texttt{supp\_hiv\_cell\_split}, \texttt{supp\_hiv\_time\_split} \\
+Table~\ref{tab:forecast}, Fig.~\ref{fig:res-forecast} & \texttt{05\_hiv\_inference.ipynb} & Forecasting with a particle filter (incl.\ filter self-test) & \texttt{hiv\_forecast} \\
+Table~\ref{tab:paper-metrics} & \texttt{05\_hiv\_inference.ipynb} & Comparison with the paper (Lu et al., PNAS 2021) & printed \\
+Fig.~\ref{fig:sup-papermetrics} & \texttt{05\_hiv\_inference.ipynb} & Does the fitted model reproduce the paper's numbers? & \texttt{supp\_hiv\_paper\_metrics} \\
+Table~\ref{tab:lab-rates}, Fig.~\ref{fig:res-rates} & \texttt{05\_hiv\_inference.ipynb} & Switching rates vs the lab's model & \texttt{hiv\_switching\_vs\_lab} \\
+\bottomrule
+\end{tabular}
+\caption{Where each result in the report is produced. Output files are PNGs in \texttt{figures/}; ``printed'' means the numbers are printed in that notebook section.}
+\label{tab:reproduce}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{4.3cm}p{10.2cm}}
+\toprule
+File & Responsibility \\
+\midrule
+\texttt{01\_extract\_traces.ipynb} & Segmentation (Cellpose-SAM), Hungarian tracking, intensity extraction, comparison with the published traces \\
+\texttt{02\_simulator.ipynb} & Gillespie direct method; birth--death and telegraph models tested against exact results \\
+\texttt{03\_abc\_baseline.ipynb} & Rejection ABC on synthetic data with known rates \\
+\texttt{04\_abc\_diagnostics.ipynb} & The diagnostic study: experiment size, statistics, regression adjustment, exact-likelihood benchmark, coverage \\
+\texttt{05\_hiv\_inference.ipynb} & Inference on well K16, model checks, held-out tests, particle-filter forecasting, comparison with the paper \\
+\midrule
+\texttt{stochsim/telegraph.py} & Gillespie, telegraph propensities, experiment designs, priors, summary statistics \\
+\texttt{stochsim/fluorescence.py} & Large-number telegraph model with extrinsic noise, drift removal, the 13 summary statistics \\
+\texttt{stochsim/abc.py} & Rejection ABC, regression adjustment, MAD scaling, weighted credible intervals \\
+\texttt{stochsim/figures.py} & Saves every figure to \texttt{figures/} under a stable name \\
+\texttt{build\_reference\_table.py} & Builds either reference table in parallel with \texttt{multiprocessing}; the Gillespie table was run on AWS EC2 \\
+\texttt{tests/test\_stochsim.py} & Correctness tests against known answers, and timings of each optimization \\
+\texttt{results/} & Saved reference tables, each with its \texttt{run\_metadata.json} (seed, settings, versions, run time) \\
+\texttt{README.md}, \texttt{requirements.txt} & Setup, run order, EC2 steps and the result-to-code map; pinned package versions (Python 3.12) \\
+\bottomrule
+\end{tabular}
+\caption{Code layout. Notebooks hold the analysis in order; the package holds code shared between the notebooks and the table builder.}
+\label{tab:code}
+\end{table}

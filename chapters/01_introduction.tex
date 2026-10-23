@@ -1,0 +1,31 @@
+\chapter{Introduction}\label{ch:intro}
+
+\section{Noise in gene expression}\label{sec:intro-noise}
+
+Two cells with identical DNA, in exactly the same environment, can still end up with drastically different protein levels. Elowitz et al.\ tested this by putting two copies of the same gene, with identical promoters but different colored fluorescent reporters, into the same cell. The copies still produced different amounts of fluorescence, showing that at least part of the randomness in gene expression is inherent to the cell itself \cite{elowitz2002}. This randomness arises as a gene's promoter switches on and off at random, producing molecules in bursts rather than steadily. Bursty and steady genes may average the same, but the bursty one has far larger peaks and dips, which can decide whether a treatment works or fails on two otherwise identical cells.
+
+This is clearest in HIV. The virus produces a protein, Tat, that boosts its own expression. If an early random burst produces enough Tat, this feedback takes off and the cell actively makes virus; otherwise the virus goes latent \cite{weinberger2005}. Antiretroviral drugs only act on actively replicating virus, so latent cells survive treatment and can reappear when the promoter turns back on. Lu et al.\ \cite{lu2021} screened 1,806 compounds for how they alter this noise, producing the time-lapse dataset used here \cite{idb_dataset}.
+
+Only the brightness of each cell can be observed, and it must be used to work out the rates behind it: how often the promoter turns on, how long it stays on, and how much protein it produces while on. This is an inverse problem. Because the process is inherently random, many different parameter values could explain the observed data, and the model has no tractable likelihood for time-series data. This project therefore uses simulation-based Bayesian inference, specifically approximate Bayesian computation (ABC) \cite{beaumont2002}, which gives a range of plausible values rather than a single estimate, and so also shows how uncertain each rate is.
+
+\section{Aims and outcomes}\label{sec:intro-aims}
+
+The aim of this project was to extract single-cell traces from the public UIUC dataset \cite{idb_dataset}, build a stochastic simulator of the HIV promoter as a telegraph model, and recover its rates with Bayesian methods as a range of plausible values rather than a single estimate. Table~\ref{tab:plan} compares the plan with what was delivered. Overall, the project did what it set out to do, with three deviations (Section~\ref{sec:disc-deviations}). The Cellpose work \cite{pachitariu2025} was a proof of concept on a single well, since the full screen was too large to process with the available storage and compute. ABC became the main method instead of particle MCMC because it passed the exact-likelihood and coverage checks \cite{prangle2014}. And rather than following through with the extensions, the time went into diagnosing and fixing the wide credible intervals that came up. Chapter~\ref{ch:methods} describes the methods and how the code is organized, Chapter~\ref{ch:validation} the validation and diagnostic study, Chapter~\ref{ch:results} the results, and Chapter~\ref{ch:discussion} the discussion and what I learned.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{2.6cm}p{5.0cm}p{6.8cm}}
+\toprule
+Plan stage & Planned deliverable & Outcome \\
+\midrule
+Week 1: data & Single-cell traces from raw movies (Cellpose + Hungarian tracking) & Done. 479 cells $\times$ 72 frames from one well (K16), consistent with the authors' traces. \\
+Week 2: simulator & Gillespie SSA for birth--death and telegraph models, checked against exact results & Done. Matches the Poisson and Peccoud--Ycart distributions. \\
+Week 3: synthetic inference & ABC recovering known rates with credible intervals & Done. Intervals were wide; a diagnostic study found and fixed the cause (Section~\ref{sec:syn-diagnosis}). \\
+Week 4: real data & Posterior for switching rates and burst size of the HIV circuit & Done, with a large-number telegraph model (Ch.~\ref{ch:results}). \\
+Week 5: extensions & Feedback circuits; DNA strand-displacement link & Partly. Added held-out tests, particle-filter forecasting and comparison with the lab's model; feedback and DNA are discussed only. \\
+\bottomrule
+\end{tabular}
+\caption{Project plan from the proposal against what was delivered.}
+\label{tab:plan}
+\end{table}

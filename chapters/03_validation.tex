@@ -1,0 +1,65 @@
+\chapter{Validation and the Diagnostic Study}\label{ch:validation}
+
+\section{Testing the simulator against exact results}\label{sec:sim-validation}
+
+The simulator was validated against two models with well-defined answers before proceeding. For birth--death ($k=20$, $\gamma=1$) the simulated steady state has mean $19.78 \pm 0.10$ against 20 and Fano factor 0.979 against 1. For the telegraph model ($k_{on}=0.5$, $k_{off}=1.5$, $k_m=40$) the promoter is ON 25.1\% of the time against 25.0\%, the mean is $10.27 \pm 0.24$ against 10 and the Fano factor 10.99 against 11. The histogram matches both the exact distribution, Eq.~\eqref{eq:peccoud}, and direct Beta--Poisson sampling (Fig.~\ref{fig:sim}a). At fixed mean, the Fano factor falls from 109 to 1.03 as $k_{on}$ rises from 0.05 to 50, recovering the birth--death limit (Fig.~\ref{fig:sim}b). The full table and further figures are in Appendix~\ref{sec:sup-sim}, and the quick checks from this chapter are also automated in \texttt{tests/test\_stochsim.py} (Section~\ref{sec:computing}).
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\linewidth]{sim_telegraph_exact.png}\hfill
+\includegraphics[width=0.49\linewidth]{sim_fano_vs_kon.png}
+\caption{(a) Telegraph steady state: Gillespie histogram, exact Peccoud--Ycart distribution and direct Beta--Poisson sampling agree (Fano 11, versus 1 for a Poisson with the same mean). (b) Fano factor against $k_{on}$ at fixed mean: slow switching gives strong bursting noise; fast switching recovers the birth--death limit.}
+\label{fig:sim}
+\end{figure}
+
+\section{Baseline ABC recovers the rates, but loosely}\label{sec:syn-baseline}
+
+The baseline (\texttt{03\_abc\_baseline.ipynb}) tests ABC on synthetic data with known rates, $k_{on}=0.5$, $k_{off}=1.5$, $k_m=40$: 10 cells observed for 50 frames one molecule lifetime apart, with Normal(0, 3) measurement noise. The prior is log-uniform, with $k_{on}, k_{off} \in [0.05, 5]$ and $k_m \in [5, 100]$; 10,000 simulations are reduced to 4 summary statistics and the closest 1\% are kept. While for all four test cases the truth remained inside each 95\% interval, the intervals were too wide to be considered useful. Rerun with identical settings on the diagnostic table (Table~\ref{tab:widths}, Appendix Fig.~\ref{fig:syn-baseline}), they span a factor of 7.6 for $k_{on}$, 16 for burst size and 64 for $k_{off}$. Visually, the $k_{off}$ posterior barely shifts from the prior toward the true value.
+
+\section{Diagnosing the wide intervals}\label{sec:syn-diagnosis}
+
+To diagnose the wide intervals caught by this first check, I tested three things. Firstly, Monte Carlo noise, in which case the intervals shrink with more simulations. Then, whether ABC was discarding information, in which case a better method on the same data gives narrower intervals. Finally, whether the data outright lacked the information I planned to infer from the model. A new reference table of 100,000 simulations was drawn from a wider log-uniform prior ($k_{on}, k_{off} \in [0.01, 20]$, $k_m \in [2, 200]$), each simulated under both the baseline design and a more realistic design of 400 cells and 72 frames 15\,min apart, based on the actual movie. Statistics were also stored for the first 10, 50 and 100 cells, so the effect of experiment size could be measured without re-simulating.
+
+Going from 10 to 400 cells narrows every interval, with most of the gain reached by 50--100 cells: burst size goes from $\times$16 to $\times$3.8, but $k_{off}$ only to $\times$18.5. Extending the summary statistics from 4 to 11 barely helps plain rejection, because all 11 must match at once, so the closest draws are worse matches on each one. A larger table helps somewhat: with 200 draws kept and all 11 statistics, going from 10,000 to 100,000 simulations narrows $k_{off}$ from $\times$28 to $\times$9 (Appendix Fig.~\ref{fig:sup-nsims}; a different setting from the 500 draws kept in Table~\ref{tab:widths}). That is to say, Monte Carlo noise is present, but it is not the main contributor.
+
+With regression adjustment on the 11 statistics, the widths fall to $\times$1.4 for $k_{on}$, $\times$1.8 for $k_{off}$ and $\times$1.4 for $k_m$ and burst size (Table~\ref{tab:widths}; posteriors after each change in Appendix Fig.~\ref{fig:syn-each}, and a worked example for one rate in Appendix Fig.~\ref{fig:syn-regex}). The extra statistics only pay off once the regression can use them: rejection needs every statistic to match at once, whereas the regression uses each one to correct the kept draws.
+
+A narrow interval doesn't, however, show that I had found the cause of the problem. For snapshot data, with just one reading per cell, an exact likelihood exists: the telegraph distribution tested in Section~\ref{sec:sim-validation} plus the measurement noise, Eq.~\eqref{eq:exact-lik}. Evaluated on a $40^3$ grid with 400 snapshots, it gives $k_{off}$ a width of $\times$2.7, against $\times$18.5 for rejection ABC on the full time series (Fig.~\ref{fig:syn-exact}). The information about $k_{off}$ is therefore in the data, and rejection ABC was somehow losing it. Regression ABC ($\times$1.8) can be narrower than the exact snapshot posterior because it also uses the autocorrelations of the time series, which snapshots do not have.
+
+\begin{equation}
+p(\mathbf{y} \mid \theta) = \prod_{c=1}^{400} \sum_{n=0}^{\infty} P_{\mathrm{tel}}(n \mid \theta)\; \mathcal{N}(y_c;\, n,\, 3^2)
+\label{eq:exact-lik}
+\end{equation}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.8\linewidth]{abc_exact_likelihood.png}
+\caption{Exact snapshot-likelihood posterior (400 cells, one frame each) against rejection and regression-adjusted ABC. The exact posterior is far narrower than rejection ABC, so the information about $k_{off}$ is present in the data.}
+\label{fig:syn-exact}
+\end{figure}
+
+The coverage test (Section~\ref{sec:bayes}) reuses 300 rows of the existing table as fake data, so it needed no new simulations (Fig.~\ref{fig:syn-coverage}). No method is overconfident. Regression adjustment lies closest to the diagonal, while rejection is too cautious: its 50\% intervals contain the truth 66--72\% of the time. The main test case is also an easy one. Averaged over the prior, the 95\% widths for $k_{on}$, $k_{off}$ and $k_m$ are $\times$5.2, $\times$14.6 and $\times$1.9 with regression adjustment, against $\times$13, $\times$62 and $\times$3.4 for rejection. Neither regression adjustment nor coverage testing was in the proposal; both were learned for this project, from Beaumont et al.\ \cite{beaumont2002} and Prangle et al.\ \cite{prangle2014}.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.75\linewidth]{abc_coverage.png}
+\caption{Coverage over 300 synthetic datasets. Top: empirical against nominal coverage (diagonal = calibrated, above = too cautious, below = overconfident; grey band $\pm2$ standard errors). Bottom: typical 95\% width. Regression adjustment is calibrated and far narrower.}
+\label{fig:syn-coverage}
+\end{figure}
+
+Where switching produces no distinct bursts (the ``mostly ON'' and ``fast switching'' cases), $k_{off}$ and burst size stay $\times$78--98 wide even with the best pipeline, though the truth is still inside. Refitting with only the simulations inside the narrower baseline prior shows how much each method depends on the prior. Rejection's $k_{off}$ width moves from $\times$18.5 to $\times$4.1, so the prior is doing most of the work, while regression's widths barely move ($\times$1.4/$\times$1.8/$\times$1.4 against $\times$1.3/$\times$1.4/$\times$1.1 for $k_{on}/k_{off}/k_m$, truth inside both), so the data decide them. Everything in Chapter~\ref{ch:results} builds on these results.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Pipeline & $k_{on}$ & $k_{off}$ & $k_m$ & burst size \\
+\midrule
+Baseline (10 cells, 10k sims, 4 stats) & $\times$7.6 & $\times$64 & $\times$8.8 & $\times$16 \\
+Movie-matched design, 400 cells, basic stats & $\times$4.5 & $\times$18.5 & $\times$8.4 & $\times$3.8 \\
+400 cells, extended stats & $\times$5.4 & $\times$18.5 & $\times$5.1 & $\times$6.8 \\
+400 cells, extended stats + regression & $\times$1.4 & $\times$1.8 & $\times$1.4 & $\times$1.4 \\
+Exact likelihood, 400 snapshots & $\times$1.5 & $\times$2.7 & $\times$1.6 & -- \\
+\bottomrule
+\end{tabular}
+\caption{95\% credible-interval width (upper/lower bound) for the main test case after each change. The true value is inside every interval.}
+\label{tab:widths}
+\end{table}

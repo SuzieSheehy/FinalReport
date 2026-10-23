@@ -1,0 +1,233 @@
+\chapter{Supplementary Results}\label{app:supplementary}
+
+\section{Data pipeline}\label{sec:sup-data}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{data_vs_published.png}
+\caption{Traces extracted here (orange, 479 cells) against the authors' published traces for the same well (blue, 59 cells). Left: per-cell mean intensity, lower for the extracted traces because their masks are not eroded towards the bright center. Middle: per-cell CV$^2$; the distributions agree. Right: ten example traces from each.}
+\label{fig:sup-published}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\linewidth]{data_tracking.png}
+\caption{Tracked cell trajectories. Left: lengths of all 11,252 raw tracks (log scale), with the 72-frame cutoff dashed. Right: the 1,252 tracks of at least 72 frames, drawn over frame 0. Most raw tracks are short fragments, and the kept tracks are local paths with no long jumps.}
+\label{fig:tracking}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{supp_sim_vs_real.png}
+\caption{Real untreated cells (left) against the plain telegraph model sampled every 15\,min (right). Real cells differ in level and drift; the model's cells share one mean. This motivated the extrinsic parameter $\eta$.}
+\label{fig:sup-simvsreal}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.55\linewidth]{data_segmentation.png}
+\caption{Cellpose segmentation of well K16 (about 1,000--1,200 cells per frame). Left: frame 0 with all 1,043 mask outlines in red. Right: a 400-pixel detail of the same frame.}
+\label{fig:seg}
+\end{figure}
+
+\section{Simulator validation}\label{sec:sup-sim}
+
+\begin{equation}
+\mathbb{E}[n] = \frac{k_m}{\gamma}\,\frac{k_{on}}{k_{on}+k_{off}}, \qquad
+\mathrm{Fano} = 1 + \frac{k_m\,k_{off}}{(k_{on}+k_{off})(k_{on}+k_{off}+\gamma)}
+\label{eq:telegraph-moments}
+\end{equation}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Check & Simulated & Exact & Snapshots \\
+\midrule
+Birth--death mean & $19.78 \pm 0.10$ & 20 & 1,990 \\
+Birth--death Fano factor & 0.979 & 1 & 1,990 \\
+Telegraph fraction of time ON & 25.1\% & 25.0\% & -- \\
+Telegraph mean & $10.27 \pm 0.24$ & 10 & 1,990 \\
+Telegraph Fano factor & 10.99 & 11.0 & 1,990 \\
+\bottomrule
+\end{tabular}
+\caption{Simulator validation against exact results. Telegraph parameters: $k_{on}=0.5$, $k_{off}=1.5$, $k_m=40$, $\gamma=1$.}
+\label{tab:sim-validation}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\linewidth]{sim_birthdeath_poisson.png}\hfill
+\includegraphics[width=0.49\linewidth]{supp_birthdeath_trajectory.png}
+\caption{Birth--death model ($k=20$, $\gamma=1$). (a) Steady-state histogram from 1,990 Gillespie snapshots against the exact Poisson(20) distribution. (b) A trajectory relaxing to its steady state, showing the burn-in discarded before snapshots are taken.}
+\label{fig:bd}
+\end{figure}
+
+\section{Further diagnostics on synthetic data}\label{sec:sup-diagnostics}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{abc_baseline_posterior.png}
+\caption{Baseline rejection ABC (10 cells, 10,000 simulations, 4 statistics): posteriors against the prior, true values dashed. The truth is always inside the 95\% interval, but $k_{off}$ is barely narrower than the prior.}
+\label{fig:syn-baseline}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{abc_posteriors_each_change.png}
+\caption{Posteriors for the same synthetic data after each change: baseline (blue), 400 cells with basic statistics (orange), 400 cells with extended statistics (green), and with regression adjustment (red). Only regression adjustment concentrates the posterior around the true value (dashed).}
+\label{fig:syn-each}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{abc_regression_example.png}
+\caption{Regression adjustment for one rate. Left: accepted simulations ($\log k_{off}$ against autocorrelation at lag 15, $r=0.83$), the weighted fit, and arrows showing samples shifted to the observed value. Right: $k_{off}$ before and after. The real adjustment uses all 11 statistics and all 3 rates.}
+\label{fig:syn-regex}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{supp_abc_table_size.png}
+\caption{Effect of reference-table size (10\%--100\% of 100,000 simulations, same number kept) on rejection ABC: Monte Carlo error contributes, but is not the main cause of the wide intervals.}
+\label{fig:sup-nsims}
+\end{figure}
+
+\section{Fluorescence model details}\label{sec:sup-model}
+
+\begin{equation}
+r(\ell) = \frac{1}{\mathrm{Var}(y)}\,\frac{1}{N_c (N_f - \ell)}\sum_{c}\sum_{f} (y_{c,f} - \bar y)(y_{c,f+\ell} - \bar y), \qquad
+\mathrm{QS} = \frac{q_{90} + q_{10} - 2\,q_{50}}{q_{90} - q_{10}}
+\label{eq:acf}
+\end{equation}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Statistic & $(0.5, 1.5, 400)$ & $(0.1, 1.0, 600)$ & $(3.0, 3.0, 300)$ \\
+\midrule
+mean & 100.0 / 96.8 & 58.4 / 57.1 & 154.0 / 150.3 \\
+CV$^2$ & 1.001 / 1.002 & 4.49 / 4.58 & 0.138 / 0.136 \\
+autocorr lag 4 & 0.948 / 0.941 & 0.974 / 0.962 & 0.868 / 0.869 \\
+autocorr lag 15 & 0.605 / 0.585 & 0.729 / 0.687 & 0.423 / 0.420 \\
+autocorr lag 40 & 0.104 / 0.137 & 0.173 / 0.215 & 0.036 / 0.110 \\
+$q_{90}$/mean & 2.57 / 2.61 & 3.82 / 4.02 & 1.49 / 1.51 \\
+between-cell var.\ fraction & 0.471 / 0.460 & 0.548 / 0.542 & 0.356 / 0.395 \\
+jitter & 0.070 / 0.068 & 0.107 / 0.107 & 0.045 / 0.041 \\
+\bottomrule
+\end{tabular}
+\caption{Gillespie / large-number model for selected statistics at three parameter sets $(k_{on}, k_{off}, k_m)$, 200 cells each.}
+\label{tab:ln-check}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llc}
+\toprule
+Parameter & Meaning & Prior \\
+\midrule
+$k_{on}$, $k_{off}$ & promoter switching rates (per lifetime) & log-uniform $[0.01, 20]$ \\
+$A$ & brightness of an always-ON cell (a.u.) & log-uniform $[10, 10^4]$ \\
+$\sigma$ & measurement noise (a.u.) & log-uniform $[1, 100]$ \\
+$\eta$ & extrinsic cell-to-cell spread & uniform $[0, 1]$ \\
+\bottomrule
+\end{tabular}
+\caption{Parameters of the fluorescence model and their priors.}
+\label{tab:priors}
+\end{table}
+
+\section{Further results on the HIV data}\label{sec:sup-hiv}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{hiv_coverage.png}
+\caption{Coverage of regression-adjusted ABC on the fluorescence model (300 synthetic datasets). All five parameters lie close to the diagonal.}
+\label{fig:res-coverage}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{hiv_ppc.png}
+\caption{Posterior predictive check: each summary statistic over 200 movies simulated from the posterior, real value marked. Every statistic is within 2 standard deviations.}
+\label{fig:res-ppc}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Scenario & Bursts per hour & Burst size (a.u.) & Fraction ON & $\eta$ \\
+\midrule
+Main analysis & 0.48 [0.08, 2.3] & 460 [35, 4,300] & 0.67 [0.32, 0.97] & 0.59 [0.53, 0.66] \\
+Background $+25$ & 0.41 [0.06, 2.3] & 400 [29, 3,900] & 0.61 [0.28, 0.96] & 0.65 [0.58, 0.73] \\
+Background $-25$ & 0.46 [0.08, 2.0] & 610 [47, 5,500] & 0.70 [0.36, 0.97] & 0.54 [0.48, 0.60] \\
+No drift removal & 0.64 [0.11, 3.2] & 170 [15, 2,200] & 0.48 [0.18, 0.94] & 0.57 [0.50, 0.65] \\
+First 36 frames (hours 1--10) & 0.53 [0.08, 2.7] & 1,300 [99, 10,000] & 0.90 [0.70, 0.99] & 0.63 [0.57, 0.70] \\
+Authors' 59 traces & 1.8 [0.20, 7.0] & 930 [68, 9,700] & 0.87 [0.55, 0.99] & 0.42 [0.29, 0.56] \\
+\bottomrule
+\end{tabular}
+\caption{Sensitivity of the posterior (median [95\% interval]) to one analysis choice at a time.}
+\label{tab:sensitivity}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{supp_hiv_cell_split.png}
+\caption{Cell-split test: $z$-scores of held-out statistics over five random splits (fit on 240 cells, predict 239). 97\% fall within $\pm2$.}
+\label{fig:sup-cellsplit}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{supp_hiv_time_split.png}
+\caption{Time-split test: posteriors fitted separately to hours 1--10 and 10--19. $A$ roughly doubles, so the process is not stationary over the movie.}
+\label{fig:sup-timesplit}
+\end{figure}
+
+\begin{equation}
+\begin{aligned}
+&\delta_{c,f} = (y_{c,f} - \bar y_f) - \frac{1}{N_f}\sum_{f'} (y_{c,f'} - \bar y_{f'}), \qquad
+\langle FL\rangle = \frac{1}{N_f}\sum_f \bar y_f, \\
+&R(\ell) = \frac{1}{N_c}\sum_c \frac{1}{N_f - \ell}\sum_{f=1}^{N_f-\ell} \delta_{c,f}\,\delta_{c,f+\ell}, \qquad
+\text{HF-CV}^2 = \frac{R(0)}{\langle FL\rangle^2}, \qquad
+\tau_{1/2} = \min\{\ell : R(\ell) = R(0)/2\}
+\end{aligned}
+\label{eq:lu-metrics}
+\end{equation}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+& $\langle FL\rangle$ & HF-CV$^2$ & HF-$\tau_{1/2}$ (h) \\
+\midrule
+Paper (Dataset S1) & 1076.36 & 0.01749 & 2.348 \\
+Authors' traces, this code & 1076.36 & 0.01749 & 2.516 \\
+Extracted traces (Section~\ref{sec:data}), this code & 787.13 & 0.01123 & 2.834 \\
+\bottomrule
+\end{tabular}
+\caption{Lu et al.\ noise metrics for well K16.}
+\label{tab:paper-metrics}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{supp_hiv_paper_metrics.png}
+\caption{The paper's HF-CV$^2$ and HF-$\tau_{1/2}$ computed on movies simulated from the posterior, against the real values. Both lie inside the model's 95\% range, although these metrics were not used in the fit.}
+\label{fig:sup-papermetrics}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.6\linewidth]{hiv_switching_vs_lab.png}
+\caption{Posterior over switching rates against the lab's model values. Burst frequency agrees; the ON fraction differs because this model has no mRNA step, so its ``ON'' state is an effective GFP-production state.}
+\label{fig:res-rates}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+Quantity & Lab model \cite{dar2012} & This work: median [95\%] & Consistent? \\
+\midrule
+Bursts per hour & 0.42 & 0.48 [0.08, 2.3] & yes \\
+Mean OFF period (h) & 2.37 & 2.1 [0.4, 12.7] & yes \\
+Fraction ON & 0.10 & 0.67 [0.32, 0.97] & no (effective) \\
+Mean ON period (h) & 0.25 & 5.0 [0.3, 48] & no (effective) \\
+\bottomrule
+\end{tabular}
+\caption{Switching rates compared with the lab's model for untreated cells.}
+\label{tab:lab-rates}
+\end{table}

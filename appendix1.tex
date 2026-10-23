@@ -1,15 +1,118 @@
-\chapter{Program flowchart}\label{app:flowchart}
+\chapter{Code Listings}\label{app:code}
 
-A flowchart is a conceptual aid which highlights input and output that a program should have, as well as the consequences of any decisions that it must make. Sometimes, these will include \textit{pseudocode}, which mimics some of the more common coding structures in a universal way. (For instance, you might say `loop over all array addresses'.)\\
+\begin{lstlisting}[caption={Generic Gillespie direct method and the telegraph model's propensities (\texttt{stochsim/telegraph.py}). A model is only a propensity function plus a list of state changes (Sections~\ref{sec:models}, \ref{sec:sim-validation}).},label={lst:gillespie}]
+def gillespie(start_state, rate_function, constants, changes, t_max, rng):
+    time = 0.0
+    state = list(start_state)
+    times = [time]
+    states = [list(state)]
 
-This particular flowchart indicates a program that reads three numbers from the terminal, and then produces the largest of the numbers back to the terminal. The colour scheme is not mandatory, but helps the reader to know what is going on at a glance.\\
+    while time < t_max:
+        rates = rate_function(state, constants)
+        total_rate = sum(rates)
+        if total_rate == 0:
+            break
 
-This flowchart was drawn with the free `Lucidcharts' extension to Google Docs, from which the result was exported as an \texttt{svg} file, and any unnecessary features were then cropped out with Inkscape. Choose any method you wish to create your own flowchart!
+        time = time + rng.expovariate(total_rate)
 
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=0.50\linewidth]{figures/flowchart.pdf}
-\end{center}
-\caption{A flowchart for the determination of the largest of three user-selected numbers.}
-\label{fig:flowchart}
-\end{figure} 
+        pick = rng.random() * total_rate
+        reaction = 0
+        running_total = rates[0]
+        while pick >= running_total:
+            reaction = reaction + 1
+            running_total = running_total + rates[reaction]
+
+        for j in range(len(state)):
+            state[j] = state[j] + changes[reaction][j]
+
+        times.append(time)
+        states.append(list(state))
+
+    return np.array(times), np.array(states)
+
+def telegraph_rates(state, constants):
+    promoter = state[0]
+    molecules = state[1]
+    if promoter == 0:
+        switch_on, switch_off, make = constants["k_on"], 0.0, 0.0
+    else:
+        switch_on, switch_off, make = 0.0, constants["k_off"], constants["k_m"]
+    destroy = constants["decay_rate"] * molecules
+    return [switch_on, switch_off, make, destroy]
+
+TELEGRAPH_CHANGES = [[+1, 0], [-1, 0], [0, +1], [0, -1]]
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Rejection and regression-adjusted ABC, Eqs.~\eqref{eq:abc}--\eqref{eq:regadj} (\texttt{stochsim/abc.py}, used by notebooks 04 and 05; results in Sections~\ref{sec:syn-diagnosis} and \ref{sec:res-posterior}).},label={lst:regadj}]
+def posterior(stats, params, target, n_keep, regression=False, scale=None, to_fit=np.log10, from_fit=None):
+    scale = mad_scale(stats) if scale is None else scale
+    rows, distances = closest_rows(stats, target, scale, n_keep)
+    if not regression:
+        return params[rows], None
+
+    weights = 1 - (distances / distances[-1]) ** 2
+    x = (stats[rows] - target) / scale
+    design_matrix = np.column_stack([np.ones(len(rows)), x])
+    y = to_fit(params[rows])
+    root_w = np.sqrt(weights)
+    coefficients = np.linalg.lstsq(design_matrix * root_w[:, None], y * root_w[:, None], rcond=None)[0]
+    adjusted = y - x @ coefficients[1:]
+    return (10**adjusted if from_fit is None else from_fit(adjusted)), weights
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Large-number telegraph model with extrinsic noise, Eqs.~\eqref{eq:relax}--\eqref{eq:extrinsic}. All cells are simulated at once; only cells whose promoter switches before the next frame are updated in the inner loop. Time cannot be vectorized, but cells can (Section~\ref{sec:computing}) (\texttt{stochsim/fluorescence.py}).},label={lst:largenumber}]
+def simulate_cells(k_on, k_off, A, sigma, eta, n_cells, np_rng, n_frames=N_FRAMES, frame_spacing=FRAME_SPACING):
+    p_on = k_on / (k_on + k_off)
+    A = A * np.exp(eta * np_rng.normal(size=n_cells) - eta**2 / 2)
+    state = (np_rng.random(n_cells) < p_on).astype(float)
+    x = A * p_on
+    t = np.zeros(n_cells)
+    next_switch = np_rng.exponential(1.0 / np.where(state == 1, k_off, k_on))
+
+    frame_times = BURN_IN + frame_spacing * np.arange(n_frames)
+    readings = np.empty((n_cells, n_frames))
+    for f, frame_time in enumerate(frame_times):
+        switching = next_switch <= frame_time
+        while switching.any():
+            dt = next_switch[switching] - t[switching]
+            target = A[switching] * state[switching]
+            x[switching] = target + (x[switching] - target) * np.exp(-dt)
+            t[switching] = next_switch[switching]
+            state[switching] = 1 - state[switching]
+            rates = np.where(state[switching] == 1, k_off, k_on)
+            next_switch[switching] = t[switching] + np_rng.exponential(1.0 / rates)
+            switching = next_switch <= frame_time
+        dt = frame_time - t
+        target = A * state
+        x = target + (x - target) * np.exp(-dt)
+        t[:] = frame_time
+        readings[:, f] = x
+
+    return readings + np_rng.normal(0.0, sigma, size=readings.shape)
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Bootstrap particle filter with systematic resampling (Section~\ref{sec:bayes}): filter hours 1--10 of each cell, then forecast hours 10--19; results in Section~\ref{sec:res-heldout} (\texttt{05\_hiv\_inference.ipynb}, forecasting; abridged).},label={lst:pf}]
+def systematic_resample(weights, rng):
+    positions = (rng.random() + np.arange(len(weights))) / len(weights)
+    return np.minimum(np.searchsorted(np.cumsum(weights), positions), len(weights) - 1)
+
+...
+for c in range(data.shape[0]):
+    A_cell = A0 * np.exp(eta0 * rng.normal(size=n_particles) - eta0**2 / 2)
+    state = state_start.copy()
+    x = unit_x_start * A_cell
+    k_on, k_off, sigma = k_on0.copy(), k_off0.copy(), sigma0.copy()
+
+    for t in range(n_seen):
+        if t > 0:
+            state, x = fluorescence.propagate(state, x, A_cell, k_on, k_off, dt, rng)
+        log_w = -0.5 * ((data[c, t] - x) / sigma) ** 2 - np.log(sigma)
+        w = np.exp(log_w - log_w.max())
+        keep = systematic_resample(w / w.sum(), rng)
+        state, x, A_cell = state[keep], x[keep], A_cell[keep]
+        k_on, k_off, sigma = k_on[keep], k_off[keep], sigma[keep]
+
+    for h in range(n_future):
+        state, x = fluorescence.propagate(state, x, A_cell, k_on, k_off, dt, rng)
+        bands[c, h] = np.percentile(x + sigma * rng.normal(size=n_particles), band_quantiles)
+\end{lstlisting}
