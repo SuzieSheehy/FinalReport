@@ -1,0 +1,27 @@
+% Text converted from the supplied Report 90072 .pdf.
+\chapter{Extracting the ECG features}\label{ch:3}
+
+\section{Locating the R peaks}
+
+Some supplied heartbeat marks were slightly before the visible R peaks. Each mark was moved to the largest ECG value within 80 ms on either side. The shifts were 30--50 ms, with a median of 40 ms. This works with the upward R peaks in this recording, but cannot find a beat that has no supplied mark.
+
+\section{RR intervals and R--S amplitude}
+
+The RR interval is the time between two consecutive R peaks. If $t_i$ is the time of the current R peak, then
+
+\begin{equation}\label{eq:rr}
+RR_i = t_i - t_{i-1}
+\end{equation}
+
+The second feature measures the vertical difference between an R peak and the lowest ECG value within the following 80 ms. This follows the feature definition in \cite{varon2015}. If $R_i$ and $S_i$ are those ECG amplitudes, then
+
+\begin{equation}\label{eq:rs}
+A_i = R_i - S_i
+\end{equation}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.97\linewidth]{figures/ecg_features.png}
+\caption{R peaks and the following minima, with the resulting RR intervals and R--S amplitudes. RR is measured in seconds and amplitude in millivolts.}\label{fig:2}
+\end{figure}
+

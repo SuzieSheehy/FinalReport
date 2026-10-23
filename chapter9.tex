@@ -1,0 +1,33 @@
+% Text converted from the supplied Report 90072 .pdf.
+\chapter{Learning and problem solving}\label{ch:9}
+
+\section{Connecting data handling with signal analysis}
+
+The project required linking several steps that can otherwise seem separate: reading a recording, converting samples to time and voltage, finding beat features, and interpreting a spectrum. Comparing the independently decoded ECG with \texttt{wfdb.rdrecord} checked that the calibration had been understood correctly \cite{signalformat,wfdbio}. The calibrated values agreed.
+
+Interpolation was needed because beat times are irregular, while the frequency calculation uses regularly spaced values. Resampling the respiratory signals to the same grid made the comparison consistent. The SciPy documentation helped connect these choices to filtering and periodogram calculation \cite{periodogram,resamplepoly}.
+
+\section{Decisions based on the data}
+
+\begin{table}[H]
+\centering
+\caption{Examples of problems and the responses used in the project.}
+\small
+\begin{tabularx}{\linewidth}{@{}p{0.32\linewidth}X@{}}
+\toprule
+\textbf{Problem} & \textbf{Response and evidence} \\
+\midrule
+Heartbeat marks were slightly early & Search near each mark for the R peak. The median shift was 40 ms. \\
+An RR interval was unusually long & Keep and flag the 1.37 s interval instead of inserting an unverified beat. \\
+The first result depended on the search range & Compare both ranges across 30 windows. RR MAE changed from 3.21 to 6.41 cycles/min. \\
+The quality screen retained very little data & Report its two-window coverage as well as its errors, and keep all-window results as the main comparison. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Extending the basic method}
+
+The R--S feature from Varon and Van Huffel \cite{varon2015} provided a useful comparison with the original RR approach. Applying both methods across the hour, changing the search range and grouping by minute labels added checks beyond the first example. These are established methods, but combining them helped reveal where the results were sensitive to the analysis choices.
+
+The clearest lesson is that an encouraging plot needs further checks. The first RR estimate matched airflow, yet its MAE across the hour was 3.21 cycles/min. Similarly, a screen that leaves only two windows can show small errors while covering very little of the recording. Both examples changed how much confidence could be placed in the initial result.
+

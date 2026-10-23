@@ -1,0 +1,19 @@
+% Text converted from the supplied Report 90072 .pdf.
+\chapter{Checking unusual RR intervals}\label{ch:4}
+
+An unusually long or short RR interval may indicate a beat-annotation problem. Each interval was compared with the median of up to five intervals on either side. A difference greater than 20\% was flagged for inspection. This simple rule is a warning flag, not a confirmed diagnosis of an incorrect beat.
+
+Across the full ECG, 443 of 29,937 intervals were flagged (1.48\%). These full-record counts are separate from the 30-window first-hour comparison. Flagged intervals were kept in the main analysis so that difficult windows were not hidden.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.97\linewidth]{figures/rr_quality.png}
+\caption{Flagged intervals in the first ten minutes. The lower panel shows the ECG around a long interval from 487.78 to 489.15 s.}\label{fig:3}
+\end{figure}
+
+\section{Example of a possible missed beat}
+
+The interval shown in Figure~\ref{fig:3} is 1.37 s, about twice its local median of 0.67 s. A missed beat is one possible explanation. However, the interval length alone does not show where that beat should be placed. It was therefore flagged and left unchanged, rather than adding a beat without enough evidence.
+
+This decision avoids introducing an assumed beat, but leaves a possible error in the RR series. Some differences from airflow may therefore be caused by the heartbeat annotations.
+

@@ -1,0 +1,64 @@
+% Text converted from the supplied Report 90072 .pdf.
+\chapter{Results}\label{ch:6}
+
+\section{The first two minutes}
+
+In the main frequency range, the RR estimate and airflow estimate were both 12.18 cycles/min. R--S amplitude gave 11.16 cycles/min. The airflow peak corresponds to a dominant period of about 4.93 s, although the waveform shows that individual cycles vary.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.97\linewidth]{figures/first_window_spectra.png}
+\caption{Spectra for the first window and the first 30 seconds of airflow. Resp C, A and N mean chest effort, abdominal effort and airflow. Each spectrum is divided by its own maximum, so heights show relative rather than absolute power.}\label{fig:4}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{First-window frequency estimates, in cycles/min.}
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Signal} & \textbf{0.15--0.40 Hz} & \textbf{0.10--0.50 Hz} \\
+\midrule
+RR intervals & 12.18 & 6.60 \\
+R--S amplitude & 11.16 & 11.16 \\
+Chest effort & 12.18 & 6.09 \\
+Abdominal effort & 12.18 & 12.18 \\
+Airflow & 12.18 & 12.18 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The wider range changed the RR estimate to 6.60 cycles/min, while airflow stayed at 12.18. This shows that a good match in one window and one frequency range is not enough to judge the method. The comparison was therefore extended to all 30 windows.
+
+\clearpage
+
+\section{Comparison across the first hour}
+
+All 30 windows had usable airflow and enough ECG features for analysis. The main results include windows with RR flags, missing abdominal data and large differences from airflow.
+
+\begin{table}[H]
+\centering
+\caption{Differences from the airflow estimate across all 30 windows. Errors and bias are in cycles/min.}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Range in Hz} & \textbf{Method} & \textbf{MAE} & \textbf{RMSE} & \textbf{Bias} \\
+\midrule
+0.15--0.40 & RR & 3.21 & 4.94 & \ensuremath{-}2.47 \\
+0.15--0.40 & R--S & 1.76 & 2.61 & \ensuremath{-}0.81 \\
+0.10--0.50 & RR & 6.41 & 8.44 & \ensuremath{-}4.52 \\
+0.10--0.50 & R--S & 2.33 & 3.82 & 0.10 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.97\linewidth]{figures/hourly_estimates.png}
+\caption{Frequency estimates across the first hour for the two search ranges. Lines connect the window estimates and do not show a continuously measured breathing rate.}\label{fig:5}
+\end{figure}
+
+R--S amplitude had lower MAE and RMSE in both ranges. In the main range, its MAE was 1.76 cycles/min compared with 3.21 for RR. Figure~\ref{fig:5} shows several windows where the RR estimate drops well below airflow, contributing to the larger error.
+
+Both methods had larger errors in the wider range. The airflow search range also changed, so these results show sensitivity to the range rather than proving that the narrow range gives the true breathing rate.
+

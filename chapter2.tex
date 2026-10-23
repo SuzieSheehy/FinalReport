@@ -1,0 +1,19 @@
+% Text converted from the supplied Report 90072 .pdf.
+\chapter{Reading and checking the ECG}\label{ch:2}
+
+The ECG was read using the format and calibration information in its header \cite{signalformat}. The sampling rate is 100 Hz, meaning that 100 samples were recorded each second. Sample positions were divided by 100 to obtain time in seconds. The gain of 200 and baseline of zero were used to convert stored ECG values into millivolts.
+
+The WFDB tools were used to read the annotations \cite{annotformat,wfdbio}. Plotting the heartbeat marks on the ECG allows their locations to be checked against the visible peaks. The upper panel in Figure~\ref{fig:1} shows the first ten seconds, while the lower panel shows the minute labels across the full record.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.97\linewidth]{figures/ecg_annotations.png}
+\caption{ECG and annotation checks. The upper panel shows 11 supplied heartbeat marks. The lower panel shows full-record minute labels; grey marks the unlabelled tail.}\label{fig:1}
+\end{figure}
+
+\section{Understanding the annotations}
+
+The symbol N has different meanings in the two annotation files. In the QRS file it is a heartbeat symbol and does not confirm that every beat is normal. In the apnea file, N labels a minute without annotated apnea, while A labels a minute with apnea. An A label does not mean that breathing stopped for the whole minute.
+
+The first-hour segment is fully covered by minute labels. The supplied heartbeat marks still require checking because the database describes them as unaudited \cite{physionet2000}.
+

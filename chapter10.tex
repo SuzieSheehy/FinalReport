@@ -1,0 +1,40 @@
+% Text converted from the supplied Report 90072 .pdf.
+\chapter{Conclusions and running the code}\label{ch:10}
+
+\section{Conclusion}
+
+The project extracted respiratory-related frequency information from RR intervals and R--S amplitude. R--S amplitude agreed more closely with airflow on average in the first hour of record a01. However, errors depended on the frequency range and signal quality. The result supports further investigation, rather than a claim that the method measures breathing accurately in all windows.
+
+The next steps would be to review breaths manually in selected windows, improve the quality checks and test the same settings on additional recordings. Comparing different window lengths would also show whether two minutes is a suitable choice.
+
+\section{Running the analysis}
+
+The project folder contains the analysis scripts, data, saved results and the notebook a01\_batch.ipynb. From that folder, the numerical analysis and figures can be regenerated with:
+
+\begin{lstlisting}[language={},caption={Commands for the analysis project.}]
+python -m pip install -r requirements.txt
+python run_analysis.py
+python make_report_figures.py
+\end{lstlisting}
+
+The notebook calls the same analysis script. Its stored outputs were captured from a standalone Python execution, rather than a Jupyter-kernel run. The calculations use the supplied recordings, not simulated observations.
+
+Window results are saved in \texttt{results/window\_results.csv}, with grouped results in summary\_metrics.csv. The file \texttt{run\_info.json} records the run settings and software versions. The default analysis uses the first-hour respiratory extract.
+
+\begin{table}[H]
+\centering
+\caption{Software versions recorded for the analysis.}
+\small
+\begin{tabular}{lr}
+\toprule
+\textbf{Software} & \textbf{Version} \\
+\midrule
+Python & 3.12.14 \\
+NumPy & 2.3.5 \\
+SciPy & 1.17.0 \\
+WFDB & 4.3.1 \\
+Matplotlib & 3.10.8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+

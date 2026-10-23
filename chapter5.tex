@@ -1,0 +1,29 @@
+% Text converted from the supplied Report 90072 .pdf.
+\chapter{Preparing the signals and estimating frequency}\label{ch:5}
+
+\section{Using a common time grid}
+
+The first hour was divided into 30 non-overlapping two-minute windows. RR values occur at beat times, which are not equally spaced. Both ECG features were therefore linearly interpolated to 4 Hz, giving one value every 0.25 s. This creates a regular grid for frequency analysis; it does not add new measured beats. Only RR intervals with both beats inside a window were included.
+
+The respiratory signals were also reduced from 100 to 4 Hz. The \texttt{resample\_poly} function applies a low-pass filter before reducing the sampling rate, helping prevent high-frequency content from appearing at misleading lower frequencies \cite{resamplepoly}. The reference signals were then placed on the same time grid as the ECG features.
+
+\section{Missing respiratory samples}
+
+The first hour contained five missing chest samples and 80 missing abdominal samples. Airflow had none. Gaps were temporarily filled so filtering could run, but a channel estimate was rejected if its analysis interval, or a three-second margin on either side, contained an original gap. This affected one chest window and 22 abdominal windows. The airflow comparisons remained available for all 30 windows.
+
+\section{Finding the strongest frequency}
+
+A straight-line trend was removed from each signal to reduce slow drift. A Hann window was then applied to reduce abrupt changes at the segment ends. A periodogram, calculated with SciPy, estimated the power spectral density (PSD), showing how power is distributed across frequencies \cite{periodogram}. This calculation uses a fast Fourier transform (FFT) to analyse the signal by frequency. The frequency with the greatest power inside the search range was selected.
+
+The main search range was 0.15--0.40 Hz. A wider range of 0.10--0.50 Hz was also tested to see how much the choice affected the answer. The selected frequency was converted from cycles per second to cycles per minute:
+
+\begin{equation}\label{eq:rate}
+\text{Estimated rate} = 60 \times f_{\mathrm{peak}}
+\end{equation}
+
+For example, 0.20 Hz corresponds to 12 cycles/min. The report uses cycles/min because these are spectral estimates rather than manually counted breaths. A strong peak can also come from noise or other signal changes.
+
+\section{Comparing the estimates}
+
+Mean absolute error (MAE) is the average size of the difference between an ECG estimate and the airflow estimate. Root mean squared error (RMSE) gives more weight to large differences. Bias is the average signed difference; a negative value means that the ECG estimates tend to be lower. Here, all three describe agreement with the airflow spectrum, whose peaks have not been checked against individual breaths.
+

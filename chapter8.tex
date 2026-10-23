@@ -1,0 +1,30 @@
+% Text converted from the supplied Report 90072 .pdf.
+\chapter{Comparison using apnea labels}\label{ch:8}
+
+As an extension, the windows were grouped using the supplied minute labels. A window was classed as all N if both minutes had N labels, all A if both had A labels, and mixed if it contained both. The first hour contained six all-N windows, 23 all-A windows and one mixed window.
+
+\begin{table}[H]
+\centering
+\caption{Main-range MAE by minute-label group. MAE is in cycles/min.}
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Window group} & \textbf{Windows} & \textbf{RR MAE} & \textbf{R--S MAE} \\
+\midrule
+All N & 6 & 1.18 & 1.18 \\
+All A & 23 & 3.88 & 1.97 \\
+Mixed A/N & 1 & 0.00 & 0.51 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The methods had similar MAE in the all-N group. R--S amplitude had a lower MAE in the all-A group, where the difference between the methods was more noticeable. The mixed group contains only one window, covering the label change at 13 minutes.
+
+These groups differ in size and occur at different times in the same recording. Their differences may also reflect signal quality or changing ECG and breathing patterns. The results therefore do not show that apnea caused the larger RR errors. Minute labels also do not identify individual breaths or exact event times.
+
+\section{Limits of the analysis}
+
+The study has three main limitations. First, it uses only one hour from one person's recording, so the findings may not apply to other people. Second, airflow peaks were used as the reference without manually counting breaths. A peak may represent noise or a repeated pattern that does not match each breath. Third, the supplied beat marks and the simple quality rules can leave errors in the ECG features.
+
+The first window was used during method development, so the study does not have a separate test set. The frequency ranges and two-minute window length are choices that should be tested on further data. The project estimates frequencies; it does not classify apnea or validate a clinical monitor.
+

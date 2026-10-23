@@ -1,0 +1,25 @@
+% Text converted from the supplied Report 90072 .pdf.
+\chapter{Further checks}\label{ch:7}
+
+\section{Looking at individual windows}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.97\linewidth]{figures/agreement_scatter.png}
+\caption{ECG estimates plotted against airflow estimates in the main range. Points on the diagonal agree. The two blue points passed the additional quality screen.}\label{fig:6}
+\end{figure}
+
+Several RR points lie well below the diagonal, while R--S points show fewer large downward differences. Airflow peaks can also change because of irregular breathing, movement or a different frequency component becoming strongest. Inspecting the waveforms is necessary to understand individual mismatches.
+
+\section{An additional quality screen}
+
+A window passed the screen only if it had no flagged RR intervals, usable abdominal data, abdominal and airflow estimates within 2 cycles/min, and neither reference peak at the edge of the search range. The screen did not use ECG-to-airflow error to choose windows.
+
+Only two of 30 windows passed in each range, a retention rate of 6.7\%. Missing abdominal samples affected 22 windows and were a major reason for the low retention. In the main range, the two retained RR estimates matched the airflow bins, while R--S MAE was 0.51 cycles/min. These small errors describe too few windows to support a general accuracy claim.
+
+The screening rule therefore needs improvement. Isolated gaps and longer periods of poor signal may need different treatment. Reviewing selected waveforms manually would help develop a more useful rule.
+
+\section{Reading the error measures together}
+
+A small bias does not necessarily mean a small error. For example, the broad-range R--S bias was 0.10 cycles/min, but its MAE was 2.33 cycles/min. Positive and negative differences can cancel in the bias. The 30 windows also come from one recording, so they are not 30 independent participants.
+
