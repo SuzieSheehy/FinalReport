@@ -1,0 +1,49 @@
+\chapter{Discussion}\label{ch: discussion}
+
+\section{Steady State}
+
+Since each site contains at most three grains after all toppling activity has ceased, the average pile height cannot exceed three. Starting from an empty grid, I expect the average height to increase initially. As sand accumulates, toppling at the boundaries allows grains to leave the system, reducing the average height, while further grain additions increase it. Eventually, I expect the average height to fluctuate around a stable value, as the average loss of sand balances the input.
+
+According to Figure~\ref{fig:average_height}, the average height initially increases as the number of grains added increases. By about 10,000 grain additions, the average height fluctuates around 2.1, consistent with the expected steady-state behaviour.
+
+A process is at steady state if all properties of the system remain constant over time \cite{DORAN202581}. A process being in a statistically stationary state usually means that the statistical properties of the system, such as its distribution, do not change over time. In an equilibrium state, the system has no potential energy driving force for change, and all opposing forces are counterbalanced, so the properties of the system do not change over time \cite{DORAN202581}.
+
+I expect the BTW model to reach a statistically stationary state. According to the definition of equilibrium above, a system in equilibrium has no driving force for change. However, the BTW model is continuously driven by sand addition, with sand lost through the open boundaries. I expect the average height to fluctuate around a stable value, which is consistent with statistically stationary behaviour.
+Therefore, the average height can be used to characterise this state.
+
+\section{Sampling and Ergodicity}
+
+In general, sampling a system over time means recording the properties of interest from the same system at different times. These records can be used to study how the properties vary over time and to estimate their statistical distributions. On the other hand, sampling an ensemble of systems means recording the properties of interest from many systems of the same model at a fixed time\cite{Frigg_Werndl_2024}.
+
+A dynamical system is ergodic if its long-term time averages equal its space averages for all initial conditions. In particular, sampling an ergodic system over a sufficiently long time can yield the same statistical results as sampling an ensemble of systems \cite{Frigg_Werndl_2024}.I expect the BTW model to be ergodic in its statistically stationary state because random sand addition and repeated toppling continually change the arrangement of sand, allowing a single pile to sample many different arrangements over time.
+
+\section{Correlation}
+
+For the four avalanche properties recorded, I expect positive correlations between them. In particular, Topples, Area, and Length may have stronger correlations with one another than with Loss. Based on their definitions, avalanches involving more sites and spreading farther generally require more toppling events. Loss may have weaker correlations with the other properties because it only increases when toppling occurs at the boundary.
+
+The Spearman correlation coefficients obtained from the simulations support this opinion. As shown in Table~\ref{tab:corr_1}, the correlations between Topples and Area, Topples and Length, and Area and Length are all greater than 0.9, while the correlations of Loss with the other three properties are approximately 0.63.
+
+
+\section{Extended Model}
+
+One noticeable difference is the spatial distribution of sand. The extended model forms a pyramid-shaped pile, with heights generally increasing from the boundaries towards the centre. The basic BTW model exhibits a disordered spatial distribution. Although sand is added at randomly selected sites in both models, the extended model develops a clear spatial pattern.
+
+This difference is due to the change in the toppling rules. In the extended model, sand leaves the system when a boundary site contains four or more grains. After all toppling activity has ceased, each boundary site therefore contains at most three grains. A site immediately next to the boundary can contain at most six grains without toppling. Similarly, sites farther from the boundary can support greater heights without toppling, allowing more sand to accumulate towards the centre.
+
+As more grains are added, the heights in the central region increase, while boundary heights remain at most three after stabilisation. This helps explain the pyramid shape observed in the simulation. The greater amount of sand that the extended model can retain also helps explain why more grain additions are needed before the average height levels off, which occurs after approximately 190,000 additions in this simulation.
+
+After 190,000 grain additions, 9,622 of the remaining 10,000 observations record Loss = 1, meaning that the average height remains unchanged after a grain is added and all toppling activity has ceased. Loss = 0 and Loss = 2 are observed 185 and 193 times, respectively. Therefore, over these final 10,000 additions, the total number of grains in the system decreases by only eight, corresponding to a decrease of $0.0032$ in the average height. 
+
+For the basic BTW model, the observed Topples frequencies show approximate power-law behaviour, appearing approximately linear on the log-log plot. For the extended model, the Topples frequencies decrease approximately linearly on linear axes up to about 25, followed by low frequencies for larger values. Area shows a similar pattern, and the frequency distributions of Topples and Area are nearly the same. Since Topples counts all toppling events while Area counts distinct toppled sites, this similarity suggests that repeated toppling at the same site within an avalanche may be uncommon. 
+
+It is also worth noting that, unlike in the basic model, the frequency at zero for both Topples and Area is much lower than the frequencies of some small positive values. This indicates that certain small avalanches occur more frequently than events with no toppling under the extended toppling rules.
+ 
+ Length also shows an approximately linear decrease in frequency over the observed range, differing from the pattern observed in the basic model.
+ 
+\section{Limitations and Further Studies}
+
+First, this project only simulates grids of one size, which is $50 \times 50$. How the grid size affects the distributions of system properties is not investigated. Grids of different sizes could be tested to explore whether and how grid size affects these properties.
+
+Second, the distribution-fitting process only uses plots, MAE and RMSE to evaluate the fits. Some discrepancies remain between the fitted and observed frequencies, particularly for Length, for which the fitted distribution provides only a rough approximation. Further statistical tests could be used to examine the fits, and additional candidate distributions could be explored.
+
+Finally, only one pile is simulated for the extended model. A large number of grain additions is needed for the average height to stabilise, making the simulation time-consuming. More independent simulations could help determine whether the observed properties are consistent across different runs.
