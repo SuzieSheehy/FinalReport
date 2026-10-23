@@ -1,0 +1,12 @@
+{
+  "original_source_sha256": "d57fb2816802bd8c26dd97495daedefe21221dbd812f7acd47b5c5ad91a98812",
+  "verbatim_sections": {
+    "cover.tex": "9bf58acf4d62603de04a084be77fbf2deefded1326e904f67e17ded3a6f9de31",
+    "summary.tex": "fa9ddc67f8f08616b70c345e17ca523ef66343ba4ee1ba87a5855376c8f835b5",
+    "chapter1.tex": "01574187b0dfe6e71f1a9fd5ae6ac98eefc97aca20c2b463376168ba59f16505",
+    "appendix1.tex": "fa6ba838e5786340cee1d01f72495b3707d66f53fd472926f2e743b95b2a7d71",
+    "bibliography.tex": "c628a61352f16f47aaffe7461f96fc62898d88878eb52f7ca67ba81ac29abe6d"
+  },
+  "all_sections_match_original_source_exactly": true,
+  "desktop_latex_compile": "success"
+}

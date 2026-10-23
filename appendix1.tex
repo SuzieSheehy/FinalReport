@@ -1,15 +1,22 @@
-\chapter{Program flowchart}\label{app:flowchart}
 
-A flowchart is a conceptual aid which highlights input and output that a program should have, as well as the consequences of any decisions that it must make. Sometimes, these will include \textit{pseudocode}, which mimics some of the more common coding structures in a universal way. (For instance, you might say `loop over all array addresses'.)\\
+\chapter{Reproducibility Notes}
 
-This particular flowchart indicates a program that reads three numbers from the terminal, and then produces the largest of the numbers back to the terminal. The colour scheme is not mandatory, but helps the reader to know what is going on at a glance.\\
+The core analysis is reproduced from the project root using
 
-This flowchart was drawn with the free `Lucidcharts' extension to Google Docs, from which the result was exported as an \texttt{svg} file, and any unnecessary features were then cropped out with Inkscape. Choose any method you wish to create your own flowchart!
+\begin{verbatim}
+.\.venv\Scripts\python.exe run_analysis.py --no-download
+\end{verbatim}
 
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=0.50\linewidth]{figures/flowchart.pdf}
-\end{center}
-\caption{A flowchart for the determination of the largest of three user-selected numbers.}
-\label{fig:flowchart}
-\end{figure} 
+and the exploratory classifier using
+
+\begin{verbatim}
+.\.venv\Scripts\python.exe apnea_classification.py
+\end{verbatim}
+
+The report figures are generated from the project analysis and stored in
+the \texttt{figures} directory. The five-minute and minute-level result tables
+are stored in \texttt{results/respiratory\_rate\_5min\_windows.csv} and
+\texttt{results/respiratory\_rate\_by\_apnea\_minute.csv}. The additional
+summary figures used to discuss robustness are generated directly from these
+results and from the raw ECG samples. All numerical values reported in the
+Results chapter can therefore be recreated from the supplied data and code.

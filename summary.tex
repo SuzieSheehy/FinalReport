@@ -1,0 +1,7 @@
+\chapter*{Summary}
+\addcontentsline{toc}{chapter}{Summary}
+
+This report investigates whether respiratory-related information can be estimated from long-duration electrocardiogram (ECG) recordings. PhysioNet Apnea-ECG record \texttt{a01}, sampled at 100 Hz over approximately 8.21 hours, was used to develop a reproducible Python workflow. The supplied QRS annotations were used to calculate 29,937 R--R intervals. These intervals were checked for clearly unrealistic values, interpolated to a regular 4 Hz grid, detrended, and analysed using Welch's power spectral density method within the 0.15--0.40 Hz frequency range.
+
+The first five-minute window produced an estimated respiratory-related rate of 9.4 breaths/min. Across 98 complete five-minute windows, the estimates ranged from 9.38 to 19.69 breaths/min, with a mean of 13.58 breaths/min, showing that the selected spectral component changed over time. The analysis therefore shows that a reproducible respiratory-related frequency estimate can be extracted from the R--R interval series. However, the estimates were not directly compared with a respiratory reference signal, so they should be interpreted as ECG-derived respiratory-related estimates rather than validated measurements of breathing rate.
+

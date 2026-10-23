@@ -1,33 +1,18 @@
-\documentclass[a4paper, 10.5pt, oneside]{report}
-%------------PREAMBLE
-\include{preamble}
-\usepackage{morefloats}
-%---------------------------
-                                          
+\documentclass[a4paper,10.5pt,oneside]{report}
+\input{preamble}
 \begin{document}
-
-%---------------------------TITLE PAGE
 \include{cover}
-%---------------------------
-
-%---------------------------TABLE OF CONTENTS
+\pagenumbering{roman}
+\input{summary}
+\clearpage
 \tableofcontents
-%---------------------------
-
-%---------------------------MAIN BODY
+\clearpage
+\pagenumbering{arabic}
 \input{chapter1}
-%---------------------------
-
-%---------------------------APPENDICES
 \begin{appendices}
- \input{appendix1}
+\input{appendix1}
 \end{appendices}
-%---------------------------
-
-%---------------------------BIBLIOGRAPHY
-\addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{abbrv}
-\bibliography{biblio}
-%---------------------------
-
+\clearpage
+\addcontentsline{toc}{chapter}{References}
+\input{bibliography}
 \end{document}
