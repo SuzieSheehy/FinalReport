@@ -1,0 +1,148 @@
+\section{Results and Analysis}
+Here we present some simulation results to test the speed and accuracy of the PCA-KF model. In addition, we provide a result which illustrates how `stale' a static PCA estimate can get when the data is subjected to the covariance rotation as described in Section \ref{sec:rotcov}. Note that estimation error is calculated by measuring each of:
+\begin{itemize}
+    \item The root mean squareed innovation: $\sqrt{\frac{1}{n-n_{burn}}\sum_{t=1}^{n-n_{burn}}\delta_t^2}$, and
+    \item The root mean squared state error: $\sqrt{\frac{1}{n-n_{burn}}\sum_{t=1}^{n-n_{burn}}\|\bm{\beta}_{t|t}-\bm{\beta}_t\|^2}$
+\end{itemize}
+\subsection{Dynamic Projection Tests}
+First we present a simulation result with the following hyperparamters:
+\begin{itemize}
+    \item $(n,n_{burn},p)=(2500,400,200)$, where $n$ is the number of observations, $p$ is the state dimension, and $n_{burn}$ is the number of observations used to initialise PCA.
+    \item Initial PCA proportion of variance retained (target): $0.80$.
+    \item Maximum angle increment (in radians) $\theta=0.005$, or, $\frac{2\pi}{\theta}\approx 1257$.
+    \item $\mathrm{Var}(u_t) = 10^{-2}$
+    \item $\veps_t$ construction scale parameter is $10^{-2}$; this scales the $\bm{\veps}$ covariance.
+    \item $x_t$ construction scale parameter is $10^{-2}$; this scales the $\bm{x}$ covariance.
+\end{itemize}
+We fix an initial PCA rotation $L$, then at time $t$ (of the non-burn data), we find the proportion of variance explained by $L$ of the true covarinace $\Sigma_t$ as: $\frac{\mathrm{tr}(L^T\Sigma_t L)}{\mathrm{tr}(\Sigma_t)}$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/propvar.png}
+    \caption{Proportion of variance retained over time.}
+    \label{fig:propvar}
+\end{figure}
+We can observe from Figure \ref{fig:propvar} that the explained variance of the initial $q$ eigenvectors of the true covariance matrix drops sharply. Indeed, past roughly $1000$ iterations, the proportion of variance plateaus at $\sim 0.33$. This suggests the need to update our representations as we iterate through the algorithm. Interestingly, the plateau point is roughly where the maximum allowed period is, suggesting this is a useful heuristic cutoff point for where the projection gets stale.
+\subsection{Dynamic Filter}
+Now, we provide a simulation result for the full PCA-KF algorithm with the following hyperparamters:
+\begin{itemize}
+    \item $(n,n_{burn},p)=(2500,500,200)$
+    \item Initial PCA proportion of variance retained (target): $0.90$ for the chaining experiment.
+    \item Angle increment (in radians) $\theta=0.0002$, to prevent excessive shrinkage of our estimate.
+    \item $\mathrm{Var}(z_t) = 10^{-2}$
+    \item $\veps_t$ construction scale parameter is $10^{-2}$
+    \item $x_t$ construction scale parameter is $10^{-2}$
+\end{itemize}
+\begin{figure}[H]
+    \caption{KF estimation error vs proportion of variance}
+    \centering
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/innov_vs_prop.png}
+        \caption{RMSE($\hat{y},y$)}
+        \label{fig:placeholder}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/level_vs_prop.png}
+        \caption{RMSE($\hat{\beta},\beta$)}
+        \label{fig:placeholder}
+    \end{subfigure}
+    \label{fig:rmseprop}
+\end{figure}
+We see from Figure \ref{fig:rmseprop} that increasing the retained proportion of variance reduces the error in both metrics, well beyond the margin of error. However, the actual difference for the $\bm{\beta}$ RMSE is only increased by $\sim 13\%$ when going from $0.8$ to $0.2$ proportion of variance.
+
+\begin{figure}[H]
+    \caption{KF estimation error vs chaining mode}
+    \centering
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/innov_vs_chain.png}
+        \caption{RMSE($\hat{y},y$)}
+        \label{fig:placeholder}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/level_vs_chain.png}
+        \caption{RMSE($\hat{\beta},\beta$)}
+        \label{fig:placeholder}
+    \end{subfigure}
+    \label{fig:rmsechain}
+\end{figure}
+
+From Figure \ref{fig:rmsechain}, we note that the chaining approach is convincingly less accurate than static regarding the innovation error, but less convincingly so for the state error. Ergo, we see no advantage to chaining projections over just keeping the static PCA. It appears that the loss of information across the iterations is sufficient that it worsens accuracy, despite it attempting to correct the drift in the projection of the static PCA. This may be inevitable if using any sort of projection chaining approach, since we are always right-multiplying within an existing space, meaning we can at best retain information over iterations. Indeed, our proposed projection chaining method is  mean-squared optimal \textit{within} the projection chaining framework. Perhaps worth noting is that chaining appeared to yield less dispersion in errors across different runs, despite having a higher mean error. This could be related to the `shrinkage' of the estimate over time due to loss of subspace information.
+
+For Figures \ref{fig:innovbyq} - \ref{fig:acf}, we note that these are run with $(n,n_{burn},p,\text{prop}) = (2000, 400, 200, 0.80)$ with a maximum rotation angle of $0.0001$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/innov_by_q.png}
+    \caption{RMS Innovation vs. $\alpha$}
+    \label{fig:innovbyq}
+\end{figure}
+
+Figure \ref{fig:innovbyq} shows that the $Q$ scaling factor affects the estimation accuracy greatly if it is too large. The idea behind this is that since $\bm{Q} = \mathrm{Cov}(\bm{\beta}_t - \bm{\beta}_{t-1})$, then if we set this to be too large, our estimates become too sensitive to new updates, thus leading to excessive variance in our state estimates (hence large error). Indeed, this propogates to larger innovations $\delta_t = y_t - \hat{y}_t$. Interestingly, it appears difficult to make $\bm{Q}$ `too small', at least in the grid we chose. This is a useful robustness result, since we can only test so many values of $\bm{Q}$ before leading to computational intractability, thus defeating the purpose of the PCA-KF algorithm.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.67\textwidth]{figures/q_beta.png}
+    \caption{State estimates for different $\alpha$ values}
+    \label{fig:betabyq}
+\end{figure}
+
+Figure \ref{fig:betabyq} illustrates the interpretation of large vs small values of $\alpha$ (and by extension, $\bm{Q}$). Note that these are the state estimates on the native $\RR^p$ scale (that is, on the scale of the true states). It is immediately clear that $\alpha=10^{-1}$ yields very high variance in our state results, and the opposite for $\alpha=10^{-9}$. In particular, this reinforces the importance of searching a wide range of $\alpha$ values since we cannot be sure of the true state's variance, and our choice can greatly affect this assumption.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.67\textwidth]{figures/scree_example.png}
+    \caption{Cumulative Scree Plot for true initial covariance}
+    \label{fig:scree}
+\end{figure}
+
+Figure \ref{fig:scree} illustrates the number of components required to retain a minimum level of variance retention. For example, at $50\%$ of variance retained, we need only $\sim30$ components out of the $200$ total. We also observe that the $50$ components with the least variance explained cumulatively explain very little variance; only $\sim 1-2\%$. So many components can of course greatly increase the runtime of the algorithm for almost negligble explanatory power, citing the earlier mentioned $\sim$cubic relationship between time complexity and the state dimension. A useful heuristic from this plot is that half of the components appear to explain $\sim 90\%$ of the variance.
+
+\begin{figure}[H]
+    \caption{Autocorrelation Function (ACF) Plots}
+    \centering
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/acf_best.png}
+        \caption{ACF for highest Shapiro-Wilk statistic}
+        \label{fig:placeholder}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/acf_worst.png}
+        \caption{ACF for lowest Shapiro-Wilk statistic}
+        \label{fig:placeholder}
+    \end{subfigure}
+    \label{fig:acf}
+\end{figure}
+
+Figure \ref{fig:acf} shows autocorrelation function (ACF) plots of the normalised innovations $(S_t^{\frac{-1}{2}}\delta_t)_t$ for both the `worst' and `best' values of $\alpha$. The way to read it is that the value at Lag $k$ shows the correlation between the process and itself, shifted $k$ timesteps forward. We note that since we expect the process to be white noise, then one should also expect all the correlations for all lags (apart from $0$) to be $\sim 0$. Curiously, this appears to be the case for \textit{both} the best and worse values of $\alpha$, indicating robustness of the autocorrelation property to misspecification. Of couse, we also have the $N(0,1)$ property which needs to be satisfied, so the ACF alone does not fully capture the quality of the KF fit. 
+
+Finally, we calculate the fit times and number of components retained for $(n,n_{burn})=(2000,400)$, prop=$0.90$, same scale options as previous simulations, for $p\in \{50,100,200,300\}$. The algorithm was run on an Intel i7 12700KF CPU. As observed in Table \ref{tab:label}, we see that the time difference between $p=50$ and $p=300$ is roughly $17$x, which is considerably less than the expected $6^3=216$. However, we note that there are considerable overheads in the data generation component which do not necesasrily scale with $p^3$. In addition, the ratio in the $q$ values of these runs is $4.7$, so the reduced dimension appears to scale sublinearly with $p$, which is promising for particularly large values of $p$. A limitation is that this hardware cannot handle substantially larger values of $p$, like $p=1000$, since we run out of memory in the data generation phase (the simulataneous covariance matrix generation).
+
+\begin{table}[H]
+    \centering
+    \caption{Runtime and Components retained: Average of $5$ runs.}
+    \begin{tabular}{c c c c}
+        \toprule
+        $p$ & mean\_time $\pm$ std. err. (s) & $q$ \\
+        \midrule
+        50 & 0.379 $\pm$ 0.001 & 17.2 \\
+        \midrule
+        100 & 0.945 $\pm$ 0.005 & 32.4 \\
+        \midrule
+        200 & 3.402 $\pm$ 0.010 & 59.2 \\
+        \midrule
+        300 & 6.378 $\pm$ 0.018 & 80.9 \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:label}
+\end{table}
+
+For a clean optimisation comparison, we can compare the fast block diag algorithm with the base one on $(n,p) = (3000, 200)$ at $0.80$ prop. Averaging 10 calls to each function gives $0.839\pm 0.004$s and $1.741\pm 0.007$s for the fast and base algorithms respectively, where the error is the standard error. So we see the block diagonal matrix generation approximately halve in runtime under the numpy.einsum approach, indicating successful optimisation on that front.

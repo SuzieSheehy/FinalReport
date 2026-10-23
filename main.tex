@@ -1,7 +1,26 @@
 \documentclass[a4paper, 10.5pt, oneside]{report}
 %------------PREAMBLE
 \include{preamble}
+\setlength{\parskip}{0.6em}
+% \setlength{\parindent}{0pt}
 \usepackage{morefloats}
+\usepackage[capitalise, noabbrev]{cleveref}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{subcaption}
+\lstdefinestyle{terminal}{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  showstringspaces=false,
+}
+\newcommand{\veps}{\varepsilon}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\EE}{\mathbb{E}}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\theequation}{\arabic{equation}}  
 %---------------------------
                                           
 \begin{document}
@@ -12,22 +31,35 @@
 
 %---------------------------TABLE OF CONTENTS
 \tableofcontents
+\newpage
 %---------------------------
 
-%---------------------------MAIN BODY
-\input{chapter1}
-%---------------------------
-
+%--------------------------- INTRODUCTION/BACKGROUND
+\input{introduction.tex}
+\input{background.tex}
+%--------------------------- THE ALGORITHM
+\newpage
+\input{dynamic_projections.tex}
+\input{dynamic_pcakf.tex}
+%---------------------------RESULTS etc.
+\newpage
+\input{results.tex}
+\input{conclusion.tex}
 %---------------------------APPENDICES
-\begin{appendices}
- \input{appendix1}
-\end{appendices}
+\newpage
+\addcontentsline{toc}{chapter}{Appendix}
+\appendix
+\input{appendix1}
+% \begin{appendices}
+%  \
+% \end{appendices}
 %---------------------------
 
 %---------------------------BIBLIOGRAPHY
 \addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{abbrv}
-\bibliography{biblio}
+\printbibliography
 %---------------------------
 
+%--------------------------- DECLARATION OF GEN AI USE
+\input{declaration.tex}
 \end{document}
