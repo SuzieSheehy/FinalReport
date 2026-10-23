@@ -1,33 +1,601 @@
-\documentclass[a4paper, 10.5pt, oneside]{report}
-%------------PREAMBLE
-\include{preamble}
-\usepackage{morefloats}
-%---------------------------
-                                          
+% COMP90072 report, completed against the Complex Systems handout and rubrics.
+% Original cover adapted from https://github.com/SuzieSheehy/FinalReport.
+% Empirical snippets are generated from the saved CSVs; see README.md.
+\documentclass[11pt,a4paper,oneside]{report}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{booktabs,tabularx,array}
+\usepackage{graphicx,xcolor}
+\usepackage{tikz,pgfplots}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=1.18}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage{placeins}
+\usepackage{needspace}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{cite}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\definecolor{teal}{HTML}{167D8D}
+\definecolor{amber}{HTML}{BA6B20}
+\definecolor{ink}{HTML}{18384B}
+\hypersetup{
+ pdftitle={Effect of Driving Location on Avalanche Statistics in the BTW Sandpile Model},
+ pdfauthor={Fangyu Shen},
+ pdfsubject={COMP90072 Complex Systems Project, 18 October 2026}}
+\urlstyle{same}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\U}{\mathrm{U}}
+\newcommand{\B}{\mathrm{B}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{3pt}
+\setlist{itemsep=2pt,topsep=4pt}
+\captionsetup{font=small,labelfont=bf}
+% Let text fill space around floats while protecting paragraph endings.
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+\setlength{\intextsep}{12pt plus 2pt minus 2pt}
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\titleformat{\chapter}[display]{\normalfont\LARGE\bfseries}
+  {\large\chaptertitlename\ \thechapter}{6pt}{}
+\titlespacing*{\chapter}{0pt}{0pt}{16pt}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,
+ frame=single,rulecolor=\color{gray!40},showstringspaces=false}
+\pagestyle{plain}
+\setcounter{tocdepth}{1}
+\setcounter{secnumdepth}{1}
+\numberwithin{equation}{chapter}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+
 \begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+\vspace*{12mm}
+{\LARGE\scshape The University of Melbourne\par}
+\vspace{16mm}
+{\Large\scshape Project Report\par}
+\vspace{5mm}
+\rule{\linewidth}{0.5mm}\par
+\vspace{6mm}
+{\Large The Art of Scientific Computation\par}
+\vspace{7mm}
+{\huge\bfseries Effect of Driving Location on Avalanche Statistics in the BTW Sandpile Model\par}
+\vspace{6mm}
+\rule{\linewidth}{0.5mm}\par
+\vspace{10mm}
+\begin{minipage}[t]{0.45\textwidth}
+\raggedright\large
+\textit{Author:}\par Fangyu Shen\par
+\vspace{3mm}\normalsize Student ID: 1278034
+\end{minipage}\hfill
+\begin{minipage}[t]{0.45\textwidth}
+\raggedleft\large
+\textit{Subject code:}\par COMP90072\par
+\vspace{3mm}\normalsize Complex Systems Project
+\end{minipage}\par
+\vfill
+{\large Faculty of Science\par}
+{\large The University of Melbourne\par}
+\vspace{8mm}
+{\large 18 October 2026\par}
+\vspace{12mm}
+{\normalsize Subject co-ordinators:\par}
+\vspace{2mm}
+{\normalsize A/Prof. Suzie Sheehy \& Prof. Christian Reichardt\par}
+\vspace{10mm}
+\end{titlepage}
+\pagenumbering{roman}
+\hypersetup{pageanchor=true}
 
-%---------------------------TITLE PAGE
-\include{cover}
-%---------------------------
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+This project examines how the location of grain additions affects avalanche statistics in the Bak--Tang--Wiesenfeld sandpile, comparing uniform driving with a mixture of 80\% central-patch and 20\% whole-grid additions on the same $31\times31$ open lattice.
 
-%---------------------------TABLE OF CONTENTS
+Three independent runs were analysed for each driving rule, using a primary window of 20,000 additions per run after discarding the first 20,000 additions. Mean topplings per addition rise from 38.0043 under uniform driving to 67.5938 under centre-biased driving (ratio 1.7786), compared with finite-lattice predictions of 38.2256 and 67.6840 (ratio 1.7706). Most of the observed increase reflects larger avalanches when they occur: the conditional mean number of topplings rises from 89.32 to 154.61, while the probability of triggering an avalanche rises from 0.4255 to 0.4372. Under both driving rules, mean loss is approximately one grain per addition and mean stable height is close to 2.082.
+
+The finite-lattice mean-response identity explains how driving location changes avalanche activity under a shared stationary configuration measure. Conservation checks and seeded replay of all 360,000 production events support the numerical results. Tail fits vary with the lower cutoff, while block-length sensitivity limits the reliability of confidence intervals.
+
+\medskip
+\noindent\textbf{Keywords:} Abelian sandpile; self-organized criticality; avalanche statistics; stochastic simulation; finite-size effects.
+
+\clearpage
+\begingroup
+\small
+\setlength{\parskip}{0pt}
 \tableofcontents
-%---------------------------
+\endgroup
+\clearpage
+\pagenumbering{arabic}
 
-%---------------------------MAIN BODY
-\input{chapter1}
-%---------------------------
+\chapter{Introduction}
+\label{ch:introduction}
+\section{Motivation and research question}
+\label{sec:motivation}
+In the Bak--Tang--Wiesenfeld (BTW) model, each addition introduces a single grain, yet the resulting avalanche can spread across many sites and cause some to topple repeatedly. This idealized lattice model provides a setting for studying how local threshold interactions generate collective behaviour~\cite{bak1987,bak1988}.
 
-%---------------------------APPENDICES
-\begin{appendices}
- \input{appendix1}
-\end{appendices}
-%---------------------------
+Following extension 5 of the project handout, this study asks: \emph{How does preferential addition near the centre affect avalanche statistics compared with uniform addition on the same finite lattice?} Avalanche statistics depend on both the configuration before addition and the site at which the grain is added. As shown in Section~\ref{sec:ergodicity}, the two driving rules share the same stationary distribution over configurations, yet their avalanche statistics can differ. Similar mean heights therefore need not imply similar avalanche activity, making the driving distribution relevant to the interpretation of simulations on a finite lattice.
 
-%---------------------------BIBLIOGRAPHY
+To isolate the effect of the addition-site distribution, we hold all other model rules fixed and examine the number of topplings, avalanche area, spatial extent, and boundary loss, together with the relationships among these measures. Centre-biased addition is expected to increase the mean number of topplings because grains are added farther from the dissipative boundary. We also expect avalanches covering larger areas to involve more topplings, and avalanche area to be positively associated with spatial extent. We further hypothesise that boundary loss is less strongly correlated with these measures, since an avalanche can remain entirely within the grid without losing any grains.
+
+Mass balance provides an additional consistency check: once the stored mass shows no systematic drift, the long-run mean loss should equal one grain per addition.
+
+\section{Self-organized criticality and scale invariance}
+\label{sec:scaling}
+The model separates slow external driving from rapid local relaxation: a new grain is added only after the previous avalanche has ended. Interior topplings conserve grains, while boundary topplings dissipate them. Repeated additions sustain fluctuating activity without requiring a separate density parameter to be tuned to a critical value. These mechanisms motivate the model's use in studying self-organized criticality (SOC)~\cite{bak1987,bak1988,dhar1999}.
+
+To explain the connection between scaling and power laws, consider a positive observable with survival function $F(x)=\Prob(X\geq x)$. Suppose, within an ideal scaling range,
+\begin{equation}
+ F(bx)=b^{-\beta}F(x),\qquad b>0.
+\end{equation}
+Differentiating with respect to $b$ at $b=1$ gives $xF'(x)=-\beta F(x)$, hence $F(x)=Cx^{-\beta}$. The corresponding continuous density is proportional to $x^{-(\beta+1)}$. For integer avalanche sizes, this relationship is asymptotic rather than exact at every integer. The exponents of the survival function and density therefore differ by one. Fits to finite samples require a lower threshold and encounter an upper cutoff; a straight line on logarithmic axes alone does not establish a power law~\cite{clauset2009}.
+
+\chapter{Model and Theoretical Framework}
+\label{ch:theory}
+\section{Lattice, driving and observables}
+\label{sec:model}
+The lattice is $V=\{1,\ldots,31\}^2$, with $N=961$. Each site $x$ has an integer height $h_x\geq0$. A configuration is stable when $h_x\leq3$ at every site. A site with $h_x\geq4$ topples, losing four grains and sending one in each nearest-neighbour direction. Any grain sent outside $V$ leaves the system. The threshold remains four at edges and corners, where one and two grains are lost per toppling, respectively. An event consists of one addition and the subsequent relaxation, with the event index counting additions.
+
+Uniform driving has $p_\U(x)=1/N$. For the central patch $C=\{15,16,17\}^2$, centred on the middle site of the odd-sized grid, the extension uses
+\begin{equation}
+ p_\B(x)=\frac{0.2}{N}+\frac{0.8}{9}\one_{\{x\in C\}}.
+ \label{eq:drive}
+\end{equation}
+The whole-grid branch also includes $C$, so the total probability of selecting a site in $C$ under centre-biased driving is $0.8+0.2(9/961)=0.801873$, compared with $9/961=0.009365$ under uniform driving. Every site has a positive probability of receiving a grain.
+
+Figure~\ref{fig:model} illustrates the toppling rule, boundary loss and the two addition-site distributions.
+\input{results/model_schematic.tex}
+
+For one addition at $a$, let $n_x$ be the number of topplings at $x$ and $T=\{x:n_x>0\}$. The recorded quantities are defined in Table~\ref{tab:definitions}.
+
+\begin{table}[htbp]
+\centering
+\caption{Event measurements. Distances are measured in lattice spacings and loss in grains. Repeated topplings contribute to $S$ but not to $A$.}
+\label{tab:definitions}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{@{}llY@{}}
+\toprule
+Quantity & Definition & Interpretation\\
+\midrule
+Topplings $S$ & $\sum_x n_x$ & Total number of toppling operations.\\
+Area $A$ & $|T|$ & Number of distinct sites that topple.\\
+Loss $D$ & $\sum_x b_x n_x$ & Number of grains lost, where $b_x$ counts missing neighbours.\\
+Extent $R$ & $\max_{x\in T}\|x-a\|_1$ & Maximum distance from the addition site to a toppled site.\\
+Mean height $\bar h$ & $N^{-1}\sum_x h_x$ & Stored mass per site after stabilization.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Manhattan distance measures separation in nearest-neighbour steps, consistent with the four-neighbour connectivity, rather than the path actually travelled by a grain. If $T$ is empty, \mbox{$S=A=D=R=0$}. A single-site avalanche has $R=0$, and an avalanche confined to the interior can have $D=0$.
+
+\section{Boundaries, stationarity and mean height}
+\label{sec:stationarity}
+The open boundary of a finite lattice acts as a sink. On a closed finite lattice, continual additions increase total mass without limit, while a stable configuration can hold at most $3N$ grains. Stabilization must therefore eventually fail. More generally, termination is guaranteed only when every site has a path to a sink, so dissipation in one part of a disconnected system is insufficient.
+
+The situation differs on an infinite lattice where additions are confined to a finite subset. Starting from an empty lattice, there is no boundary through which mass can escape, so after $t$ additions the total mass is $t$. If the configuration stabilizes, at least $t/3$ sites must be occupied. The active or occupied region must therefore continue to expand; a finite source does not produce the global input--loss balance of the finite system. The existence of local limiting measures on infinite lattices requires an analysis of local behaviour beyond this total-mass argument~\cite{jarai2018}.
+
+A deterministic steady state has time-independent observables. A statistically stationary state has a time-independent probability law, even though individual configurations and measured observables fluctuate. Equilibrium also involves the absence of sustained external driving and, in a Markov description of equilibrium dynamics, detailed balance. The driven, dissipative sandpile is studied in a statistically stationary regime with ongoing input and output, rather than as a static pile or a system in thermodynamic equilibrium. Block means of height and activity, cumulative loss, and comparisons across seeds and observation windows provide practical diagnostics of this regime.
+
+For the mean height, a simple heuristic assigns equal probability to the four stable values $0,1,2,3$, giving $\E[h]=1.5$. This provides a reference for the simulated mean, although the assumption neglects both constraints on recurrent configurations and correlations between neighbouring heights. A more reliable qualitative expectation is $0\leq\bar h\leq3$, with continuing fluctuations. In this height convention, the infinite-volume square-lattice mean is $17/8=2.125$~\cite{jarai2018}, providing a reference value for the finite $31\times31$ open grid. Section~\ref{sec:baselineheight} compares these reference values with the data.
+
+\section{Toppling matrix and conservation}
+\label{sec:matrix}
+Using the positive-diagonal convention, the toppling matrix and update are
+\begin{equation}
+ \Delta_{xy}=
+ \begin{cases}
+ 4,&x=y,\\
+ -1,&x\sim y,\quad x,y\in V,\\
+ 0,&\text{otherwise}.
+ \end{cases}
+ \qquad T_x h=h-\Delta e_x\quad(h_x\geq4).
+ \label{eq:matrix}
+\end{equation}
+\Needspace{6\baselineskip}
+Here heights are represented by column vectors, and $\Delta$ is symmetric. The handout uses the opposite sign convention: its matrix is $B=-\Delta$, and its update is $h+B e_x$. The four conditions in the handout have the following interpretations:
+\begin{enumerate}
+ \item $B_{xy}=B_{yx}\geq0$ for $x\ne y$: a toppling transfers nonnegative amounts to other sites, with symmetric transfers on this undirected lattice. Symmetry is a property of this model, but is not required for every directed Abelian sandpile.
+ \item $B_{xx}<0$: the toppling site loses grains.
+ \item $\sum_y B_{xy}\leq0$: a toppling cannot create total mass.
+ \item $\sum_{x,y}B_{xy}<0$: at least one site dissipates mass. Together with connectivity to a sink, this supports stabilization.
+\end{enumerate}
+In $d$ dimensions, a hypercubic lattice has $2d$ nearest-neighbour directions. The toppling rule therefore requires $B_{xx}=-2d$, $B_{xy}=1$ for neighbours and zero otherwise, with threshold $k=2d$. Symmetry and the sign of the diagonal follow directly. On a finite open subset, the row sum is $\deg_V(x)-2d\leq0$, with strict inequality at boundary sites, so the total sum is negative. Connectivity to a sink is still required for termination.
+
+For the two-dimensional grid used here, $B_{xx}=-4$, $B_{xy}=1$ for neighbours, and the row sums are $0,-1,-2$ for interior, edge and corner sites, respectively. The total sum is $-4L=-124$ at $L=31$. All four conditions therefore hold, and the stability threshold is $k=4=-B_{xx}$. With this sign convention, a legal toppling always requires $h_x\geq4$.
+
+If $M_t$ is total mass after event $t$, then
+\begin{equation}
+ M_t=M_{t-1}+1-D_t,\qquad
+ \frac1T\sum_{t=t_0+1}^{t_0+T}D_t
+ =1-\frac{M_{t_0+T}-M_{t_0}}{T}.
+ \label{eq:mass}
+\end{equation}
+Bounded mass in stable configurations makes the long-run average loss one grain per addition, even for temporally dependent events. This conservation identity holds independently of convergence to the stationary configuration distribution.
+
+\section{Abelian dynamics, sampling and stationary measure}
+\label{sec:ergodicity}
+When two distinct sites are unstable, toppling either cannot decrease the other's height. Both orders are therefore legal and yield $h-\Delta e_x-\Delta e_y$. Proving termination and the uniqueness of the toppling count at every site requires a further argument, given in Appendix~\ref{app:proofs}. Together, these properties justify using any legal processing order~\cite{dhar1990,jarai2018}.
+
+When every site has a positive probability of receiving a grain, the finite sandpile chain has a single recurrent class. A trajectory starting from any stable configuration eventually enters this class with probability one. Within the recurrent class, adding a grain at a fixed site and then stabilizing permutes the configurations. Each such permutation preserves the uniform measure, as does their probability-weighted mixture. The two driving rules therefore share the same stationary measure over recurrent configurations~\cite{dhar1999,jarai2018}. Uniformity over configurations does not imply independent, uniformly distributed heights at individual sites.
+
+For an observable $f$, an ensemble average is estimated from independent configurations sampled from this measure, whereas a time average follows a single trajectory:
+\begin{equation}
+ \langle f\rangle_{\rm ens}=\sum_{h\in\mathcal R}\pi(h)f(h),
+ \qquad
+ \langle f\rangle_T=\frac1T\sum_{t=1}^T f(h_t).
+\end{equation}
+Irreducibility on the finite recurrent class ensures that long-run time averages converge to the stationary average. Aperiodicity is additionally required for convergence of the state distribution at individual times, but not for convergence of time averages. Finite simulation records still contain temporal dependence and may retain transient effects. Runs with independent seeds, block analysis and comparisons across observation windows help assess these practical issues.
+
+To connect this stationary measure to avalanche statistics, note that an avalanche begins precisely when the selected stable site has height three. Consequently,
+\begin{equation}
+ \Prob_p(S>0)=\sum_x p(x)\,\pi(h_x=3).
+ \label{eq:trigger}
+\end{equation}
+Although $\pi$ is the same for both rules, the weights $p(x)$ differ, and the height probabilities vary with position near the boundary. Avalanche frequency and size may therefore change even though the stationary height field has the same probability law.
+
+\section{Exact finite-lattice benchmarks}
+\label{sec:benchmarks}
+The vector update for one event is $h_t-h_{t-1}=e_{a_t}-\Delta n_t$. Taking stationary expectations yields
+\begin{equation}
+ \Delta\,\E[n]=p,\qquad
+ \E[S]=\one^{\mathsf T}\Delta^{-1}p,\qquad
+ \E[D]=1.
+ \label{eq:theory}
+\end{equation}
+This is the mean-response identity of the Abelian sandpile~\cite{dhar1990,dhar1999}. Defining $q=\Delta^{-1}\one$, symmetry also gives $\E[S]=p^{\mathsf T}q$. The two driving rules therefore assign different weights to the same spatial response function while preserving the stationary configuration measure established in Section~\ref{sec:ergodicity}.
+
+The discrete Poisson problem was solved using a sine basis with eigenvalues
+$4-2\cos(\pi j/(L+1))-2\cos(\pi k/(L+1))$. An independent dense linear solve gives a maximum absolute difference of $8.4\times10^{-13}$ in the response. The resulting means are 38.2256 for uniform driving and 67.6840 for centre-biased driving, with a ratio of 1.77065. These theoretical values were computed independently of the event averages from the CSV files. Figure~\ref{fig:response} illustrates why the centre-biased mean is larger.
+
+The same identity gives the mean response at other bias strengths without further simulation. Let $p_C$ be uniform on the same central patch and set $p_w=(1-w)p_\U+wp_C$, with $0\leq w<1$. Every site then has a positive probability of receiving a grain, so the argument for a shared stationary measure still applies. By linearity,
+\begin{equation}
+ \E_w[S]=(1-w)\E_\U[S]+w\E_C[S].
+ \label{eq:linearidentity}
+\end{equation}
+Here $\E_C[S]=p_C^{\mathsf T}q$ is the mean response to an addition in the central patch under the shared stationary measure. For this lattice and patch, the Poisson solution gives
+\input{results/linear_response_report.tex}
+At $w=0.8$, this expression reproduces the centre-biased benchmark above.
+\begingroup
+\pgfplotsset{every axis post/.append style={height=5.0cm}}
+\input{results/response_report.tex}
+\endgroup
+\FloatBarrier
+
+\chapter{Computational Methods}
+\label{ch:methods}
+\section{Implementation, tests and efficiency}
+A first-in, first-out queue stores unstable sites. Precomputed neighbour lists represent missing neighbours as sink edges, while membership flags prevent duplicate queue entries. Removing a site from the queue triggers one legal toppling, after which the site is queued again if it remains unstable. A dictionary of toppling counts provides both $S$ and $A$ without requiring a full grid to be cleared for each event. Computation is concentrated on the active avalanche, giving $O(1+S+A)$ work per event apart from periodic grid checks. The constant term accounts for additions that trigger no toppling. By comparison, a full-grid scan may repeatedly inspect many inactive sites.
+
+Eight dynamics tests cover events without topplings, topplings at interior, edge and corner sites, a one-site sink, repeatability, the input distribution, and agreement between queue, stack and independent scan implementations. The comparison of update orders uses 80 stable initial configurations on $5\times5$ and $9\times9$ grids, including highly occupied configurations, and checks the complete final grids, event metrics and toppling counts at each site. Fourteen further tests check input validation and confirm that invalid calls leave grids and saved files unchanged. Five regression tests additionally check replay rejection in both Python modes, data-driven figure regeneration, and detection of incorrect bar values and labels. All 27 tests passed with and without Python's optimization flag; parameter validation and replay checks use explicit exceptions.
+
+During data generation, stability, mass and cleared queue-membership flags are checked every 1,000 additions. A separate audit of every saved production row verified $M_t=M_{t-1}+1-D_t$, $0\leq A\leq\min(S,961)$, nonnegative measurements, coordinate bounds and the conventions for events without topplings. Replaying all six seeded trajectories reproduced every addition site and recorded metric for all 360,000 events. An additional synchronous array implementation reproduced all 420,000 production and pilot events. It also agreed with queue and stack relaxation on all 1,024 stable-state/addition combinations on a $2\times2$ grid and in 25 tests on the $31\times31$ grid used in the study. Source hashes and audit results are saved with the analysis.
+
+The recorded timing experiment compared queue and scan processing using identical $15\times15$ states after warm-up and the same sequence of 3,000 additions, with five repetitions. Both implementations computed all event measurements and produced identical outputs. Median times were 0.00962\,s and 0.02871\,s, respectively, corresponding to a speedup of about 2.98. These timings were recorded with Python 3.12.14 on arm64 and exclude warm-up.
+
+\section{Sampling design and provenance}
+\label{sec:sampling}
+Simulations under both driving rules start from an empty lattice. The pilot runs used seeds 1101 and 1201, with 30,000 additions each. Production runs used seeds 101--103 for uniform driving and 201--203 for centre-biased driving, with 60,000 additions per run generated using Python's \texttt{random.Random} (MT19937). The complete trajectories, including the initial filling transient, are retained.
+
+The primary summaries use additions 20,001--40,000 from each run after discarding the first 20,000 additions, giving 20,000 measured additions per run and 60,000 primary observations per driving rule. Windows 10,001--30,000, 40,001--60,000 and 20,001--60,000 are used to assess sensitivity to the observation period, although their overlap means that they are not independent replications. The block-averaged heights suggest that a burn-in of 20,000 additions is conservative relative to the visible filling transient.
+
+In the primary windows, the observed fractions of additions in the central patch are 0.00882 and 0.80002 for uniform and centre-biased driving, respectively, compared with the intended probabilities of 0.009365 and 0.801873.
+
+The raw data fields are
+\texttt{step, site, S, A, D, R, mass}, where \texttt{site} is a zero-based flattened index. All observations come from the simulations, independently of the theoretical benchmark values. Appendix~\ref{app:reproduce} gives a brief reproduction guide, while \texttt{README.md} details the commands and inputs.
+
+\section{Statistical summaries and exploratory fits}
+\label{sec:statistics}
+Means of $S$, $A$, $D$ and $R$ are calculated across all additions, including zeros, whereas avalanche distributions and correlations are conditional on $S>0$. Events with zero $D$ or $R$ cannot be placed on the horizontal axis of a logarithmic survival plot, but remain in the denominator, and their probabilities are reported explicitly. Spearman rank correlations are calculated separately for each driving rule, using average ranks for ties. These correlations are reported descriptively, without significance tests that assume independent events.
+
+For block length $b$, let $s_{rk}$ be the mean toppling count in block $k$ of run $r$, with $K$ blocks per run. An illustrative estimate of the standard error of the equally weighted mean across $m=3$ runs is
+\begin{equation}
+ \widehat{\mathrm{SE}}_b
+ =\frac1m\sqrt{\sum_{r=1}^m
+  \frac{\widehat{\mathrm{Var}}_k(s_{rk})}{K}}.
+ \label{eq:block}
+\end{equation}
+This estimate requires sufficiently weak correlations between block means. Estimates for $b=500,1000,2000,5000$ are compared to assess sensitivity to block length and are reported alongside variation across seeds and observation windows.
+
+For the positive integer-valued observable $X$, representing either $S$ or $A$, the exploratory tail model is
+\begin{equation}
+ p_\alpha(x\mid x\geq x_{\min})
+ =\frac{x^{-\alpha}}{\zeta(\alpha,x_{\min})},\qquad \alpha>1.
+ \label{eq:tail}
+\end{equation}
+Here $\zeta(\alpha,x_{\min})=\sum_{k=x_{\min}}^\infty k^{-\alpha}$ is the Hurwitz zeta function, which normalizes the discrete distribution.
+The fitted exponent is obtained by minimizing
+$n\log\zeta(\alpha,x_{\min})+\alpha\sum_i\log x_i$ at fixed lower cutoffs of 20, 50, 100 and 200. The alternative is a shifted geometric distribution with probability
+$q(1-q)^{x-x_{\min}}$, with $\hat q=1/(1+\overline{x-x_{\min}})$.
+The two models are compared using the maximum absolute distance from the empirical CDF and their likelihoods~\cite{clauset2009}. No hypothesis-test $p$-values are reported: the observations are temporally dependent, the thresholds were explored, and neither unbounded model accounts for the cutoff imposed by the finite lattice.
+
+\chapter{Stationarity and Avalanche Distributions}
+\label{ch:baseline}
+\section{Filling transient, height and mass balance}
+\label{sec:baselineheight}
+Figure~\ref{fig:height} shows the empty grid filling rapidly, followed by small fluctuations in the block-averaged stable height. Under uniform driving, the mean in the primary window is 2.08158, with individual-run means ranging from 2.08104 to 2.08255. This is substantially above the heuristic value of 1.5 obtained by assigning equal probability to each stable height. The mean satisfies the bound on stable heights and is below the infinite-volume reference of 2.125, as can occur on a finite open grid.
+
+\input{results/height_plot.tex}
+
+Mean loss under uniform driving is 0.99947 grains per addition in the primary window. The cumulative mean approaches one in Figure~\ref{fig:loss}, consistent with conservation and bounded storage. Loss occurs intermittently, with additions that lose no grains balanced by events that dissipate several.
+
+The mean toppling count is 38.0043, compared with the exact benchmark of 38.2256, a relative difference of $-0.58\%$. The discrepancy exceeds the smallest block-based error estimate and is assessed using alternative sampling windows and block-based diagnostics in Section~\ref{sec:uncertainty}.
+\input{results/loss_report.tex}
+\FloatBarrier
+
+\section{Avalanche distributions and finite-size tails}
+\label{sec:distributions}
+Of the 60,000 additions in the primary window under uniform driving, 25,529 trigger an avalanche. Among these avalanches, the mean number of topplings is 89.32, compared with a median of 16 and a 99th percentile of 869.7. The largest observed $S$ is 2,367. These differences indicate a strongly right-skewed distribution that is poorly described by a symmetric Gaussian approximation.
+
+Figure~\ref{fig:distributions} shows all four survival functions. The curves for $S$ and $A$ span a broad range and turn downward for the largest events. Area is bounded by 961 sites, and the largest observed baseline area is 836. The loss distribution has a point mass at zero: 52.45\% of baseline avalanches lose no grains. Positive losses follow a discrete, right-skewed distribution with an observed maximum of 55. Extent is an integer distance bounded by 60 on this grid; 14.25\% of baseline avalanches have zero extent, and the largest observed value is 54. These differences in support and probability at zero call for separate distributional descriptions of the four observables.
+
+\begingroup
+\pgfplotsset{every axis post/.append style={height=6.5cm}}
+\input{results/distribution_plot.tex}
+\endgroup
+
+\clearpage
+\section{Exploratory distribution fitting}
+\label{sec:tailresults}
+Table~\ref{tab:tail} reports selected tail fits. For baseline topplings, increasing $x_{\min}$ from 20 to 100 changes $\hat\alpha$ from 1.594 to 2.044, reaching 2.503 at a cutoff of 200. The estimates for baseline area similarly change from 1.629 to 2.197 and then 2.934. This systematic dependence on the cutoff, together with the curvature of the survival functions, does not support a stable, unbounded power-law description of these finite data.
+
+\input{results/tail_report.tex}
+
+The geometric alternative has a smaller CDF distance in seven of the eight displayed comparisons and a higher likelihood in all eight, as indicated by the negative per-event log-likelihood differences in Table~\ref{tab:tail}. These descriptive comparisons favour the geometric alternative, while the finite-lattice cutoff and threshold sensitivity leave the distributional form unresolved. Scaling analysis would require a truncated tail model and multiple lattice sizes.
+\FloatBarrier
+
+\chapter{Effect of Centre-Biased Driving}
+\label{ch:extension}
+\section{Frequency, size and spatial extent}
+\label{sec:comparison}
+Figure~\ref{fig:corecomparison} compares the mean responses under the two driving rules over the same primary window. The mean number of topplings rises from 38.0043 to 67.5938, an increase of 77.86\%. The theoretical ratio of the means is 1.77065, close to the measured ratio of 1.77858. Under centre-biased driving, the observed mean differs from the exact value of 67.6840 by $-0.13\%$.
+
+\begingroup
+\pgfplotsset{every axis post/.append style={height=6.0cm}}
+\input{results/core_comparison_plot.tex}
+\endgroup
+
+Table~\ref{tab:metrics} provides supplementary avalanche statistics for the same window, including the triggering probability and conditional size summaries.
+\input{results/metrics_table.tex}
+
+\begin{samepage}
+The decomposition
+\begin{equation}
+ \E[S]=\Prob(S>0)\,\E[S\mid S>0]
+ \label{eq:decomposition}
+\end{equation}
+separates avalanche frequency from the mean size of an avalanche when it occurs. The probability of triggering an avalanche rises by 1.17 percentage points, from 42.55\% to 43.72\%, a factor of 1.0275. The conditional mean of $S$ rises by about 73.10\%, from 89.32 to 154.61, a factor of 1.7310. Multiplying these factors gives the overall ratio, with larger avalanches accounting for most of the increase in the mean in this sample.
+
+\end{samepage}
+
+Among events that trigger an avalanche, mean area increases from 72.90 to 114.28 sites and mean extent from 9.25 to 11.61 lattice spacings. The median number of topplings rises from 16 to 37, and the 99th percentile from 869.7 to 1,237.7. Under centre-biased driving, the largest observed toppling count is 2,959, yet the largest observed extent is only 48, compared with 54 for the baseline. Extent is measured from the addition site, so additions near the centre allow smaller maximum distances than additions near the boundary. For additions in the central $3\times3$ patch, $R\leq32$, so events with $R>32$ under centre-biased driving must originate from the 20\% whole-grid branch.
+
+The mean stable height changes only from 2.08158 to 2.08211, a small difference between the samples that is consistent with the shared stationary configuration measure predicted by theory. Mean height measures the amount of sand stored, whereas toppling count measures the redistribution triggered by an addition. Interior topplings conserve mass, so greater avalanche activity can coexist with nearly unchanged mean height and a mean loss of approximately one grain per addition. Equations~\eqref{eq:trigger} and \eqref{eq:theory} explain why event statistics can differ under the same stationary measure.
+
+\FloatBarrier
+\section{Boundary loss and repeated topplings}
+\label{sec:lossinterpretation}
+Mean loss remains close to one grain per addition: 0.99947 under uniform driving and 0.99917 under centre-biased driving. However, the fraction of avalanches that lose no grains increases from 52.45\% to 68.02\%, while the mean loss among events with positive loss increases from 4.94 to 7.15 grains. Centre-biased driving thus produces fewer events with boundary loss, but more grains are lost when such events occur, preserving the long-run balance.
+
+Since grains can be lost only during an avalanche, the corresponding probabilities and means satisfy
+\begin{equation}
+ \begin{aligned}
+ \Prob(D>0)&=\Prob(S>0)\bigl[1-\Prob(D=0\mid S>0)\bigr],\\
+ \E[D]&=\Prob(D>0)\,\E[D\mid D>0].
+ \end{aligned}
+ \label{eq:lossdecomposition}
+\end{equation}
+Table~\ref{tab:dissipation} expresses this comparison across all additions: positive loss occurs after 20.2300\% of uniform additions and 13.9817\% of centre-biased additions. The lower frequency is offset by greater loss per dissipative event.
+\input{results/dissipation_report.tex}
+
+Larger typical avalanches are compatible with less frequent loss. A relatively small avalanche initiated near an edge can lose grains, whereas a larger avalanche initiated near the centre may remain confined to the interior. Boundary loss depends on the position of the active region as well as its area.
+
+\begin{samepage}
+Figure~\ref{fig:activity} compares mean toppling counts in common logarithmic area bins to examine repeated topplings under both driving rules. The inequality $S\geq A$ holds for every avalanche, and the amount by which a point lies above $S=A$ measures repeated topplings. The event-weighted mean of $S/A$ increases from 1.0613 to 1.1125. Unlike the ratio of pooled means, this statistic gives equal weight to each avalanche, rather than greater weight to events with larger areas. Changes in the distribution of avalanche areas can also contribute to this increase, leaving the driving effect at fixed area unresolved.
+
+\end{samepage}
+\input{results/activity_plot.tex}
+\FloatBarrier
+
+\section{Correlations and comparison with predictions}
+\label{sec:correlations}
+The descriptive correlations in Table~\ref{tab:correlations} support the expectations set out in Chapter~\ref{ch:introduction}. Toppling count and area are very strongly rank-correlated, with values near 0.999 under both driving rules. Correlations of area and toppling count with extent are also strong, ranging from about 0.97 to 0.99 across the two rules. Avalanches affecting larger regions usually involve more topplings, although differences in shape and repeated topplings prevent exact proportionality.
+
+Correlations involving loss are weaker, with baseline values around 0.55--0.56 and centre-biased values around 0.66--0.67. This weaker association is consistent with the high probability of zero loss and the dependence of boundary loss on avalanche location.
+\input{results/correlations_table.tex}
+\FloatBarrier
+
+\chapter{Discussion and Conclusion}
+\label{ch:discussion}
+\section{Sampling uncertainty and robustness}
+\label{sec:uncertainty}
+Centre-biased driving increases the mean number of topplings in every recorded window (Table~\ref{tab:sensitivity}), with the ratio of means ranging from 1.7673 to 1.7786. Using all 40,000 post-burn-in additions per run gives means of 38.1524 and 67.6409, with a ratio of 1.7729, closer to the exact value of 1.77065. The direction and approximate magnitude of the effect on this finite lattice are consistent across windows, with the ratios spanning about 0.0113.
+\input{results/sensitivity_table.tex}
+
+Results for individual runs and block-based error estimates are given in Appendix~\ref{app:diagnostics}. Under uniform driving, the estimated standard error decreases from 0.1581 to 0.0505 as block length increases from 500 to 5,000, while the corresponding centre-biased estimates range from 0.1645 to 0.0844. The estimates do not settle at a clear common plateau, and a block length of 5,000 events leaves only four blocks per run in the primary window. This dependence on block length, together with the small sample of three runs, limits the reliability of confidence intervals.
+
+Conservation links events over time: excess loss during one period changes the mass available in later periods. Multiplying the vector balance for an event by $q^{\mathsf T}$ gives
+\begin{equation}
+ \sum_{t=t_0+1}^{t_0+T}S_t
+ =\sum_{t=t_0+1}^{t_0+T}q_{a_t}
+   +q^{\mathsf T}(h_{t_0}-h_{t_0+T}).
+ \label{eq:weightedbalance}
+\end{equation}
+This exact identity relates the total number of topplings to the sequence of addition sites and the configurations at the start and end of the window, and explains why treating events as independent is inappropriate. Changing block length can reveal cancellation as well as persistent correlations; descriptive ranges and comparisons across windows summarize the resulting sampling variability.
+
+The identity also decomposes the difference between the observed mean and the stationary prediction $\mu_p=p^{\mathsf T}q$. Writing $\bar S_T=T^{-1}\sum_{t=t_0+1}^{t_0+T}S_t$,
+\begin{equation}
+ \bar S_T-\mu_p
+ =\underbrace{\left(\frac1T\sum_{t=t_0+1}^{t_0+T}q_{a_t}-\mu_p\right)}_{\text{input-sampling term}}
+  +\underbrace{\frac{q^{\mathsf T}(h_{t_0}-h_{t_0+T})}{T}}_{\text{weighted-endpoint term}}.
+ \label{eq:meandeviation}
+\end{equation}
+Table~\ref{tab:meanerror} gives both terms for the primary window. The input-sampling term reflects the addition sites selected during the run, whereas the endpoint term captures the difference in weighted height $q^{\mathsf T}h$ between the start and end of the window, rather than the difference in ordinary mass. The endpoint term was recovered from the recorded sites and toppling counts, then checked against the endpoint configurations obtained by independent replay.
+\input{results/mean_error_report.tex}
+\FloatBarrier
+
+The input-sampling contribution is larger in magnitude than the endpoint contribution under uniform driving, whereas the two are similar under centre-biased driving. These signed contributions account for the observed mean deviations while leaving the stationary predictions unchanged. Variance attribution and mixing require separate assessment; the endpoint term may still include transient effects.
+
+\section{Scope, learning and limitations}
+The comparison distinguishes three aspects of the dynamics: the stationary configuration measure, the probability of triggering an avalanche, and its size when it occurs. Avalanche frequency and size can differ under a shared stationary measure, explaining how increased activity can coexist with an unchanged stationary height distribution. The Poisson response predicts mean activity quantitatively, while connectivity to a sink and the Abelian proof establish stabilization and justify the use of any legal update order.
+
+The simulations cover one lattice size, one nonzero bias strength and three independent runs per driving rule, with relatively few rare events. Comparisons across windows assess robustness, but mixing time remains unmeasured. The tail fits are exploratory, and their dependence on the cutoff limits conclusions about the underlying distributions. For the fixed lattice and central patch, Eq.~\eqref{eq:linearidentity} determines how the mean response varies with bias strength. Further simulations with different grid sizes, input patterns and bias strengths would test changes in distribution shape, rare-event behaviour and finite-size scaling, while longer independent runs would provide more detailed empirical evidence on these features.
+
+\section{Conclusion}
+Concentrating grain additions near the centre increases mean avalanche activity in the BTW model studied here. The ratio of mean toppling counts is 1.7786 in the primary window and 1.7729 in the longer retained window, compared with the exact finite-lattice value of 1.77065. Across the sampled windows, the observed increase is approximately 77--78\% and primarily reflects larger avalanches when they occur, with a modest change in avalanche frequency (Section~\ref{sec:comparison}).
+
+Despite this increase in activity, the simulations give a mean loss of approximately one grain per addition under both driving rules, and theory predicts the same stationary height distribution. Avalanches under centre-biased driving are less likely to lose grains at the boundary, but those with positive loss dissipate more grains on average (Section~\ref{sec:lossinterpretation}). Toppling count, area and extent are strongly associated, with weaker correlations involving loss (Table~\ref{tab:correlations}).
+
+Conservation checks, exact theoretical means, independent tests of update order and replay of all recorded events support the central finding: changing where grains are added alters avalanche activity under a shared stationary configuration measure.
+\FloatBarrier
+
+\appendix
+% Compact back matter, with each appendix retaining its chapter identity.
+\clearpage
+\titleclass{\chapter}{straight}
+\titleformat{\chapter}[hang]{\normalfont\Large\bfseries}
+  {\chaptertitlename\ \thechapter}{0.75em}{}
+\titlespacing*{\chapter}{0pt}{18pt plus 3pt minus 2pt}{10pt}
+\chapter{Termination and Uniqueness of Stabilization}
+\label{app:proofs}
+This appendix presents the arguments for Questions 11--12 using the positive-diagonal convention in Eq.~\eqref{eq:matrix}. The proofs below apply the general Abelian framework developed in Refs.~\cite{dhar1990,jarai2018} to the finite connected grid.
+
+\section{Termination}
+For any real vector $v$,
+\begin{equation}
+ v^{\mathsf T}\Delta v
+ =\sum_{\{x,y\}\in E_V}(v_x-v_y)^2+\sum_x b_xv_x^2.
+\end{equation}
+Each undirected edge in $E_V$ is counted once. This quadratic form vanishes only for the zero vector: equality requires a common value across the connected grid and a zero value at a boundary site. Hence $\Delta$ is positive definite and invertible.
+
+Let $q=\Delta^{-1}\one$. Every component is strictly positive: if a minimum component $q_x$ were nonpositive, then
+$(\Delta q)_x=4q_x-\sum_{y\sim x}q_y\leq b_xq_x\leq0$,
+contradicting $(\Delta q)_x=1$.
+For a nonnegative integer configuration, define $\Phi(h)=q^{\mathsf T}h\geq0$. A legal toppling changes it by
+\begin{equation}
+ \Phi(T_xh)-\Phi(h)=-q^{\mathsf T}\Delta e_x=-1.
+\end{equation}
+Any sequence of legal topplings therefore contains at most $\lfloor\Phi(h^{(0)})\rfloor$ operations. A process that continues whenever an unstable site remains must thus terminate in a stable configuration.
+
+\section{Commutation and unique toppling counts}
+If distinct sites $x$ and $y$ are both unstable, each remains unstable after the other topples because off-diagonal transfers are nonnegative. Thus
+\begin{equation}
+ T_yT_xh=h-\Delta e_x-\Delta e_y=T_xT_yh.
+\end{equation}
+This commutation result applies to two topplings that are simultaneously legal. Conditional operators that leave stable sites unchanged need not commute on every configuration.
+
+To prove uniqueness, let $v$ record the toppling counts in one complete legal stabilization, so $h^{(0)}-\Delta v\leq3$ componentwise. Consider a second legal sequence that is about to exceed $v_x$ topplings at some site $x$ for the first time. Its current count vector $u$ then satisfies $u_x=v_x$ and $u_y\leq v_y$ at every other site. The current height at $x$ satisfies
+\begin{equation}
+ h_x^{(0)}-4u_x+\sum_{y\sim x}u_y
+ \leq h_x^{(0)}-4v_x+\sum_{y\sim x}v_y
+ =(h^{(0)}-\Delta v)_x\leq3.
+\end{equation}
+The site therefore cannot legally topple, giving a contradiction. Thus the second sequence never exceeds $v$. Exchanging the roles of the two completed sequences and applying the same argument proves that their count vectors are equal. They consequently have the same total number of topplings and the same stable final configuration.
+
+The stable final configuration and the multiset of topplings are unique. An arbitrary permutation of topplings need not be legal, but every complete legal ordering yields the same result. Queue, stack and scan implementations can therefore be compared without requiring identical intermediate trajectories.
+
+\clearpage
+\chapter{Additional Sampling Diagnostics}
+\label{app:diagnostics}
+These diagnostics supplement the pooled results with variation across the three runs and standard-error estimates for several block lengths. The estimates require sufficiently weak correlations between blocks.
+\input{results/run_table.tex}
+\input{results/block_table.tex}
+\FloatBarrier
+
+\Needspace{14\baselineskip}
+\chapter{Reproduction Guide}
+\label{app:reproduce}
+The code submission contains the Python scripts, tests, dependency list, report source, model schematic and historical timing record. Trajectories and derived results are regenerated from fixed random seeds using the commands in \texttt{README.md}. The computational environment used Python 3.12.14 and NumPy 2.3.5. After running the simulation and analysis commands, rebuild the report from the directory containing \texttt{main.tex}, using a LaTeX distribution with the packages listed in that file:
+
+\begin{lstlisting}
+latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+\end{lstlisting}
+
+The \texttt{README.md} in the same directory documents dependencies, installation, simulation and analysis commands, validation procedures, the data schema, and the scripts and inputs used to generate each reported result. Follow those instructions to reproduce the numerical results or regenerate the trajectories. Regenerating data replaces the corresponding saved outputs.
+\FloatBarrier
+
+\clearpage
+\chapter{Coverage of Project Questions}
+\label{app:coverage}
+The table below identifies the section or appendix containing the response to each project question.
+\begin{table}[htbp]
+\centering
+\caption{Sections addressing the twelve project questions.}
+\label{tab:coverage}
+\begin{tabularx}{\linewidth}{@{}lYl@{}}
+\toprule
+Question & Topic & Location\\
+\midrule
+Q1 & Scale invariance and power laws & Section~\ref{sec:scaling}\\
+Q2 & SOC mechanisms in BTW & Section~\ref{sec:scaling}\\
+Q3 & Dissipation and the infinite-lattice alternative & Section~\ref{sec:stationarity}\\
+Q4 & Mean-height expectation and measurement & Sections~\ref{sec:stationarity}, \ref{sec:baselineheight}\\
+Q5 & Steady, stationary and equilibrium states & Section~\ref{sec:stationarity}\\
+Q6 & Time/ensemble averages and ergodicity & Section~\ref{sec:ergodicity}\\
+Q7 & Four distributions and exploratory fitting & Sections~\ref{sec:distributions}, \ref{sec:tailresults}\\
+Q8 & Correlation predictions and measurements & Sections~\ref{sec:motivation}, \ref{sec:correlations}\\
+Q9 & Meaning of matrix conditions & Section~\ref{sec:matrix}\\
+Q10 & Matrix entries, signs and threshold & Section~\ref{sec:matrix}\\
+Q11 & Commutation of legal topplings & Appendix~\ref{app:proofs}\\
+Q12 & Termination and unique stabilization & Appendix~\ref{app:proofs}\\
+\bottomrule
+\end{tabularx}
+\end{table}
+\FloatBarrier
+
+\Needspace{16\baselineskip}
+\phantomsection
 \addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{abbrv}
-\bibliography{biblio}
-%---------------------------
+\begin{thebibliography}{9}
+\bibitem{bak1987}
+P.~Bak, C.~Tang, and K.~Wiesenfeld.
+Self-organized criticality: An explanation of the $1/f$ noise.
+\emph{Physical Review Letters}, 59:381--384, 1987.
+\href{https://doi.org/10.1103/PhysRevLett.59.381}{doi:10.1103/PhysRevLett.59.381}.
 
+\bibitem{bak1988}
+P.~Bak, C.~Tang, and K.~Wiesenfeld.
+Self-organized criticality.
+\emph{Physical Review A}, 38:364--374, 1988.
+\href{https://doi.org/10.1103/PhysRevA.38.364}{doi:10.1103/PhysRevA.38.364}.
+
+\bibitem{dhar1990}
+D.~Dhar.
+Self-organized critical state of sandpile automaton models.
+\emph{Physical Review Letters}, 64:1613--1616, 1990.
+\href{https://doi.org/10.1103/PhysRevLett.64.1613}{doi:10.1103/PhysRevLett.64.1613}.
+
+\bibitem{dhar1999}
+D.~Dhar.
+The abelian sandpile and related models.
+\emph{Physica A}, 263:4--25, 1999.
+\href{https://doi.org/10.1016/S0378-4371(98)00493-2}{doi:10.1016/S0378-4371(98)00493-2};
+\href{https://arxiv.org/abs/cond-mat/9808047}{arXiv:cond-mat/9808047}.
+
+\bibitem{jarai2018}
+A.~A.~J\'arai.
+Sandpile models.
+\emph{Probability Surveys}, 15:243--306, 2018.
+\href{https://doi.org/10.1214/14-PS228}{doi:10.1214/14-PS228};
+\href{https://arxiv.org/abs/1401.0354}{arXiv:1401.0354}.
+
+\bibitem{clauset2009}
+A.~Clauset, C.~R.~Shalizi, and M.~E.~J.~Newman.
+Power-law distributions in empirical data.
+\emph{SIAM Review}, 51(4):661--703, 2009.
+\href{https://doi.org/10.1137/070710111}{doi:10.1137/070710111}.
+
+\end{thebibliography}
 \end{document}

@@ -1,0 +1,70 @@
+% Hand-constructed example of the rules in Section 2.1; no simulation data.
+% Heights are listed row by row from top left. The only addition is at (2,2).
+\begin{figure}[htbp]
+\centering
+\begingroup
+\newcommand{\examplegrid}[3]{%
+  \begin{scope}[shift={(#1,0)}]
+  \foreach \v [count=\k from 0] in {#2} {
+    \pgfmathtruncatemacro{\col}{mod(\k,3)}
+    \pgfmathtruncatemacro{\row}{2-floor(\k/3)}
+    \ifnum\v=4\def\cellfill{amber!70}\else
+      \ifnum\v=3\def\cellfill{teal!35}\else\def\cellfill{gray!10}\fi
+    \fi
+    \filldraw[fill=\cellfill,draw=white,line width=0.7pt]
+      (0.7*\col,0.7*\row) rectangle +(0.7,0.7);
+    \node at (0.7*\col+0.35,0.7*\row+0.35) {\v};
+  }
+  \draw[gray!65] (0,0) rectangle (2.1,2.1);
+  \node[align=center,font=\small] at (1.05,-0.35) {#3};
+  \end{scope}%
+}
+\begin{tikzpicture}[font=\small,>=stealth]
+\node[anchor=west,font=\small\bfseries] at (0,3.25)
+  {(a) One addition and a two-toppling avalanche on an illustrative $3\times3$ grid};
+\examplegrid{0}{0,3,0,0,3,0,0,0,0}{Initial stable state}
+\examplegrid{3.6}{0,3,0,0,4,0,0,0,0}{After addition}
+\examplegrid{7.2}{0,4,0,1,0,1,0,1,0}{After centre topples}
+\examplegrid{10.8}{1,0,1,1,1,1,0,1,0}{Final stable state}
+\draw[->,thick,ink] (2.3,1.05) -- (3.35,1.05)
+  node[midway,above=3pt] {$+1$};
+\draw[->,thick,ink] (5.9,1.05) -- (6.95,1.05)
+  node[midway,above=3pt] {topple};
+\draw[->,thick,ink] (9.5,1.05) -- (10.55,1.05)
+  node[midway,above=3pt] {topple};
+\draw[->,thick,amber] (8.25,2.12) -- (8.25,2.8);
+\node[anchor=west,font=\footnotesize,align=left] at (8.45,2.55)
+  {1 grain leaves\\at the top edge};
+\node[anchor=west,font=\footnotesize] at (0,-0.95)
+  {Amber cells are unstable ($h=4$). Here $S=2$, $A=2$, $D=1$ and $R=1$.};
+
+\node[anchor=west,font=\small\bfseries] at (0,-1.65)
+  {(b) Addition-site probabilities on the actual $31\times31$ lattice};
+% Each map contains 31 x 31 cells. The central 3 x 3 patch is to scale.
+\begin{scope}[shift={(0.15,-5.35)},x=0.1cm,y=0.1cm]
+  \fill[teal!25] (0,0) rectangle (31,31);
+  \draw[step=1,white,line width=0.12pt] (0,0) grid (31,31);
+  \draw[ink,line width=0.6pt] (0,0) rectangle (31,31);
+\end{scope}
+\node[anchor=west,font=\small\bfseries] at (3.55,-2.6) {Uniform};
+\node[anchor=west,align=left] at (3.55,-3.35)
+  {Every site:\\$p_\U(x)=1/961$};
+\node[anchor=west,align=left,font=\footnotesize] at (3.55,-4.5)
+  {Total probability in $C$:\\$9/961=0.009365$};
+\begin{scope}[shift={(7.15,-5.35)},x=0.1cm,y=0.1cm]
+  \fill[amber!12] (0,0) rectangle (31,31);
+  \fill[amber!80] (14,14) rectangle (17,17);
+  \draw[step=1,white,line width=0.12pt] (0,0) grid (31,31);
+  \draw[ink,line width=0.6pt] (0,0) rectangle (31,31);
+  \draw[amber,line width=0.7pt] (14,14) rectangle (17,17);
+\end{scope}
+\node[anchor=west,font=\small\bfseries] at (10.55,-2.6) {Centre-biased};
+\node[anchor=west,align=left] at (10.55,-3.45)
+  {Outside $C$: $0.2/961$\\Inside $C$: $0.2/961+0.8/9$};
+\node[anchor=west,align=left,font=\footnotesize] at (10.55,-4.7)
+  {Total probability in $C$:\\$0.8+0.2(9/961)=0.801873$};
+\end{tikzpicture}
+\endgroup
+\caption{Model rules and driving distributions. (a) A hand-constructed example shows how one addition triggers an interior toppling followed by an edge toppling, which loses one grain. The final mass is $6+1-1=6$. (b) The two input distributions used in the experiment, where $C$ is the central $3\times3$ patch. Colours identify probability regions, with per-site probabilities stated explicitly. The 20\% whole-grid branch includes $C$.}
+\label{fig:model}
+\end{figure}

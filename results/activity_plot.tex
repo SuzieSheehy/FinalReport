@@ -1,0 +1,15 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.88\linewidth,height=5.8cm,xmode=log,ymode=log,xlabel={Avalanche area $A$},ylabel={Mean topplings in area bin},grid=major,grid style={gray!15},legend pos=north west,legend style={font=\small},tick label style={font=\small},label style={font=\small}]
+\addplot[teal,thick,mark=*,mark size=1.5pt] coordinates {(1,1) (2,2) (3,3) (4.432384,4.432977) (6.916912,6.939305) (10.83702,10.97901) (16.69616,17.08906) (25.58238,26.4653) (38.82152,40.69988) (59.48155,63.73987) (91.34797,99.7156) (139.7862,157.0225) (215.4453,249.8996) (329.9583,403.9197) (492.0532,682.8546) (680.8878,1295.031)};
+\addlegendentry{Uniform}
+\addplot[amber,thick,mark=*,mark size=1.5pt] coordinates {(1,1) (2,2) (3,3) (4.45429,4.455696) (6.903418,6.919762) (10.85034,10.99252) (16.70791,17.04173) (25.55789,26.53256) (38.99195,40.95684) (59.85149,63.49109) (92.40243,99.27157) (141.2907,155.371) (215.865,250.3063) (328.9131,431.0273) (497.3653,808.5257) (684.5333,1451.208)};
+\addlegendentry{Centre-biased}
+\addplot[gray,dashed,domain=1:961,samples=2] {x};
+\addlegendentry{$S=A$}
+\end{axis}
+\end{tikzpicture}
+\caption{Mean toppling count within common logarithmic area bins, plotted at the mean area in each bin. All events have $S>0$. Departure above $S=A$ shows repeated topplings. Lines connect the binned means to guide the eye.}
+\label{fig:activity}
+\end{figure}

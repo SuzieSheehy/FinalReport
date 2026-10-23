@@ -1,0 +1,11 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=0.82\linewidth,height=4.0cm,xlabel={Column on the centre row},ylabel={Expected topplings per addition},xmin=1,xmax=31,ymin=0,ymax=85,grid=major,grid style={gray!15},tick label style={font=\small}]
+\path[fill=amber!15] (axis cs:14.5,0) rectangle (axis cs:17.5,85);
+\addplot[teal,thick,mark=*,mark size=1pt] coordinates {(1,10.30681) (2,19.66577) (3,28.1283) (4,35.74446) (5,42.56233) (6,48.62741) (7,53.98222) (8,58.66589) (9,62.71386) (10,66.15769) (11,69.0249) (12,71.33885) (13,73.1187) (14,74.37936) (15,75.13149) (16,75.38149) (17,75.13149) (18,74.37936) (19,73.1187) (20,71.33885) (21,69.0249) (22,66.15769) (23,62.71386) (24,58.66589) (25,53.98222) (26,48.62741) (27,42.56233) (28,35.74446) (29,28.1283) (30,19.66577) (31,10.30681)};
+\end{axis}
+\end{tikzpicture}
+\caption{Theoretical response $q_x=(\Delta^{-1}\mathbf{1})_x$ for additions along the central row. The central patch is shaded. The response is calculated from the discrete Poisson equation. Greater distance from the sink raises the expected amount of redistribution.}
+\label{fig:response}
+\end{figure}

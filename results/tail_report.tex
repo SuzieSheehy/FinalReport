@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Exploratory tail fits on the primary window. The power-law exponent changes with the lower cutoff. $K$ is the maximum empirical--model CDF distance. $\Delta\ell/n=(\ell_{\rm PL}-\ell_{\rm geom})/n_{\rm tail}$; negative values favour the geometric model in likelihood. Both models have unbounded support and omit the finite lattice cutoff. All cutoffs, including 50 and 200, are saved in the analysis JSON.}
+\label{tab:tail}
+\begin{tabular}{@{}ll@{\hspace{2em}}rrrrrr@{}}
+\toprule
+Metric & Drive & $x_{\min}$ & $n_{\rm tail}$ & $\widehat\alpha$ & $K_{\rm PL}$ & $K_{\rm geom}$ & $\Delta\ell/n$\\
+\midrule
+$S$ & Uniform & 20 & 12002 & 1.594 & 0.131 & 0.138 & -0.07314\\
+$S$ & Uniform & 100 & 5930 & 2.044 & 0.123 & 0.041 & -0.10853\\
+$S$ & Centre-biased & 20 & 15172 & 1.488 & 0.195 & 0.086 & -0.24105\\
+$S$ & Centre-biased & 100 & 9788 & 1.921 & 0.143 & 0.047 & -0.12924\\
+$A$ & Uniform & 20 & 11919 & 1.629 & 0.138 & 0.104 & -0.15551\\
+$A$ & Uniform & 100 & 5657 & 2.197 & 0.136 & 0.040 & -0.16394\\
+$A$ & Centre-biased & 20 & 15102 & 1.524 & 0.210 & 0.045 & -0.35856\\
+$A$ & Centre-biased & 100 & 9506 & 2.108 & 0.174 & 0.054 & -0.20868\\
+\bottomrule
+\end{tabular}
+\end{table}
