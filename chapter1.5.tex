@@ -1,0 +1,109 @@
+\chapter{Models}\label{ch:background}
+
+\section{BTW model}\label{sec:btw}
+
+In our two-dimensional BTW model, a site $(x,y)$ becomes unstable when $z(x, y)\geq 4$. Hence an unstable site follows the deterministic toppling rule \cite{BTW1988}:
+\[
+z(x,y) \rightarrow z(x,y)-4
+\]
+And each of its closest neighbours receives one unit of sand.
+\[
+z(x\pm1,y) \rightarrow z(x\pm1,y)+1
+\]
+\[
+z(x,y\pm1) \rightarrow z(x,y\pm1)+1
+\]
+\\
+%Q2- why BTW model is an SOC model
+BTW model is a classical example that exhibits SOC. To explain this, we follow the argument in the fundamental paper by Bak et al. \cite{BTW1988}, where they described a ``minimally stable state" with all sites lie right below the toppling threshold. In our 2D case, this would mean height is 3 for all sites in the lattice. In this minimally stable state, any local perturbance will spread to its neighbours in a chain reaction and eventually propagate through the whole lattice. As the system evolves, configurations with sites further below threshold will be generated (through avalanches and dissipation) and hence break down the minimally stable clusters. This resulting critical state means that perturbations may terminate locally or propagate over a wide range of distances, so there is no characteristic length or corresponding time scale below the finite system size (hence scale invariant). \\
+
+This process is also self-organised. Because when the average height of the pile is far below the threshold, most added sand units will cause little activity or loss and simply accumulates, whereas when the pile reaches close to the threshold, it becomes more susceptible. New sand additions can cause large avalanches and dissipation off the boundary and hence reduce the height. This feedback causes the system to approach a critical state without external parameter tuning. \\
+
+%Q4
+We may later observe this in Chapter \ref{ch:methodology} Figure \ref{fig:average-height}, where the stationary average height for the BTW model lies at around 2.1 and Manna model at around 0.7. Neither model approaches the minimally stable heights (3 and 1 respectively), which would be highly susceptible to system-wide propagation, nor does it remain at a low height where perturbations terminate almost immediately. \\
+
+\subsection{Open boundaries}\label{subsec:openboundary}
+
+%Q3- why finite open boundaries
+In this report we conduct simulations on a finite grid with open boundaries, meaning that a sand unit will escape the grid once it reaches beyond our finite boundary. Imagine if the boundary is closed, then no sand units will be able to escape and at some point the system will be stuck in an unstable state and avalanches will never be able to terminate.\\
+
+Suppose the lattice is infinite and we only drop the sand units on a finite subset. Hence no sand will escape the system and the total mass keeps increasing. The sand units will spread outwards and the area affected will be progressively larger. A paper by Ostojic \cite{ostojic2003patterns} specifically studied this case, where sand units were added only on one site in an infinite lattice. The resulting rescaled configurations may approach a limiting spatial pattern and display self-similarity. However, the author found that the perturbed area takes different shapes with different uniform initial conditions. This behaviour is therefore not equivalent to the SOC property examined in our finite model.\\
+
+\subsection{Stationarity}\label{subsec:stationary}
+
+%Q5- steady state, statistical stationary, equilibrium
+In this report, we analyse observations after the system has reached a steady and statistically stationary state. A steady state generally means the overall behaviour of a system remain constant with zero net flow. A statistically stationary state means the probability distribution is time independent. An equilibrium state means there is no sustained external input or output.\\
+
+After the initial transient state, our BTW model reaches a steady and statistically stationary state rather than an equilibrium state. This is because individual configurations and avalanche sizes continue to change, but quantities such as the average pile height fluctuate around constant long run values. The model is not in equilibrium because grains are continuously added and dissipated through the open boundaries.\\
+
+\subsection{Abelian property}\label{subsec:abelian}
+
+%Q9- conditions on toppling matrix
+The topplings in the BTW sandpile model are Abelian, meaning that when there are multiple unstable sites in the system, it does not matter which order we perform each toppling. The toppling matrix $\Delta(x,y)$ redistributes sand from unstable site $x$ to site $y$ must therefore satisfy:
+\begin{equation}\label{eq:toppling1}
+\forall x,y \in L, x \neq y, \Delta(x,y)=\Delta(y,x)\geq 0
+\end{equation}
+\begin{equation}\label{eq:toppling2}
+\forall x \in L, \Delta(x,x)< 0
+\end{equation}
+\begin{equation}\label{eq:toppling3}
+\forall x \in L, \sum_{y\in L}\Delta(x,y)\leq 0
+\end{equation}
+\begin{equation}\label{eq:toppling4}
+\sum_{x,y\in L}\Delta(x,y)< 0
+\end{equation}
+where $L$ is the lattice of the sand pile.\\
+
+Eq. (\ref{eq:toppling1}) indicates that the interaction between two sites is symmetric. The sand units redistributed from $x$ to $y$ when $x$ topples is equal to the units redistributed from $y$ to $x$ when $y$ topples. And this redistribution amount will always be non-negative when $x$ and $y$ are different sites. Eq. (\ref{eq:toppling2}) describes that a toppling site will lose sand units and hence the change is negative. Eq. (\ref{eq:toppling3}) describes a single toppling caused by an arbitrary unstable site $x$ cannot increase the overall mass. The total change of sand units will either equal to 0 when no sand is lost from our system (that the toppling does not reach the boundary), or be negative if some sand units are dissipated from the system. In eq. (\ref{eq:toppling4}), we extend the previous case by summing over all sites in the lattice, that is toppling every site in the lattice. By the previous case the sum is automatically non-positive, and because the lattice will always contain at least one site that is at the boundary, there must be dissipation from the system, and hence the sum is strictly negative.\\
+
+%Q10-BTW matrix and stability threshold
+Specifically, the toppling matrix for our BTW model is given by:
+\begin{equation}\label{eq:topplingbtw}
+    \Delta(x,y)=\begin{cases}
+        -2d & x=y \\
+        1 & \text{x,y are nearest neighbours}\\
+        0 & \text{Otherwise}
+    \end{cases}
+\end{equation}
+where $d=2$ in our 2D case.\\
+
+The stability threshold is therefore $k=4$ and it satisfies all conditions we just described. Eq. (\ref{eq:toppling1}) is satisfied since when  $x$ and $y$ are different sites $\Delta(x,y)=\Delta(y,x)$ will either be 1 if $x$ and $y$ are nearest neighbours or 0 otherwise. Eq. (\ref{eq:toppling2}) is satisfied since $\Delta(x,x)=-2d<0$. Eqs. (\ref{eq:toppling3}) and (\ref{eq:toppling4}) are satisfied for the same reason as previously discussed.\\
+
+%Q11-commutation of toppling operators
+And hence the toppling operator $T_x$ that maps from a configuration $p$ to $p'$ is:
+\begin{equation}
+    (T_xp)(y):=\begin{cases}
+        p(y)+\Delta(x,y) & p(x)\geq-\Delta(x,x) \\
+        p(y) & \text{Otherwise}
+    \end{cases}
+\end{equation}
+
+Suppose $x \neq x'$ are both unstable,
+\[
+(T_xT_{x'}p)(y)=(T_{x'}p)(y)+\Delta(x,y)=p(y)+\Delta(x',y)+\Delta(x,y)
+\]
+\[
+(T_{x'}T_{x}p)(y)=(T_{x}p)(y)+\Delta(x',y)=p(y)+\Delta(x,y)+\Delta(x',y)
+\]
+Therefore, for unstable configurations we have $(T_xT_{x'}p)(y)=(T_{x'}T_{x}p)(y)$.\\
+
+%Q12-uniqueness of stablisation
+In addition to the commutative property, we may further prove the stabilisation is unique. That is, no matter what order we take to perform the topplings through an avalanche, the result is always the same. Following Dhar's argument \cite{dhar1999}, we consider two unstable sites $x$ and $x'$. By eq. (\ref{eq:toppling1}),  toppling one site cannot make the other stable. Repeatedly applying the property $T_xT_{x'}p=T_{x'}T_{x}p$ shows that changing the order of toppling a sequence of unstable sites produces the same stable configuration. Namely, if we have 
+\[
+p'=\mathbb{T}p=\prod_{i=1}^{N} T_{x_i}p
+\]
+where $\mathbb{T}$ is the stabilisation operator through an avalanche for some unstable configuration $p$, $p'$ must be unique. \\
+
+\section{Manna model}\label{sec:manna}
+
+%comparison wt BTW & more detailed toppling rules here
+Unlike the BTW model, the Manna model has a stochastic toppling rule, so an individual toppling cannot be represented by one fixed toppling matrix. Notably, Dhar \cite{Dhar1999Manna} established a stochastic analogue of the Abelian property for the Manna model. Nevertheless, since our report mainly focuses on the effect of stochastic toppling on avalanche statistics, we shall not discuss this property in detail.\\
+
+In Manna's two state model \cite{Manna1991TwoState}, a site becomes unstable once its height reaches or exceeds 2. Hence when it topples, we have:
+\[
+z(x,y) \rightarrow z(x,y)-2
+\]
+
+The sand units are then independently assigned to randomly selected nearest neighbours. Thus the neighbours are sampled with replacements, and it may be possible that both sand units are assigned to the same neighbour. Similar to the BTW model, any sand units directed to the outside the open boundary is lost from the system.
+
+
