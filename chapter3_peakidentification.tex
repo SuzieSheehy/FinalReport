@@ -1,14 +1,14 @@
-\chapter{Locating RR peaks}
+\chapter{QRS Complex Identification}
 
 In this section we develop and evaluate methods for identifying QRS complexes otherwise known as RR peaks in ECG data.
 The method we develop is inspired by the Pan-Tompkin Algorithm \cite{pan1985real}. The Pan-Tompkins algorithm is widely used in 
 literature for ECG analysis, \cite{fariha2020analysis}, hence why we use it as inspiration in this project. 
-We implement simplifications of the process whose performance we evaluate against the QRS annoations 
+We implement simplifications of the process whose performance we evaluate against the QRS annotations 
 supplied, which indicate the occurence of a QRS complex.  
 
 \section{Filtering and Pre-Processing}
 ECG signals are prone to noise, and variation in the data, so its important to filter and pre-process before attempting 
-to locate RR peaks. The filtering is based off literature values for ECG signals, specifically 
+to locate QRS peaks. The filtering is based off literature values for ECG signals, specifically 
 we expect to be locating frequencies associated within the range of 5 - 15 Hz \cite{pan1985real}. 
 Figure~\ref{fig:freq_filter} illustrates an example waveform before and after filtering in different frequency ranges, employing 
 a Fourier Transform before removing frequencies and inverting back. \\
@@ -21,17 +21,17 @@ a Fourier Transform before removing frequencies and inverting back. \\
 \end{figure}
 We can see that a frequency filter cleans up the waveform to better resemble a ECG signal, whilst retaining 
 the QRS complexes, Figure~\ref{fig:freq_filter} suggests that a range of 5-35 Hz mantains 
-amplitude of the QRS complex along with the ECG signal shape, this is the frequency range this project uses.\\
+amplitude of the QRS complex along with the ECG signal shape, this is the frequency range used in this project.\\
 
-Once we restrict ourselves to a filtered waveform, we implement a Pre-Processing method heavily influenced by \cite{pan1985real}. The idea 
-is that RR peaks are associated with large inclines and declines in the wave form, so we want to use derivatives, and square them to highlight and 
+Once we restrict ourselves to a filtered waveform, we implement a pre-processing method heavily influenced by \cite{pan1985real}. The idea 
+is that QRS peaks are associated with large inclines and declines in the wave form, so we want to use derivatives, and square them to highlight and 
 exhausterbate this difference, before a moving integration window converts the derivative back into a smooth signal with a large peak 
-associated with the RR peaks whilst minimising the effect of the other smaller peaks. The process is specifically, 
+associated with the QRS peaks whilst minimising the effect of the other smaller peaks. The process is specifically, 
 \begin{enumerate}
         \item Differentiate the waveform.
         \item Square the differentiated waveform, to ensure all values are positive, additionally the steeper incline and decline , 
         associated with the peaks will now be amplified helping to distinguish against the smaller peaks. 
-        \item A moving integration window on the Squared Differentiated waveform, produces a signal that amplifies the RR peak (nearby it), and minimises 
+        \item A moving integration window on the squared differentiated waveform, produces a signal that amplifies the QRS peak (nearby it), and minimises 
         the other smaller peaks. 
 \end{enumerate}
 Figure~\ref{fig:Pre-Process} illustrates how the waveform is transformed over this process, note in the overlap
@@ -44,7 +44,7 @@ the processed waveform has been scaled to highlight how the peaks are close to e
 \end{figure}
 
 \section{Basic Algorithm}
-We can see in Figure~\ref{fig:Pre-Process} that the processed waveform has large peaks close to (but just after) the location of the RR peaks in the Signal. The idea 
+We can see in Figure~\ref{fig:Pre-Process} that the processed waveform has large peaks close to (but just after) the location of the QRS peaks in the Signal. The idea 
 of our algorithm is to,
 \begin{enumerate}
         \item Locate the peaks on the processed waveform which are clear and can be done using an inbuilt python peaking finding function (sp.signal.find\_peaks).
@@ -56,7 +56,7 @@ as 0.25 secs, this is not too large as the normal heart rate is between 60-100 b
 0.6 - 1sec between QRS time complexes \cite{victorchang_resting_heart_rate}. When implementing the inbuilt function, we need to prescribe a
 size threshold for what we expect a peak in the integrated waveform to be above. As we have seen that amplitudes can vary significantly, the
 idea of our algorithms is to then start with a high size threshold value, we choose 1000 as the dataset with the largest amplitudes we identified (a13)
-was roughly 700 (note the scaling is 1/200), so 1000 was chosen as a buffer. Starting from the high size threshold we see how many peaks are identified, 
+was roughly 700 (note the scaling is 1/200 in Figure~\ref{fig:Pre-Process}), so 1000 was chosen as a buffer. Starting from the high size threshold we see how many peaks are identified, 
 if not enough peaks are identified with respect to some time interval threshold (i.e number of peaks per sec) we gradually decrease the size threshold until the
 number of peaks identified is above the minimum number we expect to identify.
 This is the basic idea of the algorithms developed in this section,
@@ -128,9 +128,9 @@ We can see that different time interval ratios are better than others, namely be
 
 \end{table}
 
-So the optimal number of RR peaks per second threshold value seems to be 0.90. We do a more in-depth analysis into 0.90, noting that above 
-only compared number of peaks identified, not locations. Table~\ref{tab:threshold-results_0.90_indepth} investigates locations, specifically the matching, the peaks 
-hallucinated vs peaks missed.  
+So the optimal number of QRS peaks per second threshold value seems to be 0.90. We do a more in-depth analysis into 0.90, noting that above 
+only compared number of peaks identified, not locations. Table~\ref{tab:threshold-results_0.90_indepth} investigates locations, specifically the proportion of matching peaks, 
+along with the peaks hallucinated and peaks missed.  
 \begin{table}[H]
     \centering
     \caption{In depth analysis into 0.90 threshold, proportion of peaks found, peaks hallucinated and peaks 
@@ -166,8 +166,7 @@ to 1 in every dataset, outside of b02 the proportion ranges from 0.967 - 1.0.
 However, it still isn't perfect with still large amount of hallucination in x04, whilst it still
 misses considerably many peaks in some datasets such as b02. We saw in section 2, that the b02 sample has very small 
 difference in QRS complex amplitude compared to other peaks, indicating the sensitivity of this kind of algorithm to relative 
-magnitude differences of QRS complex amplitude and T, P peak amplitudes. It could be improve by testing smaller 
-increments of thresholds however that will continue to worsen the algorithms time complexity.
+magnitude differences of QRS complex amplitude and T, P peak amplitudes.
 The sacrifice with this algorithm is that the increased complexity reduces the efficiency 
 of the algorithm. Table~\ref{tab:time-results} illustrates that the run time over an hour of data increases 
 up to about 15 times. 
@@ -236,7 +235,7 @@ identical to the basic algorithm form with the modification that:
 \text{time interval threshold}
 = \text{factor} \times
 \frac{\text{number of annotations}}
-{\text{end time} - \text{start time}}
+{\text{end time} - \text{start time}}.
 \] 
 
 

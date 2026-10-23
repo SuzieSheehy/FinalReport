@@ -1,4 +1,4 @@
-\chapter{Evaluation of Estimation Methods}
+\chapter{Respiratory Rate Estimation}
 
 When estimating Respiratory Rate from ECG signal, the common approach is to use 
 data associated with the QRS complexes \cite{MIRMOHAMADSADEGHI201466}. There are two common methods; the first focuses on locating 
@@ -21,7 +21,7 @@ using the Jump Detection Algorithm described above.
 Implementing either of these methods requires spectrum analysis, however as we are dealing with non-uniform time data we can't blindly
 apply the Fast Fourier Transform (FFT). There are two ways of dealing with non-uniform time series data which we explore in 
 this project. The first is to use an interpolation method between the QRS peak data and then sample a uniform time 
-from this and apply tge FFT to this waveform, the other is to use the Lomb-Scargle Method defined for non-uniform time 
+from this and apply the FFT to this waveform, the other is to use the Lomb-Scargle Method defined for non-uniform time 
 series data. We give a brief explanation of each method, and compare the output spectrum of those in this section, then the section below we will continue the analysis to 
 the spectrograms. 
 
@@ -47,13 +47,12 @@ interpolation matches the waveform closely.
     \label{fig:RPA_interp}
 \end{figure}
 The discrete Fourier Transform (FFT) is a method that decomposes a sequence of points into its frequency components. Per the Nquist 
-Theorem, we consider frequencies that are multiples of 1/sample rate. For these frequencies, then when we consider 
-a sample $(x_n), 1 \leq n \leq N$, where we have $N$ data points.The Discrete Fourier Transform for
+Theorem, we consider frequencies that are multiples of 1/sample rate. For a sample $(x_n), 1 \leq n \leq N$, where we have $N$ data points.The Discrete Fourier Transform for
 frequency index $k$, is given by:
 \[
 X_k = \sum_{n=1}^N x_n \cdot e^{\frac{-2\pi ikn}{N}}. 
 \]
-Note that $X_k$ is often a complex number, where the magnitude corresponds to the amplitude, and the angle the phase. When plotting 
+Note that $X_k$ is a complex number, where the magnitude corresponds to the amplitude, and the angle the phase. When plotting 
 spectrums we are looking at the $|X_k|$ against its frequency $k$. When we refer to a Fast Fourier Transform this refers 
 to an algorithm that computes the transform in the fastest known time complexity ($O(N\log N)$). 
 \subsection{LombScargle Method}
@@ -66,7 +65,7 @@ f_\theta(x) = a*\sin(\theta x) + b*\cos(\theta x) + c.
 \]
 The fitting is done via weighted least squares estimates. 
 This method has no reliance on uniform time, and thus allows us to directly analyse the spectrum of non-uniform data without 
-relying on first interpolating. Something worth considering when implementing this method is that as it is statistical thus there is a presence
+relying on first interpolating. Something worth considering when implementing this method is that as it is statistical there is a presence
 of error in the estimation. 
 
 \subsection{Method Comparison}
@@ -76,7 +75,7 @@ both analysis methods pick up on the same frequencies, however they do
 so with different amplitudes, in the RPA case the LomgScargle 
 Method picks up on large frequencies, whilst in the RSA case LombScargle and 
 FFT methods are similiar, with the FFT method amplitudes being slightly larger. 
-These Figures indicate that both methods are viable, as they pick up similiar 
+These figures indicate that both methods are viable, as they pick up similiar 
 frequency peaks with similiar amplitude proportions (i.e amplitudes of frequency 
 in relation to others within the same method). As a preliminary spectrum analysis
 doesn't conclusively point towards one of the spectrum methods, we evaluate 
@@ -96,7 +95,7 @@ the Respiratory Rate Method employing both methods.
 \end{figure}
 
 In the following section we are going to produce Spectrograms, in producing these plots the time 
-complexity of both methods becomes important, the Fast Fourier Implementation is $O(N\log N)$, whilst 
+complexity of both methods becomes important, the Fast Fourier implementation is $O(N\log N)$, whilst 
 the LombScargle method is $O(NM)$, where $M$ is the number of frequencies, $N$ the number of data points. 
 This difference becomes significant, and is why for compilation reasoning we focus largely on the FFT based method.
 
@@ -125,7 +124,7 @@ estimate the Respiratory Rate. In what follows the spectrograms work on a 60sec 
 produces a spectrum every 10secs, based on a 60sec window of data (30 secs each side). In Figures~\ref{fig:RPAvsRPA_spec_FFT},~\ref{fig:RPAvsRPA_spec_lg} we can see
 a Spectrogram over the first hour for each method, implemented with each analysis technique. 
 Its clear in both figures that the RPA method picks up on a stronger dominate frequency sitting just below 
-0.3HZ compared to the RSA method, which picks up a similiar frequency however with a weaker 
+0.3Hz compared to the RSA method, which picks up a similiar frequency however with a weaker 
 amplitude. 
 
 \begin{figure}[H]
@@ -154,7 +153,8 @@ This is indicative of the sensitivity of the RPA method to noise as well as inco
 that is present. This makes sense as the method is based upon 
 amplitudes, which would be highly sensitive to artifacts and noise affecting the ability 
 of the method to pick up on the frequency associated with Respiratory Rate, as well as if a peak is hallucinated the amplitude 
-may be dramatically different inpacting the ability to detect a pattern. 
+may be dramatically different inpacting the ability to detect a pattern. Note also that in Figure~\ref{fig:RPAvsRPA_spec_lg}, 
+the Spectrogram is pixelated and not as clear as the FFT Spectrograms. 
 
 \begin{figure}[H]
     \centering
@@ -177,9 +177,9 @@ frequency being picked up, most notably in dataset b01. We note that these datas
 of peaks correctly identified, indicating the importance of a reliable QRS compelx identification.  These faint signals weren't picked up 
 by the RPA method, indicating that whilst the RPA method may be better at picking up a stronger signal, 
 it isn't as robust as the RSA method may be. \\
-In the Figures above we have only compared the FFT based implementations, the reasoning is that as 
+In the figures above we have only compared the FFT based implementations, the reasoning is that as 
 discussed the LombScargle method is more computationally expensive, so producing and 
-saving the Spectrograms is time and memory consuming, further the LombScargle method being 
+saving the Spectrograms is time and memory consuming along with that the Spectrograms lack clarity, further the LombScargle method being 
 statistical introduces error into the estimation. We saw that the interpolation 
 method is very similiar in behaviour to the raw data providing validity for working with this method. \\
 
@@ -205,4 +205,32 @@ In Figure~\ref{fig:RSA_files_fft_90} which uses a 90 second window, there is no 
     \label{fig:RSA_files_fft_30_inc}
 \end{figure}
 Initial exploration indicates that increment size and window size aren't contributing factors to the lack of signal in the spectrograms, this suggests
-that the problem is with either the method or waveforms we are working with. 
+that the problem is with either the method or waveforms we are working with. \\
+
+It is also worth considering that the QRS identification algorithm may not be the issue. To test this, 
+we use peaks detected by the annotation files instead of our own Algorithm. 
+In Figure~\ref{fig:RSA_files_fft_ann} we can see that using the annotation files, the spectrogram looks 
+very similiar to that produced by the Jump Algorithm seen in Figure~\ref{fig:RSA_files_fft}, suggesting that the either there 
+are errors in the annotations or that the RSA method may not be able to always pick up 
+on frequency trends. Note this is also an indication that the RSA method may be robust to missing or incorrect peaks
+as there is variance in the Jump Algorithm and QRS annotation files, as seen in section 3. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/RSA_spectrogram_files_FFT_ann.pdf}
+    \caption{Spectrogram comparison across datasets for RSA method with FFT implementation 
+    with peaks identified via annotations.}
+    \label{fig:RSA_files_fft_ann}
+\end{figure}
+
+In Figure~\ref{fig:RPA_files_fft_ann} we can see that using the annotation files, the RPA method is unable to detect any
+trends, compared to the RPA method utilising the Jump Algorithm which did detect a trend as seen in Figure~\ref{fig:RPA_files_fft}. 
+This doesn't have a clear explanation, considering the precision of the Jump Algorithm compared to annotation files 
+for the a01 dataset. This may suggest that trend is an artifact.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/RPA_spectrogram_files_FFT_ann.pdf}
+    \caption{Spectrogram comparison across datasets for RPA method with FFT implementation 
+    with peaks identified via annotations.}
+    \label{fig:RPA_files_fft_ann}
+\end{figure}
