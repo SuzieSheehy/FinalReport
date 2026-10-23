@@ -1,0 +1,117 @@
+\chapter{Findings}\label{ch:results}
+
+\section{Results and Discussion}
+Snapshots of electrocardiograms are as below:
+\begin{figure}[H]
+      \begin{centering}
+            \includegraphics[width=12cm]{a01plot}
+            \includegraphics[width=12cm]{a02plot}
+            \caption{Snapshots of electrocardiograms for records \texttt{a01} and \texttt{a02}, respectively. The dotted blue lines are the QRS annotations provided by the database.}
+            \label{ECGs}
+      \end{centering}
+\end{figure}
+
+As is evident in the ECG for \verb|a02| in \ref{ECGs}, not all of the QRS complexes were annotated correctly by the provided annotation file. The difficulty may have arisen from the p-waves almost becoming as tall as the R-peak. 
+The method used to find the peaks for the 4th order central moments was to find the 'mid-points' between QRS annotations and finding the maxima in-between those points. While this method is suffient when the QRS complexes are annotated correctly, if there are missing annotations, this causes peaks to be missed. The result is that there will appear to be regions where the respiratory rate will look slower than is actually the case.
+\par
+A snapshot of the obtain EDR is shown in figure \ref{EDRProcess}. As can be seen in (d), the frequency of the EDR appears to be higher than the measured respiratory efforts. 
+\begin{figure}[H]
+      \begin{centering}
+            \includegraphics[width=15cm]{EDR_Process}
+            \caption{A visual guide to estimating the EDR signal, using record \texttt{a02} as an example. (a) Original ECG readings. (b) Calculating the 4th order central moments with L=2. (c) Performing a cubic interpolation on the peaks. (d) comparison between the EDG and measured respiratory efforts after post-processing.}
+            \label{EDRProcess}
+      \end{centering}
+\end{figure}
+\subsection{Spectrogram}
+Note that all the findings and figures were generated from \verb|STFT.ipynb|.\nl
+The spectrograms for EDRs and chest measurements can be seen in figure \ref{EDRCompare}. For record \verb|a01|, both spectrograms have clear 'bright bands' for frequencies between 15-25 beats/min, suggesting that the EDR was able to capture the overall respiratory rate well. On the other hand, for \verb|a02|, the pattern on the spectrogram is more uniform. Furthermore, In the region $t\in\left[129,176\right]$, most of the frequencies between 4-30 are absent, whereas in the chest measurements, there is a bright band at around 20 beats/min. Nonetheless, there seems to be evidence to suggest that when a person exits a state of apnoea and return to normal breathing, we sometimes observe decreases in intensities of many of the frequencies in the 4-30 breaths/min range. This could be due to the absence of QRS annotations, suggesting that the machine learning tool used by the database had difficulties in annotations during the transition from apnoea to normal breathing. 
+\begin{figure}[H]
+      \begin{centering}
+            \includegraphics[width=15cm]{Spectrogram_Compare}
+            \caption{Spectrograms for EDR and chest measurements for \texttt{a01} and \texttt{a02}, respectively. The green line indicate onset of apnoea and light blue lines indicate a return to normal breathing.}
+            \label{EDRCompare}
+      \end{centering}
+\end{figure}
+\nl
+When a line is traced through the brightest block in the spectrogram for each time period, one obtains an estimate of the average respiratory heart rate with a window of 30 seconds. In figure \ref{AvgRR}, we further averaged the respiratory rate with a rolling window of 2 minutes. In general, the more the respiratory rate is averaged out, the less variance the difference has. 
+\begin{figure}[H]
+      \begin{centering}
+            \includegraphics[width=15cm]{AvgRR}
+            \caption{(a,c) Average respiratory rate, extracted from the respiratory efforts from the Chest and EDR, over a 2 minute window. (b,d) Difference between respiratory rate of chest minus EDR with the 95\% confidence interval. \texttt{a01}: $\mu=-0.836890,\sigma=4.894213$. \texttt{a02}: $\mu=-0.116147,\sigma=5.428670$}
+            \label{AvgRR}
+      \end{centering}
+\end{figure}
+\subsection{Regression Analysis}
+To further understand how well the EDR predicts chest respiratory rate, we can perform a regression analysis. Let $\text{EDR}_t$ and $\text{Chest}_t$ denote the average respiratory rate derived from the EDR and RIP at time t, respectively. Then, we perform a regression analysis using \verb|pandas| and \verb|statsmodel| on the simple regression model
+\begin{equation*}
+      \mathrm{Chest}_t \sim \beta_0 + \beta_1\,\mathrm{EDR}_t
+\end{equation*}
+with $\text{Chest}_t$ being the dependent variable and $\text{EDR}_t$ the explanatory variable. The result of the Ordinary Least Squares (OLS) regression is as below:
+\par
+\begin{center}
+      \textbf{OLS Regression Results}\\
+      \begin{tabular}{lclc}
+            \hline
+            \textbf{Dep. Variable:}    &      Chest       & \textbf{  R-squared:         } &     0.017   \\
+            \textbf{Model:}            &       OLS        & \textbf{  Adj. R-squared:    } &     0.016   \\
+            \textbf{Method:}           &  Least Squares   & \textbf{  F-statistic:       } &     32.96   \\
+            \textbf{Date:}             & Thu, 22 Oct 2026 & \textbf{  Prob (F-statistic):} &  1.08e-08   \\
+            \textbf{Time:}             &     23:14:14     & \textbf{  Log-Likelihood:    } &   -5876.2   \\
+            \textbf{No. Observations:} &        2043      & \textbf{  AIC:               } & 1.176e+04   \\
+            \textbf{Df Residuals:}     &        2041      & \textbf{  BIC:               } & 1.177e+04   \\
+            \textbf{Df Model:}         &           1      & \textbf{                     } &             \\
+            \textbf{Covariance Type:}  &       HC1        & \textbf{                     } &             \\
+            \hline
+      \end{tabular}
+      \begin{tabular}{lcccccc}
+                              & \textbf{coef} & \textbf{std err} & \textbf{t} & \textbf{P$> |$t$|$} & \textbf{[0.025} & \textbf{0.975]}  \\
+            \hline
+            \textbf{Intercept} &      12.2366  &        0.435     &    28.125  &         0.000        &       11.383    &       13.090     \\
+            \textbf{EDR}       &       0.1620  &        0.028     &     5.741  &         0.000        &        0.107    &        0.217     \\
+            \hline
+      \end{tabular}
+      \begin{tabular}{lclc}
+            \textbf{Omnibus:}       & 36.131 & \textbf{  Durbin-Watson:     } &    0.450  \\
+            \textbf{Prob(Omnibus):} &  0.000 & \textbf{  Jarque-Bera (JB):  } &   20.527  \\
+            \textbf{Skew:}          & -0.021 & \textbf{  Prob(JB):          } & 3.49e-05  \\
+            \textbf{Kurtosis:}      &  2.511 & \textbf{  Cond. No.          } &     69.8  \\
+            \hline
+      \end{tabular}
+      \label{OLSTable}
+\end{center}
+\nl
+ Note that the Standard Errors are heteroscedasticity robust (HC1), that is, the results of the regression analysis is accurate even when the standard errors are not assumed to be uniform for all observations. \nl
+The coefficients of interest are statistically significantly different from 0 at 5\% confidence level. Based on this regression analysis, we can estimate respiratory rates from averaged EDR rates according to the formula
+\begin{equation*}
+      \text{Chest}_t = 12.2366 + 0.1620\times\text{EDR}_t
+\end{equation*}
+Due to the scope of the research project, we were not able to do any further regression analysis, such as multiple linear regression or IV estimation. At this stage, we have not demonstrated that this model does not suffer from omitted variable bias, so the result should be interpreted causally.
+
+\nl
+Plotting the chest measurements against the EDR measurements reveals that there is low correlation (albeit statistically significant at 5\% level) between the respiratory rate from EDR measurements and Chest measurements (See Figure \ref{EDRvsChest}). Indeed, the Pearson r value for the combined database of \verb|a01| and \verb|a02| for chest and EDR measurements came out to only a 0.1301, suggesting a weak statistical relationship.
+
+\begin{figure}[H]
+      \begin{centering}
+            \includegraphics[width=12cm]{EDRvsChest.png}
+            \caption{A scatter plot of respiratory rates from Chest vs. EDR. Opacity indicates frequency - the more frequent, the darker the dot. The red line is the simple regression model we obtained from \ref{OLSTable}.}
+            \label{EDRvsChest}
+      \end{centering}
+\end{figure}
+\nl
+
+The most significant bottleneck in the data which was used was the sampling frequency, as many similar studies have used data with much higher frequencies. This is problematic, as it is desirable for the window for 4th order central moments to be as wide as possible. In our study, we were limited to $L=2$. Furthermore, The Butterworth low-pass filter is limited to a ceiling of 50Hz (Nyquist frequency), which meant I couldn't use that filter for the pre-processing. We ultimately filtered using a Fast Fourier Transform method.
+\nl
+Another significant challenge is that based on the database, it is not possible to distinguish the demographics of the person who was recorded (e.g. age, gender, other pre-existing health conditions), which are highly relevant in establishing what a 'typical' resting breath rate/heart rate is for such a person \cite{mirahmadizadehRelationshipDemographicFeatures2021}\cite{alam2024statistical}. This, consequently, affects the respiratory rate.
+
+\section{Further directions}
+Other methods exist in the umbrella of EDR, which utilise values of e.g. Q-peak, R-peak, the gradient of the R-wave, and more. \cite{akaiReducingRespiratoryArtifacts2026}. These methods are outside the scope of the study, but could be of interest in future studies.
+\nl
+The statistical analysis performed on the data was highly simplified, as we only looked at the correlation between true measurements and EDR measurements. It could have been worthwhile to inspect how the distribution of the respiratory rate differ for states under apnoea and with normal breathing differ, and whther they could offer insight into apnoea detection for un-annotated ECGs. It is also worth noting that since the respiratory rate is time-series data, running an ARDL(1,1) model such as 
+\begin{equation*}
+      \text{EDR}_t = \beta_0 + \beta_1\text{EDR}_{t-1} + \gamma_1\text{Apn}_t + \gamma_2\text{Apn}_{t-1}+ \ve_t
+\end{equation*}
+where $\text{Apn}_t$ is 1 if apnoea is detected in the time-frame and 0 otherwise, could have unveiled information about how Apnoea affects the variability of the respiratory rate. Due to time constraints, both topics were beyond the scope of this study, but it is nonetheless a possible future direction for research. 
+
+\section{Conclusion}
+In conclusion, we were able to develop softwares which can plot ECGs from WFDB files, convert records into respiratory data using EDR, and use STFT to plot spectrograms and approximate respiratory rates. Simple linear regression analysis showed little statistical correlation between respiraty rates derived from chest measurements and EDR methods. Further research could involve inspecting other EDR methods and comparing the accuracy, and more complex statistical analysis. Overall, it is clear that with more research, EDRs could offer a cheap yet accurate estimation of respiration patterns, which could increase the rate of diagnosis of respiration-related illnesses/condition, particularly in under-resourced regions, and save many lives.
+

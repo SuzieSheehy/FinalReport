@@ -1,10 +1,6 @@
-# FinalReport
-Final Report template
+This is the final report from kazuhide Ogawa Javes.
 
-The PDF for the report should be generated from main.tex:
+To the markers: please download the .zip file and extract all - it contains all the folders and files required to reproduce the figures and data in my report.
 
-
-
-Note for Latex or Overleaf users: (Credit to Antonio Spataro)
-You may need to move a line between the preamble.tex file to the beginning of main.tex (for Overleaf) or vice versa:
-\documentclass[a4paper, 10.5pt, oneside]{report}
+Ensure you have the following packages downloaded on your Python library:
+wfdb, numpy, matplotlib, pathlib, math, scipy, time, pandas, statsmodels

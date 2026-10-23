@@ -16,6 +16,19 @@
 \usepackage{soul}                       %provides hyphenatable letter spacing, striking and so forth
 \usepackage{appendix}                   %appendices
 \setcounter{tocdepth}{1}                %level of detail in the table of contents
+\usepackage{csquotes}
+\usepackage[backend=biber,natbib=true,style=numeric,sorting=none]{biblatex}
+\addbibresource{biblio.bib}
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=20mm,
+ }
+\usepackage{morefloats}
+\usepackage{graphicx}
+\graphicspath{ {./figures/} }
 
 %-----------MATH, TABULAR AND GRAPHICS PACKAGES
 \usepackage{amsfonts}                   %extra fonts in math mode
@@ -47,7 +60,7 @@
 \pagestyle{plain}                       %puts headings on each page, subject to doc style
 %\headheight 15pt                       %distance between header and top margin
 %\lhead{}                               %header is on the left page
-\numberwithin{equation}{chapter}        %equations look like (a.b)
+%\numberwithin{equation}{chapter}        %equations look like (a.b)
 %\numberwithin{equation}{section}       %equations look like (a.b.c)
 %\numberwithin{figure}{section}         %figures look like (a.b.c)
 %\setcounter{chapter}{-1}               %change the chapter seed
@@ -80,6 +93,7 @@
 \newcommand{\curl}[1]{\gv{\nabla} \times #1}             %for curl
 \newcommand{\sch}{Schr$\ddot{\rm o}$dinger }
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\nl}{\par\noindent}
 
 %-----------HYPERLINKS
 \usepackage{hyperref}

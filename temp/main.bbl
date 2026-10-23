@@ -1,0 +1,701 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{associationUnderstandingVitalSigns}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=1768b05aec461e46fcdbff1c24d5c2eb}{%
+           family={Association},
+           familyi={A\bibinitperiod},
+           given={American\bibnamedelima Lung},
+           giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \strng{namehash}{1768b05aec461e46fcdbff1c24d5c2eb}
+      \strng{fullhash}{1768b05aec461e46fcdbff1c24d5c2eb}
+      \strng{fullhashraw}{1768b05aec461e46fcdbff1c24d5c2eb}
+      \strng{bibnamehash}{1768b05aec461e46fcdbff1c24d5c2eb}
+      \strng{authorbibnamehash}{1768b05aec461e46fcdbff1c24d5c2eb}
+      \strng{authornamehash}{1768b05aec461e46fcdbff1c24d5c2eb}
+      \strng{authorfullhash}{1768b05aec461e46fcdbff1c24d5c2eb}
+      \strng{authorfullhashraw}{1768b05aec461e46fcdbff1c24d5c2eb}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Every time you go to the doctor, the first thing they do is check your vital signs. These four initial tests measure the basic functions of your body and are (mostly) regulated by your autonomic nervous system.}
+      \field{howpublished}{https://www.lung.org/blog/respiratory-rate-vital-signs}
+      \field{langid}{english}
+      \field{shorttitle}{Understanding {{Vital Signs}}}
+      \field{title}{Understanding {{Vital Signs}}: {{The Importance}} of {{Your Respiratory Rate}}}
+      \field{urlday}{24}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C:\Users\kazuh\Zotero\storage\VBGWRHLR\respiratory-rate-vital-signs.html
+      \endverb
+    \endentry
+    \entry{fanHighAccuracyUltraLow2022}{article}{}{}
+      \name{author}{8}{}{%
+        {{hash=d330f0c7819580ad1269e2decb0c8fbb}{%
+           family={Fan},
+           familyi={F\bibinitperiod},
+           given={Jiajing},
+           giveni={J\bibinitperiod}}}%
+        {{hash=709a4fac30eda379d2cd5571ef88910f}{%
+           family={Yang},
+           familyi={Y\bibinitperiod},
+           given={Siqi},
+           giveni={S\bibinitperiod}}}%
+        {{hash=b013eb94b3435dc281980e6158c859f7}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Jiahao},
+           giveni={J\bibinitperiod}}}%
+        {{hash=548bd5533808db7db16fbf5ffb75426b}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Zhen},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=9647aadbafd03f0f56fb6831dfa9cbd2}{%
+           family={Xiao},
+           familyi={X\bibinitperiod},
+           given={Jianbiao},
+           giveni={J\bibinitperiod}}}%
+        {{hash=5a24d678d4580fe962ce13a9f94ee277}{%
+           family={Chang},
+           familyi={C\bibinitperiod},
+           given={Liang},
+           giveni={L\bibinitperiod}}}%
+        {{hash=a54a68fcc8e4a1777334c6a4453fb97a}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Shuisheng},
+           giveni={S\bibinitperiod}}}%
+        {{hash=21b6969d672728cb4ea4381d1d8706b5}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Jun},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{5ede284038f40aeee773890186bdddfd}
+      \strng{fullhash}{4a573c77a07510eeb55c9bc59c92d1a3}
+      \strng{fullhashraw}{4a573c77a07510eeb55c9bc59c92d1a3}
+      \strng{bibnamehash}{5ede284038f40aeee773890186bdddfd}
+      \strng{authorbibnamehash}{5ede284038f40aeee773890186bdddfd}
+      \strng{authornamehash}{5ede284038f40aeee773890186bdddfd}
+      \strng{authorfullhash}{4a573c77a07510eeb55c9bc59c92d1a3}
+      \strng{authorfullhashraw}{4a573c77a07510eeb55c9bc59c92d1a3}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The respiratory rate is widely used for evaluating a person's health condition. Compared to other invasive and expensive methods, the ECG-derived respiration estimation is a more comfortable and affordable method to obtain the respiration rate. However, the existing ECG-derived respiration estimation methods suffer from low accuracy or high computational complexity. In this work, a high accuracy and ultra-low power ECG-derived respiration estimation processor has been proposed. Several techniques have been proposed to improve the accuracy and reduce the computational complexity (and thus power consumption), including QRS detection using refractory period refreshing and adaptive threshold EDR estimation. Implemented and fabricated using a 55 nm processing technology, the proposed processor achieves a low EDR estimation error of 0.73 on CEBS database and 1.2 on MIT-BIH Polysomnographic Database while demonstrating a record-low power consumption (354 nW) for the respiration monitoring, outperforming the existing designs. The proposed processor can be integrated in a wearable sensor for ultra-low power and high accuracy respiration monitoring.}
+      \field{issn}{2079-6374}
+      \field{journaltitle}{Biosensors}
+      \field{month}{8}
+      \field{number}{8}
+      \field{title}{A {{High Accuracy}} \& {{Ultra-Low Power ECG-Derived Respiration Estimation Processor}} for {{Wearable Respiration Monitoring Sensor}}}
+      \field{urlday}{24}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{12}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \field{pages}{665}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.3390/bios12080665
+      \endverb
+      \verb{file}
+      \verb C:\Users\kazuh\Zotero\storage\AV7BIQ8I\Fan et al. - 2022 - A High Accuracy & Ultra-Low Power ECG-Derived Respiration Estimation Processor for Wearable Respirat.pdf
+      \endverb
+    \endentry
+    \entry{mirahmadizadehRelationshipDemographicFeatures2021}{article}{}{}
+      \name{author}{9}{}{%
+        {{hash=8fad623293fef99353d2a294fee6ce8f}{%
+           family={Mirahmadizadeh},
+           familyi={M\bibinitperiod},
+           given={Alireza},
+           giveni={A\bibinitperiod}}}%
+        {{hash=a35f1b320278b19c9874be8d69ca7ec6}{%
+           family={Farjam},
+           familyi={F\bibinitperiod},
+           given={Mojtaba},
+           giveni={M\bibinitperiod}}}%
+        {{hash=e46162276687ed63c074e94653bc4df4}{%
+           family={Sharafi},
+           familyi={S\bibinitperiod},
+           given={Mehdi},
+           giveni={M\bibinitperiod}}}%
+        {{hash=0ecf1a0e045d0cb84bdaa23472edd079}{%
+           family={Fatemian},
+           familyi={F\bibinitperiod},
+           given={Hossein},
+           giveni={H\bibinitperiod}}}%
+        {{hash=97371d1b92eb0c1e8c94dadbdfaca365}{%
+           family={Kazemi},
+           familyi={K\bibinitperiod},
+           given={Maryam},
+           giveni={M\bibinitperiod}}}%
+        {{hash=3c5d24f14bcee85d1019db410befdd0f}{%
+           family={Geraylow},
+           familyi={G\bibinitperiod},
+           given={Kiarash\bibnamedelima Roustai},
+           giveni={K\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=3daa8089fa96ec916e8f9eac983d8253}{%
+           family={Dehghan},
+           familyi={D\bibinitperiod},
+           given={Azizallah},
+           giveni={A\bibinitperiod}}}%
+        {{hash=b8cf263a855c924cbcc1e4ee5a332364}{%
+           family={Amiri},
+           familyi={A\bibinitperiod},
+           given={Zahra},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=2e9410057237e13372b087cf40fce43f}{%
+           family={Afrashteh},
+           familyi={A\bibinitperiod},
+           given={Sima},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{3fd5888ccd55c3ed6f5c6c52bc82c117}
+      \strng{fullhash}{91b38359f62b1c53790167a8ed6882e6}
+      \strng{fullhashraw}{91b38359f62b1c53790167a8ed6882e6}
+      \strng{bibnamehash}{3fd5888ccd55c3ed6f5c6c52bc82c117}
+      \strng{authorbibnamehash}{3fd5888ccd55c3ed6f5c6c52bc82c117}
+      \strng{authornamehash}{3fd5888ccd55c3ed6f5c6c52bc82c117}
+      \strng{authorfullhash}{91b38359f62b1c53790167a8ed6882e6}
+      \strng{authorfullhashraw}{91b38359f62b1c53790167a8ed6882e6}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Abstract Backgrounds Cardiovascular Diseases (CVDs) are the first leading cause of death worldwide. The present study aimed to investigate the relationship between demographics, anthropometrics, sleep duration, physical activity, and ECG parameters in the Fasa Persian cohort study. Methods In this cross-sectional study, the basic information of 10,000 participants aged 35--70~years in the Fasa cohort study was used. The data used in this study included demographic data, main Electrocardiogram (ECG) parameters, anthropometric data, sleep duration, and physical activity. Data analysis was performed using t-test, chi-square, and linear regression model. Results Based on multivariate linear regression analysis results, increased age was significantly associated with all study parameters. Nevertheless, gender and body mass index showed no significant relationship with SV3 and PR. Wrist circumference, hip circumference and waist circumference significantly increased the mean values of the ECG parameters. However, sleep duration was not significantly associated with the ECG parameters. In addition, hypertension was major comorbidity, which was shown to increase the mean values of the ECG parameters. Conclusion Several factors affected the ECG parameters. Thus, to interpret ECGs, in addition to age and gender, anthropometric indices, physical activity, and previous history of comorbidities, such as hypertension and ischemic heart disease, should be taken into consideration.}
+      \field{issn}{1471-2261}
+      \field{journaltitle}{BMC Cardiovascular Disorders}
+      \field{langid}{english}
+      \field{month}{12}
+      \field{number}{1}
+      \field{title}{The Relationship between Demographic Features, Anthropometric Parameters, Sleep Duration, and Physical Activity with {{ECG}} Parameters in {{Fasa Persian}} Cohort Study}
+      \field{urlday}{23}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{volume}{21}
+      \field{year}{2021}
+      \field{urldateera}{ce}
+      \field{pages}{585}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1186/s12872-021-02394-8
+      \endverb
+    \endentry
+    \entry{alam2024statistical}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=ab67a2316f3554aba74b2950bcf4480e}{%
+           family={Alam},
+           familyi={A\bibinitperiod},
+           given={Mohammad\bibnamedelima Nazmul},
+           giveni={M\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=3586653bf9418e34ff97e8dd60e3388b}{%
+           family={Laxmi},
+           familyi={L\bibinitperiod},
+           given={Vijay},
+           giveni={V\bibinitperiod}}}%
+        {{hash=2fd15306e743dad08936d946e330e397}{%
+           family={Patwari},
+           familyi={P\bibinitperiod},
+           given={S\bibnamedelima Quadir},
+           giveni={S\bibinitperiod\bibinitdelim Q\bibinitperiod}}}%
+        {{hash=6252e75546475b13315ac7cecd9ed1c3}{%
+           family={Khan},
+           familyi={K\bibinitperiod},
+           given={Engr\bibnamedelimb Mohammad\bibnamedelima Shahriar},
+           giveni={E\bibinitperiod\bibinitdelim M\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=c56e5c055c07e4df6e58bf5b00fa410d}{%
+           family={Mian},
+           familyi={M\bibinitperiod},
+           given={Md\bibnamedelima Nannu},
+           giveni={M\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+      }
+      \strng{namehash}{db592beee4fe7c8af89fb6359c25ce9c}
+      \strng{fullhash}{f189b2ce0a5a6db1b20ff38c782b0890}
+      \strng{fullhashraw}{f189b2ce0a5a6db1b20ff38c782b0890}
+      \strng{bibnamehash}{db592beee4fe7c8af89fb6359c25ce9c}
+      \strng{authorbibnamehash}{db592beee4fe7c8af89fb6359c25ce9c}
+      \strng{authornamehash}{db592beee4fe7c8af89fb6359c25ce9c}
+      \strng{authorfullhash}{f189b2ce0a5a6db1b20ff38c782b0890}
+      \strng{authorfullhashraw}{f189b2ce0a5a6db1b20ff38c782b0890}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Cuestiones de Fisioterapia}
+      \field{number}{03}
+      \field{title}{Statistical Analysis of {{ECG}} Pattern Variations Based on Age and Gender}
+      \field{volume}{53}
+      \field{year}{2024}
+      \field{pages}{3274\bibrangedash 3283}
+      \range{pages}{10}
+      \verb{file}
+      \verb C:\Users\kazuh\Zotero\storage\8XPJ4RAM\Alam et al. - 2024 - Statistical analysis of ECG pattern variations based on age and gender.pdf
+      \endverb
+    \endentry
+    \entry{jordanAdultObstructiveSleep2014a}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=027a1a03609812b8de3ca6e2c95baec4}{%
+           family={Jordan},
+           familyi={J\bibinitperiod},
+           given={Amy\bibnamedelima S.},
+           giveni={A\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=466c37686dbe45edde218571a10837bc}{%
+           family={McSharry},
+           familyi={M\bibinitperiod},
+           given={David\bibnamedelima G.},
+           giveni={D\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=5bd1e6ab69540cd562dd9b6113dfdd95}{%
+           family={Malhotra},
+           familyi={M\bibinitperiod},
+           given={Atul},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{480947c53f66432fc4cdf06406d28251}
+      \strng{fullhash}{480947c53f66432fc4cdf06406d28251}
+      \strng{fullhashraw}{480947c53f66432fc4cdf06406d28251}
+      \strng{bibnamehash}{480947c53f66432fc4cdf06406d28251}
+      \strng{authorbibnamehash}{480947c53f66432fc4cdf06406d28251}
+      \strng{authornamehash}{480947c53f66432fc4cdf06406d28251}
+      \strng{authorfullhash}{480947c53f66432fc4cdf06406d28251}
+      \strng{authorfullhashraw}{480947c53f66432fc4cdf06406d28251}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0140-6736, 1474-547X}
+      \field{journaltitle}{The Lancet}
+      \field{langid}{english}
+      \field{month}{2}
+      \field{number}{9918}
+      \field{title}{Adult Obstructive Sleep Apnoea}
+      \field{urlday}{24}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{383}
+      \field{year}{2014}
+      \field{urldateera}{ce}
+      \field{pages}{736\bibrangedash 747}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1016/S0140-6736(13)60734-5
+      \endverb
+      \verb{file}
+      \verb C:\Users\kazuh\Zotero\storage\429FK7MM\Jordan et al. - 2014 - Adult obstructive sleep apnoea.pdf
+      \endverb
+    \endentry
+    \entry{yasumaRespiratorySinusArrhythmia2004}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=9091c74a3beca7ea95aedca47c5ade3d}{%
+           family={Yasuma},
+           familyi={Y\bibinitperiod},
+           given={Fumihiko},
+           giveni={F\bibinitperiod}}}%
+        {{hash=2601acaaa933abf0c661991b1918efcf}{%
+           family={Hayano},
+           familyi={H\bibinitperiod},
+           given={Jun-ichiro},
+           giveni={J\bibinithyphendelim i\bibinitperiod}}}%
+      }
+      \strng{namehash}{ee3c0c90164ccf6ff2583fe04ef0db89}
+      \strng{fullhash}{ee3c0c90164ccf6ff2583fe04ef0db89}
+      \strng{fullhashraw}{ee3c0c90164ccf6ff2583fe04ef0db89}
+      \strng{bibnamehash}{ee3c0c90164ccf6ff2583fe04ef0db89}
+      \strng{authorbibnamehash}{ee3c0c90164ccf6ff2583fe04ef0db89}
+      \strng{authornamehash}{ee3c0c90164ccf6ff2583fe04ef0db89}
+      \strng{authorfullhash}{ee3c0c90164ccf6ff2583fe04ef0db89}
+      \strng{authorfullhashraw}{ee3c0c90164ccf6ff2583fe04ef0db89}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{00123692}
+      \field{journaltitle}{Chest}
+      \field{langid}{english}
+      \field{month}{2}
+      \field{number}{2}
+      \field{title}{Respiratory {{Sinus Arrhythmia}}: Why Does the Heartbeat Synchronize with Respiratory Rhythm?}
+      \field{urlday}{23}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{volume}{125}
+      \field{year}{2004}
+      \field{urldateera}{ce}
+      \field{pages}{683\bibrangedash 690}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1378/chest.125.2.683
+      \endverb
+    \endentry
+    \entry{schaferEstimationBreathingRate2008}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=c7d0021e788ca5e44ff72475a62b30a7}{%
+           family={Schäfer},
+           familyi={S\bibinitperiod},
+           given={Axel},
+           giveni={A\bibinitperiod}}}%
+        {{hash=6ca29776f34276f9b993dd02200a7f6b}{%
+           family={Kratky},
+           familyi={K\bibinitperiod},
+           given={Karl\bibnamedelima W.},
+           giveni={K\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \strng{namehash}{eff316a4030a562831b4a582b115eedb}
+      \strng{fullhash}{eff316a4030a562831b4a582b115eedb}
+      \strng{fullhashraw}{eff316a4030a562831b4a582b115eedb}
+      \strng{bibnamehash}{eff316a4030a562831b4a582b115eedb}
+      \strng{authorbibnamehash}{eff316a4030a562831b4a582b115eedb}
+      \strng{authornamehash}{eff316a4030a562831b4a582b115eedb}
+      \strng{authorfullhash}{eff316a4030a562831b4a582b115eedb}
+      \strng{authorfullhashraw}{eff316a4030a562831b4a582b115eedb}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{issn}{0090-6964, 1573-9686}
+      \field{journaltitle}{Annals of Biomedical Engineering}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{number}{3}
+      \field{shorttitle}{Estimation of {{Breathing Rate}} from {{Respiratory Sinus Arrhythmia}}}
+      \field{title}{Estimation of {{Breathing Rate}} from {{Respiratory Sinus Arrhythmia}}: {{Comparison}} of {{Various Methods}}}
+      \field{urlday}{23}
+      \field{urlmonth}{10}
+      \field{urlyear}{2026}
+      \field{volume}{36}
+      \field{year}{2008}
+      \field{urldateera}{ce}
+      \field{pages}{476\bibrangedash 485}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1007/s10439-007-9428-1
+      \endverb
+    \endentry
+    \entry{pollard_physionet_2026}{article}{}{}
+      \name{author}{9}{}{%
+        {{hash=ee5dba98efcb604a84e148b6339ad236}{%
+           family={Pollard},
+           familyi={P\bibinitperiod},
+           given={Tom},
+           giveni={T\bibinitperiod}}}%
+        {{hash=c3cd0996a4b4413878011d067dd7f8ed}{%
+           family={Moody},
+           familyi={M\bibinitperiod},
+           given={Benjamin\bibnamedelima E.},
+           giveni={B\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=2ea8fc75e44631dccd4c8217117062f2}{%
+           family={Lehman},
+           familyi={L\bibinitperiod},
+           given={Li-wei\bibnamedelima H.},
+           giveni={L\bibinithyphendelim w\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=03b7fd6653e5712966b913563ce760a0}{%
+           family={Gow},
+           familyi={G\bibinitperiod},
+           given={Brian\bibnamedelima J.},
+           giveni={B\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=3d2674b42b097d04e6075f9a6cc1366e}{%
+           family={Fernandes},
+           familyi={F\bibinitperiod},
+           given={Chrystinne},
+           giveni={C\bibinitperiod}}}%
+        {{hash=74b4db65212feef0d99404441bcf9fd9}{%
+           family={Xie},
+           familyi={X\bibinitperiod},
+           given={Chen},
+           giveni={C\bibinitperiod}}}%
+        {{hash=68ed63f3019ef9e3dabede7d5c5239f9}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={Alistair},
+           giveni={A\bibinitperiod}}}%
+        {{hash=2193bac90baddb616fc4dcd2f366de81}{%
+           family={Mark},
+           familyi={M\bibinitperiod},
+           given={Roger\bibnamedelima G.},
+           giveni={R\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=5b437365d8eaec5e109fbc89ae3a858f}{%
+           family={Heldt},
+           familyi={H\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{b849855cf1581b8a1d1963affa38920a}
+      \strng{fullhash}{fabbf030a8730f01c90cd5b8caec03a9}
+      \strng{fullhashraw}{fabbf030a8730f01c90cd5b8caec03a9}
+      \strng{bibnamehash}{b849855cf1581b8a1d1963affa38920a}
+      \strng{authorbibnamehash}{b849855cf1581b8a1d1963affa38920a}
+      \strng{authornamehash}{b849855cf1581b8a1d1963affa38920a}
+      \strng{authorfullhash}{fabbf030a8730f01c90cd5b8caec03a9}
+      \strng{authorfullhashraw}{fabbf030a8730f01c90cd5b8caec03a9}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Twenty-five years after its first public repository was established, the PhysioNet resource for biomedical and clinical data has enabled tens of thousands of research papers. Further efforts are ongoing to advance secure data sharing, community engagement and scalable research infrastructure.}
+      \field{issn}{3005-0693}
+      \field{journaltitle}{Nature Health}
+      \field{month}{8}
+      \field{number}{8}
+      \field{title}{{{PhysioNet}} as a Global Platform for Biomedical Research}
+      \field{volume}{1}
+      \field{year}{2026}
+      \field{pages}{792\bibrangedash 795}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1038/s44360-026-00096-z
+      \endverb
+    \endentry
+    \entry{t.penzelApneaECGDatabase2000}{inproceedings}{}{}
+      \name{author}{5}{}{%
+        {{hash=c49f90a037de94a5d12e602cfa009e9a}{%
+           family={{T. Penzel}},
+           familyi={T\bibinitperiod}}}%
+        {{hash=a2a4a964594e583f9ee4ec77dfb64ce1}{%
+           family={{G. B. Moody}},
+           familyi={G\bibinitperiod}}}%
+        {{hash=79fab7a0e5a7168c5e7ee40aa028d5fa}{%
+           family={{R. G. Mark}},
+           familyi={R\bibinitperiod}}}%
+        {{hash=ef49ff5fa543b95e514386a681f62b11}{%
+           family={{A. L. Goldberger}},
+           familyi={A\bibinitperiod}}}%
+        {{hash=4c42ed989902d786ea3c4811895320b0}{%
+           family={{J. H. Peter}},
+           familyi={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{10e0ea4072634867b18f171d25fdc7ba}
+      \strng{fullhash}{c8252d93d6c5d61ff6f1d1a41a45499f}
+      \strng{fullhashraw}{c8252d93d6c5d61ff6f1d1a41a45499f}
+      \strng{bibnamehash}{10e0ea4072634867b18f171d25fdc7ba}
+      \strng{authorbibnamehash}{10e0ea4072634867b18f171d25fdc7ba}
+      \strng{authornamehash}{10e0ea4072634867b18f171d25fdc7ba}
+      \strng{authorfullhash}{c8252d93d6c5d61ff6f1d1a41a45499f}
+      \strng{authorfullhashraw}{c8252d93d6c5d61ff6f1d1a41a45499f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Computers in {{Cardiology}} 2000. {{Vol}}.27 ({{Cat}}. {{00CH37163}})}
+      \field{isbn}{0276-6547}
+      \field{month}{9}
+      \field{title}{The Apnea-{{ECG}} Database}
+      \field{year}{2000}
+      \field{pages}{255\bibrangedash 258}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/CIC.2000.898505
+      \endverb
+    \endentry
+    \entry{akaiReducingRespiratoryArtifacts2026}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=0d6cfea8746cfc6d9037d9f75ad99ed3}{%
+           family={Akai},
+           familyi={A\bibinitperiod},
+           given={Ryota},
+           giveni={R\bibinitperiod}}}%
+        {{hash=c77d368e4709a69f5aae610e4d3937ef}{%
+           family={Yoshino},
+           familyi={Y\bibinitperiod},
+           given={Ayaka},
+           giveni={A\bibinitperiod}}}%
+        {{hash=02c4fc64ec6f5b445f85391108a4bd02}{%
+           family={Ohara},
+           familyi={O\bibinitperiod},
+           given={Kumiko},
+           giveni={K\bibinitperiod}}}%
+        {{hash=b953ba9d60d453fc099d0c62be4e5cd7}{%
+           family={Nakamura},
+           familyi={N\bibinitperiod},
+           given={Harunobu},
+           giveni={H\bibinitperiod}}}%
+        {{hash=1bf9ed4b2581210751056989c12db908}{%
+           family={Okita},
+           familyi={O\bibinitperiod},
+           given={Yoshimitsu},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{7af216529ce1b61e622add31085ba907}
+      \strng{fullhash}{f09ca18d81f3340ae13b1725f468a975}
+      \strng{fullhashraw}{f09ca18d81f3340ae13b1725f468a975}
+      \strng{bibnamehash}{7af216529ce1b61e622add31085ba907}
+      \strng{authorbibnamehash}{7af216529ce1b61e622add31085ba907}
+      \strng{authornamehash}{7af216529ce1b61e622add31085ba907}
+      \strng{authorfullhash}{f09ca18d81f3340ae13b1725f468a975}
+      \strng{authorfullhashraw}{f09ca18d81f3340ae13b1725f468a975}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Heart rate variability (HRV) has been analyzed to assess the effects of food on autonomic nervous activity, but HRV is reportedly influenced by respiration. Reducing respiratory artifacts in HRV analysis requires respiratory signals. In this study, we estimated respiratory signals from electrocardiogram (ECG), compared these signals with actual respiratory signals, and investigated HRV indices before and after reducing respiratory artifacts based on estimated or actual respiratory signals during functional food intake. ECG and actual respiratory signals were recorded from five healthy males during gamma-aminobutyric acid (GABA) or placebo intake. Estimated respiratory signals were obtained using eight types of ECG-derived respiration (EDR) methods. The highest similarity to the actual signal was observed in the signals estimated from the EDR method based on the fourth-order central moment. Comparing the LF/HF ratios (one of the HRV indices), the difference between GABA and placebo decreased at 60 min post-intake after reducing respiratory artifacts than before reducing them; a decrease of 39.5\% using the estimated signals and a decrease of 48.7\% using actual signals. Our findings indicate that the EDR method provides the possibility of analyzing HRV with reduction of respiratory artifacts using only ECG, similar to using the actual respiratory signals, in functional food studies. ©{} 2025 The Author(s). IEEJ Transactions on Electrical and Electronic Engineering published by Institute of Electrical Engineers of Japan and Wiley Periodicals LLC.}
+      \field{issn}{1931-4981}
+      \field{journaltitle}{IEEJ Transactions on Electrical and Electronic Engineering}
+      \field{langid}{english}
+      \field{number}{3}
+      \field{title}{Reducing {{Respiratory Artifacts}} in {{Heart Rate Variability}} during {{Functional Food Intake Using ECG-Derived Respiration}}}
+      \field{urlday}{24}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{21}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \field{pages}{413\bibrangedash 420}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1002/tee.70102
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\kazuh\\Zotero\\storage\\7FRPBCLD\\Akai et al. - 2026 - Reducing Respiratory Artifacts in Heart Rate Variability during Functional Food Intake Using ECG-Der.pdf;C\:\\Users\\kazuh\\Zotero\\storage\\WHZUY5A3\\tee.html
+      \endverb
+      \keyw{autonomic nervous activity,ECG-derived respiration,electrocardiogram,functional foods,heart rate variability,respiration}
+    \endentry
+    \entry{schmidtEstimationRespiratorySignal2015}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=547f6526e720499bfd9b95190fd84b94}{%
+           family={Schmidt},
+           familyi={S\bibinitperiod},
+           given={Marcus},
+           giveni={M\bibinitperiod}}}%
+        {{hash=c285330bb03f001a9ef612cde9c97fad}{%
+           family={Krug},
+           familyi={K\bibinitperiod},
+           given={Johannes\bibnamedelima W.},
+           giveni={J\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=59fa61927a9e2c349e4f9c68e6215e11}{%
+           family={Schumann},
+           familyi={S\bibinitperiod},
+           given={Andy},
+           giveni={A\bibinitperiod}}}%
+        {{hash=f9a00e4f0a1102537b3031085da6fdd2}{%
+           family={Bär},
+           familyi={B\bibinitperiod},
+           given={Karl-Jürgen},
+           giveni={K\bibinithyphendelim J\bibinitperiod}}}%
+        {{hash=09a022465f876f03bcabe4bb62dd980c}{%
+           family={Rose},
+           familyi={R\bibinitperiod},
+           given={Georg},
+           giveni={G\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {De Gruyter}%
+      }
+      \strng{namehash}{d70418d167f24703925916705b7d32e2}
+      \strng{fullhash}{2c3a25ea9a59ad878f71ed3e8c0e1ec1}
+      \strng{fullhashraw}{2c3a25ea9a59ad878f71ed3e8c0e1ec1}
+      \strng{bibnamehash}{d70418d167f24703925916705b7d32e2}
+      \strng{authorbibnamehash}{d70418d167f24703925916705b7d32e2}
+      \strng{authornamehash}{d70418d167f24703925916705b7d32e2}
+      \strng{authorfullhash}{2c3a25ea9a59ad878f71ed3e8c0e1ec1}
+      \strng{authorfullhashraw}{2c3a25ea9a59ad878f71ed3e8c0e1ec1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{For a variety of clinical applications like magnetic resonance imaging (MRI) the monitoring of vital signs is a common standard in clinical daily routine. Besides the electrocardiogram (ECG), the respiratory activity is an important vital parameter and might reveal pathological changes. Thoracic movement and the resulting impedance change between ECG electrodes enable the estimation of the respiratory signal from the ECG. This ECG-derived respiration (EDR) can be used to calculate the breathing rate without the need for additional devices or monitoring modules. In this paper a new method is presented to estimate the respiratory signal from a single-lead ECG. The 4th order central moments was used to estimate the EDR signal exploiting the change of the R-wave slopes induced by respiration. This method was compared with two approaches by analyzing the Fantasia database from www.physionet.org. Furthermore, the ECG signals of 24 healthy subjects placed in an 3 T MR-scanner were acquired.}
+      \field{issn}{2364-5504}
+      \field{journaltitle}{Current Directions in Biomedical Engineering}
+      \field{langid}{english}
+      \field{month}{9}
+      \field{number}{1}
+      \field{title}{Estimation of a Respiratory Signal from a Single-Lead {{ECG}} Using the 4th Order Central Moments}
+      \field{urlday}{24}
+      \field{urlmonth}{9}
+      \field{urlyear}{2026}
+      \field{volume}{1}
+      \field{year}{2015}
+      \field{urldateera}{ce}
+      \field{pages}{61\bibrangedash 64}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1515/cdbme-2015-0016
+      \endverb
+      \verb{file}
+      \verb C:\Users\kazuh\Zotero\storage\34QTEHIB\Schmidt et al. - 2015 - Estimation of a respiratory signal from a single-lead ECG using the 4th order central moments.pdf
+      \endverb
+      \keyw{central moment,ECG,EDR,monitoring,MRI,respiration}
+    \endentry
+    \entry{mehraChapter14Evaluation2009}{incollection}{}{}
+      \name{author}{2}{}{%
+        {{hash=343d89fbee566f0fd7a8760581acbbc2}{%
+           family={Mehra},
+           familyi={M\bibinitperiod},
+           given={Reena},
+           giveni={R\bibinitperiod}}}%
+        {{hash=234c9293e43dab2df5900971c42738a9}{%
+           family={Strohl},
+           familyi={S\bibinitperiod},
+           given={Kingman\bibnamedelima P.},
+           giveni={K\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=a8ffb676c86e7f2d9212dae71a5663cf}{%
+           family={Chokroverty},
+           familyi={C\bibinitperiod},
+           given={Sudhansu},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Philadelphia}%
+      }
+      \list{publisher}{1}{%
+        {W.B. Saunders}%
+      }
+      \strng{namehash}{8a6cabf23dc283914c4aeee935cabb97}
+      \strng{fullhash}{8a6cabf23dc283914c4aeee935cabb97}
+      \strng{fullhashraw}{8a6cabf23dc283914c4aeee935cabb97}
+      \strng{bibnamehash}{8a6cabf23dc283914c4aeee935cabb97}
+      \strng{authorbibnamehash}{8a6cabf23dc283914c4aeee935cabb97}
+      \strng{authornamehash}{8a6cabf23dc283914c4aeee935cabb97}
+      \strng{authorfullhash}{8a6cabf23dc283914c4aeee935cabb97}
+      \strng{authorfullhashraw}{8a6cabf23dc283914c4aeee935cabb97}
+      \strng{editorbibnamehash}{a8ffb676c86e7f2d9212dae71a5663cf}
+      \strng{editornamehash}{a8ffb676c86e7f2d9212dae71a5663cf}
+      \strng{editorfullhash}{a8ffb676c86e7f2d9212dae71a5663cf}
+      \strng{editorfullhashraw}{a8ffb676c86e7f2d9212dae71a5663cf}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Sleep {{Disorders Medicine}} ({{Third Edition}})}
+      \field{isbn}{978-0-7506-7584-0}
+      \field{month}{1}
+      \field{title}{Chapter 14 - {{Evaluation}} and {{Monitoring}} of {{Respiratory Function}}}
+      \field{year}{2009}
+      \field{pages}{188\bibrangedash 197}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1016/B978-0-7506-7584-0.00014-8
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
