@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+Reconstruction method & RMSE (ms) & MAE (ms) & Held-out points \\
+\midrule
+Constant-mean baseline & 83.22 & 64.72 & 28 \\
+Linear & 36.17 & 29.29 & 28 \\
+PCHIP & 35.61 & 28.27 & 28 \\
+\bottomrule
+\end{tabular}
+\caption{Reconstruction errors for 28 held-out R--R observations in a01 (660--840~s). Holdout stride 7; all methods are evaluated at the same timestamps.}
+
+\label{tab:interpolation}
+\end{table}

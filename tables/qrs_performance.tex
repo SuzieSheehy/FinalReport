@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Record & TP & FP & FN & Precision & Recall & F1 \\
+\midrule
+a01 & 29,938 & 2 & 0 & 0.9999 & 1.0000 & 1.0000 \\
+a02 & 35,080 & 7,548 & 72 & 0.8229 & 0.9980 & 0.9020 \\
+a05 & 28,726 & 37 & 33 & 0.9987 & 0.9989 & 0.9988 \\
+b01 & 35,060 & 33 & 31 & 0.9991 & 0.9991 & 0.9991 \\
+b05 & 25,020 & 2,092 & 2,682 & 0.9228 & 0.9032 & 0.9129 \\
+c01 & 27,535 & 90 & 175 & 0.9967 & 0.9937 & 0.9952 \\
+c05 & 27,906 & 172 & 98 & 0.9939 & 0.9965 & 0.9952 \\
+x01 & 36,453 & 145 & 8 & 0.9960 & 0.9998 & 0.9979 \\
+\bottomrule
+\end{tabular}
+\caption{R-peak detection scores against the supplied machine-generated QRS annotations for 8 records. Detections and references are matched within $\pm 0.12$~s.}
+
+\label{tab:qrs}
+\end{table}
