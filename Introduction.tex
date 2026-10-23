@@ -1,0 +1,84 @@
+\chapter{Introduction}\label{ch:introduction}
+
+
+\section{Graphene and Motivation}
+\label{sec:graphene_motivation}
+
+Graphene is comprised of a single 2D layer of carbon atoms arranged in a honeycomb lattice. Since it’s experimental isolation in 2004 \parencite{novoselov_electric_2004}, graphene has been studied extensively due to it’s unique structure and properties. It’s high mechanical strength, thermal conductivity, and unusual electronic behaviour makes it a promising material for a wide range of applications including high speed electronics, biomedicine, photonics and energy storage \parencite{singh_graphene_2025}. However, the practical use of graphene in electronic devices also depends on the ability to control its electronic energy levels. \\
+
+\noindent In graphene, each carbon atom in graphene bonds to three of its neighbours through $sp^2$ hybridisation, leaving one unhybridised $2p_z$ orbital perpendicular to the lattice plane. The overlap between these orbitals produces a delocalised $\pi$-electron system responsible for much of graphene's electronic behaviour. In an ideal, infinite graphene sheet, the valence and conduction bands meet at the Dirac points, giving a vanishing band gap \parencite{castro_neto_electronic_2009}. Although this electronic structure contributes to graphene's unusual transport properties, the absence of an intrinsic band gap makes conventional semiconductor-like switching difficult. \\
+
+\noindent A proposed approach to controlling graphene's electronic structure is to restrict its spatial dimensions. Graphene nanoribbons, which are confined in one in plane direction, have been investigated as a means of introducing and controlling electronic energy gaps. Both theoretical calculations and experimental measurements have demonstrated the strong dependence of nanoribbon energy gaps on their width and edge structure \parencite{son_energy_2006,han_energy_2007}. \\
+
+\noindent Further confinement produces graphene nanoflakes or graphene quantum dots, which are finite in both in plane directions. Unlike the continuous electronic bands of an infinite periodic system, finite structures possess discrete molecular energy levels. The separation between these levels depends on the number of carbon atoms, the geometry of the flake and its boundary conditions. The energy separation between the highest occupied molecular orbital (HOMO) and the lowest unoccupied molecular orbital (LUMO) provides a useful measure of the frontier level separation within a molecular orbital model \parencite{jeongCalculationElectronicStructures2024}. \\
+
+\noindent For many families of similarly shaped graphene nanoflakes, the HOMO-LUMO gap decreases as the system becomes larger. The investigation of this size dependence provides a connection between the molecular orbital description of small aromatic compounds and the electronic structure of extended graphene \parencite{jeongCalculationElectronicStructures2024}.
+
+
+\section{Finite Graphene Flakes and Edge Structure}
+\label{sec:finite_graphene_flakes}
+
+Finite graphene flakes provide a useful system for investigating how electronic structure changes as a conjugated carbon network increases in size. Small aromatic molecules, including benzene and coronene, can be regarded as finite fragments of the graphene honeycomb lattice. By progressively adding fused hexagonal rings, increasingly large structures can be generated while preserving the same underlying carbon connectivity. \\
+
+\noindent In this project, graphene-like structures are constructed by adding successive shells of benzene rings around a central hexagon. The resulting completed shell structures form a family of hexagonal flakes for which the number of carbon sites is
+
+\begin{equation}
+    N = 6m^2,
+    \label{eq:completed_shell_sites}
+\end{equation}
+
+\noindent where $m$ denotes the number of completed shells, including the central ring. The first three members of this sequence contain $N=6$, $24$ and $54$ carbon atoms, corresponding to benzene, coronene and circumcoronene, respectively \parencite{jeongCalculationElectronicStructures2024, zou_circumcoronenes_2023}. This sequence provides a systematic means of comparing the electronic spectra for increasingly larger flakes while preserving their overall hexagonal geometry. 
+
+\noindent The electronic properties of finite graphene structures depend not only on their size, but also on the arrangement of carbon atoms along their boundaries. Two important edge configurations are known as zigzag and armchair edges. These possess different atomic connectivities and can consequently support different electronic states. In particular, zigzag edges can support electronic states concentrated near the boundary, with energies close to the Fermi level \parencite{nakada_edge_1996}. Armchair edges generally exhibit different electronic behaviour and have a dependence on ribbon width \parencite{son_energy_2006}. \\
+
+\noindent The completed shell structures considered in this project include hexagonal zigzag edge graphene flakes, as examined by Jeong and Lee \parencite{jeongCalculationElectronicStructures2024}. Circumcoronene, for example, possesses six zigzag terminated sides \parencite{zou_circumcoronenes_2023}. These structures therefore provide a consistent group of flakes for examining how electronic energy levels evolve with increasing size while retaining the same broad lattice symmetry and edge type. \\
+
+\noindent However, limiting the investigation to completed shells leaves a relatively small number of possible system sizes. To explore the electronic structure between these configurations, the computational model also permits incomplete outer shells. Additional hexagonal rings are introduced sequentially and, where necessary, only part of the final ring is incorporated to achieve a specified number of carbon atoms. \\
+
+\noindent These intermediate structures provide an opportunity to investigate how changes in atomic connectivity, boundary geometry and the number of electronic states influence the calculated spectrum. They are not necessarily chemically stable molecules, and changes in size and geometry cannot be varied independently within this construction. Consequently, they are treated as exploratory mathematical models rather than direct predictions for physical nanoflakes. \\
+
+\noindent An additional consideration is the occupation of molecular orbitals. Within the $\pi$-electron model, each carbon atom contributes one electron. Structures containing an odd number of carbon atoms therefore have an odd number of $\pi$ electrons, requiring a treatment of singly occupied orbitals that is not included in the present closed shell analysis. Accordingly, the systematic HOMO-LUMO gap calculations are restricted to even numbers of carbon sites. Possible zero energy states and degeneracies in the resulting single particle spectra must also be considered when interpreting the calculated frontier level separations.
+
+
+\section{H\"uckel Molecular Orbital Theory}
+\label{sec:huckel_motivation}
+
+The electronic structure of graphene nanoflakes can be investigated using several computational approaches, ranging from first principles electronic structure methods to simplified tight binding models. Although more sophisticated methods can account for additional physical interactions, their computational cost can limit the number and size of structures that can be examined systematically. \\
+
+\noindent In this project, the $\pi$-electron system is modelled using H\"uckel molecular orbital (HMO) theory, originally developed to describe conjugated molecules and presented in detail by \textcite{streitwieser_molecular_1964}. In its simplest form, the method represents each carbon atom by one $2p_z$ orbital and includes interactions only between nearest neighbour carbon atoms. The resulting Hamiltonian is determined by the connectivity of the lattice, allowing electronic energy levels and molecular orbital coefficients to be calculated through numerical matrix diagonalisation. \\
+
+\noindent This approach is particularly appropriate for the present investigation as the same Hamiltonian construction can be applied to both small aromatic molecules and larger graphene structures. Furthermore, the nearest neighbour H\"uckel approximation is mathematically equivalent to the simplest single orbital tight-binding model of graphene when corresponding parameters are chosen consistently \parencite{castro_neto_electronic_2009}. It therefore provides a direct connection between molecular orbital theory and the electronic models commonly employed in condensed matter physics. \\
+
+\noindent Previous calculations by Jeong and Lee \parencite{jeongCalculationElectronicStructures2024} demonstrate that the H\"uckel method can reproduce important features of graphene nanoflake energy spectra, including changes in orbital energies and HOMO--LUMO separations with increasing system size. Its computational simplicity also makes it useful for investigating the influence of different geometries without requiring a separate electronic structure calculation for every system. \\
+
+\noindent Nevertheless, the approximation neglects explicit electron--electron interactions, spin polarisation and longer range hopping. Consequently, the calculated eigenvalues describe an approximate single particle electronic structure, and the HOMO-LUMO separation should not be identified directly with an experimental optical or quasiparticle gap. Within these limitations, the model provides a useful means of investigating the relationship between lattice geometry and the distribution of electronic energy levels. \\
+
+\noindent The underlying theory, approximations and mathematical construction of the Hamiltonian are developed in Chapter~\ref{ch:theory}.
+
+
+\section{Project Aims and Objectives}
+\label{sec:project_objectives}
+
+\noindent The aim of this project is to determine how the electronic structure of finite hexagonal graphene flakes evolves with increasing system size, and to assess the extent to which the H\"uckel approximation reproduces the trends reported in the literature. Particular attention is given to the HOMO-LUMO gap, the distribution of molecular orbital energies and the influence of incomplete outer shells. \\
+
+\noindent To investigate these questions, a Python program is developed to generate finite honeycomb lattices, identify nearest neighbour carbon atoms and construct the corresponding H\"uckel Hamiltonian. Numerical diagonalisation provides the molecular orbital energies and coefficients, which are subsequently used to calculate frontier level separations and visualise selected molecular orbitals. \\
+
+\noindent The specific objectives of the project are:
+
+\begin{enumerate}
+
+    \item To construct and verify a numerical H\"uckel model for finite graphene flake structures, using known results for small aromatic molecules and published graphene nanoflake calculations as benchmarks.
+
+    \item To investigate the evolution of the molecular orbital energy spectrum as the number of carbon atoms increases, including changes in level spacing and degeneracy.
+
+    \item To determine the dependence of the HOMO-LUMO gap on the number of carbon sites, comparing the completed shell series with intermediate, incomplete shell structures. The completed shell results are also examined for systematic size scaling behaviour.
+
+    \item To visualise selected molecular orbitals using 3D isosurfaces and 2D contour plots, and relate their spatial distributions to the underlying carbon lattice.
+
+    \item To compare the calculated results with the literature and critically evaluate the capabilities and limitations of the nearest neighbour H\"uckel approximation.
+
+\end{enumerate}
+
+\noindent Through these investigations, the project aims to establish how much of the size dependent electronic behaviour of finite graphene flakes can be understood from the connectivity of their $\pi$-electron network alone. The results provide a basis for interpreting the transition from small aromatic molecules towards larger graphene flake structures, while identifying the physical effects that require more sophisticated theoretical treatments. \\
+
+\noindent The following chapter introduces the theoretical framework of the H\"uckel approximation. Chapter~\ref{ch:method} describes the computational implementation and structure-generation algorithm, while Chapter~\ref{ch:results} presents the numerical results and comparisons with previous work.

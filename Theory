@@ -1,0 +1,129 @@
+\chapter{Theory}\label{ch:Theory}
+
+\section{Structure of Graphene}
+\label{sec:graphene_structure}
+
+Graphene is a single atomic layer of carbon atoms arranged in a honeycomb lattice. As the honeycomb structure is not a Bravais lattice type itself, it may be viewed as two interpenetrating triangular sublattices, conventionally labelled $A$ and $B$ (see Figure \ref{fig:structure}) \parencite{castro_neto_electronic_2009}. Each unit cell therefore contains two carbon atoms, one belonging to each sublattice. \\
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/castro_structure.png}
+    \caption{Honeycomb lattice of graphene, shown as two interpenetrating triangular sublattices $A$ and $B$, from \parencite{castro_neto_electronic_2009}.}
+    \label{fig:structure}
+\end{figure}
+
+\noindent This sublattice structure is central to the electronic properties of finite graphene flakes. In particular, changes in edge structure or in the relative numbers of $A$ and $B$ sites can affect the states near the Fermi level, including the appearance of zero-energy states in 
+some finite graphene nanostructures \parencite{fernandez-rossier_magnetism_2007,potasz_zero-energy_2010}.
+
+\section{The H\"uckel Hamiltonian}
+\label{sec:huckel_theory}
+
+Within the H\"uckel approximation, the $\pi$-electron system of a graphene flake containing $N$ carbon atoms is represented by $N$ interacting $2p_z$ atomic orbitals. As described in the course notes, the overlap matrix is approximated by the identity, and interactions are restricted to nearest neighbour carbon atoms. The resulting Hamiltonian may be expressed in terms of the lattice adjacency matrix $\mathbf{A}$,
+
+\begin{equation}
+    \mathbf{H} = \alpha\mathbf{I} + \beta\mathbf{A}
+    \label{eq:huckel_hamiltonian}
+\end{equation}
+
+\noindent where $A_{ij}=1$ if atoms $i$ and $j$ are bonded and zero otherwise. The parameter $\alpha$ defines the on-site orbital energy, while $\beta$ describes the nearest neighbour interaction. The Hamiltonian therefore depends on the connectivity of the carbon lattice, allowing structures with different geometries to be investigated using the same model. \\
+
+\noindent The molecular orbital energies $E_k$ and coefficient vectors $\mathbf{c}_k$ are obtained by solving
+
+\begin{equation}
+    \mathbf{H}\mathbf{c}_k
+    =
+    E_k\mathbf{c}_k.
+    \label{eq:huckel_eigenvalue}
+\end{equation}
+
+\noindent Each eigenvalue corresponds to a molecular orbital energy, while the elements $c_{ik}$ of its eigenvector describe the contribution of carbon site $i$ to orbital $k$. \\
+
+\noindent For the calculations presented here, $\alpha=0$ and $\beta=-1$, giving orbital energies in units of $|\beta|$. For comparison with the literature, a hopping magnitude of $|\beta|=2.40\ \mathrm{eV}$ is adopted \parencite{jeongCalculationElectronicStructures2024}. This energy scale allows the dimensionless separations obtained from diagonalisation to be expressed in electronvolts without altering the underlying model.
+
+
+\section{Molecular Orbital Occupation and Energy Gaps}
+\label{sec:homo_lumo_theory}
+
+For a neutral graphene flake, each carbon atom contributes one $\pi$ electron. Assuming an even number of electrons and a closed shell ground state, the lowest $N/2$ spatial molecular orbitals are doubly occupied. For eigenvalues ordered by increasing energy, the highest occupied molecular orbital (HOMO) and lowest unoccupied molecular orbital (LUMO) are therefore identified by
+
+\begin{equation}
+    E_{\mathrm{HOMO}} = E_{N/2},
+    \qquad
+    E_{\mathrm{LUMO}} = E_{N/2+1}.
+\end{equation}
+
+\noindent The corresponding energy separation is
+
+\begin{equation}
+    \Delta E_{\mathrm{HL}}
+    =
+    E_{\mathrm{LUMO}}
+    -
+    E_{\mathrm{HOMO}}.
+    \label{eq:homo_lumo_gap}
+\end{equation}
+
+\noindent The HOMO-LUMO gap provides a convenient measure of the separation between the frontier electronic states and allows the effects of flake size and geometry to be examined quantitatively. \\
+
+\noindent For structures with an odd number of $\pi$ electrons, a singly occupied orbital must be considered. Furthermore, even electron systems may exhibit degeneracies at the occupation boundary, in which case a simple closed shell description may not adequately represent the electronic ground state \parencite{fernandez-rossier_magnetism_2007}. The systematic gap analysis is therefore restricted to even numbers of carbon atoms, with zero or degenerate frontier level separations interpreted within the limitations of the single particle model. \\
+
+\noindent Importantly, the calculated HOMO-LUMO gap is not generally equivalent to an experimental optical or quasiparticle gap, since electron-electron interactions and excited state effects are not explicitly included in the H\"uckel approximation.
+
+
+\section{Finite-Size Effects and Sublattice Symmetry}
+\label{sec:finite_size_theory}
+
+\noindent The discrete energy spectrum of a finite graphene flake depends on both the number of carbon atoms and their connectivity. As the system increases in size, the number of available molecular orbitals increases, and the energy levels generally become more closely spaced. However, the detailed behaviour of the frontier orbitals also depends on the geometry and symmetry of the flake. \\
+
+\noindent For geometrically similar 2D structures, the number of carbon sites scales approximately with the flake area, $N\propto L^2$, where $L$ is a characteristic linear dimension. Since the low energy dispersion of ideal graphene is approximately linear near its Dirac points, confinement motivates a characteristic energy scale proportional to $1/L$ \parencite{castro_neto_electronic_2009}. This suggests a possible relationship
+
+\begin{equation}
+    \Delta E_{\mathrm{HL}}
+    \propto
+    \frac{1}{L}
+    \propto
+    N^{-1/2}.
+    \label{eq:gap_scaling}
+\end{equation}
+
+\noindent This scaling is not universal, as the frontier level separation can be strongly influenced by edge states and molecular symmetry. Nevertheless, it provides a physically motivated relationship against which the completed shell results can be compared. \\
+
+\noindent A further property of the graphene honeycomb lattice is its bipartite structure. Carbon sites can be divided into two sublattices, $A$ and $B$, such that nearest neighbour interactions occur only between opposite sublattices. Consequently, the nearest neighbour Hamiltonian has the block structure
+
+\begin{equation}
+    \mathbf{H}-\alpha\mathbf{I}
+    =
+    \begin{pmatrix}
+        \mathbf{0} & \beta\mathbf{B} \\
+        \beta\mathbf{B}^{T} & \mathbf{0}
+    \end{pmatrix},
+    \label{eq:bipartite_hamiltonian}
+\end{equation}
+
+\noindent where $\mathbf{B}$ describes the connections between the two sublattices. \\
+
+\noindent This symmetry requires the energy spectrum to occur in pairs about $\alpha$. When the sublattices contain unequal numbers of atoms, at least $|N_A-N_B|$ states occur at the on site reference energy. Additional zero energy states may also arise from the lattice connectivity, even when the sublattices are balanced. \\
+
+\noindent These properties are relevant to the intermediate structures considered in this project. Incomplete outer rings can alter the sublattice populations, local coordination and overall symmetry, potentially introducing zero energy states or changing the frontier level separation \parencite{fernandez-rossier_magnetism_2007}. Consequently, deviations from the completed shell trend cannot necessarily be attributed to size alone. \\
+
+\noindent The importance of boundary geometry is also evident in studies of zigzag edged graphene structures, where states localised near the edges can occur close to the Fermi energy \parencite{nakada_edge_1996}. These effects motivate examining both the energy eigenvalues and spatial character of the calculated molecular orbitals.
+
+
+\section{Molecular Orbital Reconstruction}
+\label{sec:orbital_reconstruction}
+
+\noindent While diagonalisation of the H\"uckel Hamiltonian gives molecular orbital energies and coefficients, the eigenvectors describe amplitudes only at discrete carbon sites. To visualise the orbitals in 3D space, these coefficients are combined with approximate atomic $2p_z$ functions through the linear combination of atomic orbitals (LCAO),
+
+\begin{equation}
+    \psi_k(\mathbf{r})
+    =
+    \sum_{i=1}^{N}
+    c_{ik}\phi_i(\mathbf{r}),
+    \label{eq:orbital_reconstruction}
+\end{equation}
+
+\noindent where $\phi_i(\mathbf{r})$ is a Slater-type orbital centred on a carbon atom $i$, as defined in the course notes. In the present model, these functions have $p_z$ symmetry, with angular momentum quantum numbers $l=1$ and $m=0$. \\
+
+\noindent The reconstructed wavefunctions can be represented by 3D isosurfaces or 2D contour plots. Positive and negative wavefunction values correspond to opposite orbital phases, rather than positive and negative electronic charges. \\
+
+\noindent The relative contribution of each carbon site to the molecular orbital $k$ is described by $|c_{ik}|^2$, providing a means of examining whether an orbital is distributed throughout the flake or concentrated near its boundaries. However, for degenerate orbital energies, the individual eigenvectors are not unique and their spatial appearance may depend on the particular basis chosen within the degenerate subspace. \\

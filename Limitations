@@ -1,0 +1,18 @@
+\chapter{Model Limitations and Further Work}
+\label{ch:limitations}
+
+
+\section{Model Limitations}
+\label{sec:results_interpretation}
+
+The results demonstrate that the nearest neighbour H\"uckel model reproduces several significant features of the finite electronic structure of graphene. In particular, the model reproduces published energy gaps for the selected hexagonal nanoflakes, predicts a systematic narrowing of the frontier level separation across the completed shell series, and reveals substantial sensitivity to lattice connectivity in intermediate configurations. \\
+
+\noindent The agreement with previously published H\"uckel calculations primarily validates the numerical implementation. The model neglects explicit electron-electron interactions, structural relaxation, chemical edge termination and longer range hopping. These limitations are particularly relevant for irregular structures or systems with degenerate frontier orbitals, where electron correlation and spin dependent effects may influence the ground-state electronic configuration \parencite{yeh_electronic_2018}. \\
+
+\noindent These limitations are particularly significant for the larger or irregular structures, where frontier orbital degeneracy and possible open shell character may require a many electron treatment. Nevertheless, the model provides a framework for identifying systematic trends and selecting finite graphene structures for more detailed electronic structure calculations.
+
+
+\section{Applications and Future Work}
+\label{sec:applications_future}
+
+\noindent Understanding how graphene flake size and geometry influence electronic structure is important for the development of graphene based nanomaterials, particularly in molecular electronics, optoelectronics and quantum dot applications \parencite{son_energy_2006,castro_neto_electronic_2009}. Although the H\"uckel approximation cannot directly predict experimental device performance, its computational efficiency makes it useful for identifying electronic trends and screening candidate structures before applying more sophisticated methods. In particular, the non-monotonic HOMO-LUMO gaps observed for incomplete shells demonstrate the importance of atomic connectivity alongside system size. Future work could investigate alternative flake geometries and edge terminations, incorporate longer range hopping and electron-electron interactions, and account for structural relaxation. Comparison with density functional theory and experimental measurements would further establish the accuracy and applicability of the model. \\

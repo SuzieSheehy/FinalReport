@@ -1,0 +1,168 @@
+\chapter{Results and Discussion}\label{ch:Results}
+
+
+\noindent The electronic structure of finite graphene flakes was investigated using the nearest neighbour H\"uckel model, with $\alpha=0$ and $\beta=-1$. The calculated energy separations were converted into electronvolts using $|\beta|=2.40$ eV, following \textcite{jeongCalculationElectronicStructures2024}. Complete shell structures containing $N=6m^2$ carbon sites were examined to establish size dependent trends and for quantitative comparisons with literature.  Intermediate even site counts were also considered to investigate the influence of incomplete outer shells on the electronic spectrum.
+
+
+\section{Benzene: Verification and Orbital Structure}
+\label{sec:benzene_results}
+
+Benzene ($N=6$) provides an analytical benchmark for validating the numerical implementation and examining the spatial structure of the molecular orbitals. The calculated eigenvalues are \\
+
+\begin{equation}
+    \frac{E_k}{|\beta|}
+    =
+    \{-2,-1,-1,1,1,2\},
+\end{equation}
+
+\noindent in agreement with the analytical H\"uckel solution given in the course notes. The three lowest spatial orbitals are occupied by six $\pi$ electrons, giving a HOMO-LUMO separation of $2|\beta|$, or 4.80 eV. The agreement in energies and degeneracies confirm that the Hamiltonian construction and diagonalisation reproduce the expected result. \\
+
+\noindent The corresponding orbital visualisations are shown in Figure~\ref{fig:benzene_orbitals}. The lowest energy orbital (1) has coefficients of equal magnitude and phase in all six carbon atoms, representing a fully bonding combination of the $2p_z$ orbitals.  In contrast, the highest-energy orbital (6), exhibits alternating phases around the ring, corresponding to an antibonding arrangement with destructive overlap between neighbouring atomic orbitals. \\
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/6_MOs.png}
+    \caption{H\"uckel molecular orbitals
+    for benzene, viewed from the yz, zx and xy planes. Red and blue indicate opposite wavefunction phase. Carbon atoms and bonds indictate the underlying moelcular geometry.}
+    \label{fig:benzene_orbitals}
+\end{figure}
+
+\noindent The two degenerate orbitals at $E=-|\beta|$ constitute the HOMO level, while those at $E=+|\beta|$ constitute the LUMO level. Individual eigenvectors within these degenerate subspaces are not unique, so their spatial representations depend on the orthonormal basis selected. The reconstructed orbitals also display the characteristic $2p_z$ nodal plane at $z=0$, with positive and negative wavefunction phases extending above and below the carbon framework. These phases describe the sign of the wavefunction rather than electric charge.
+
+\noindent Benzene therefore provides both a numerical validation of the model and a reference for interpreting the more complex orbital structures of larger graphene flakes.
+
+
+
+\section{Molecular Orbital Energy Spectra}
+\label{sec:results_spectra}
+
+\noindent Figure~\ref{fig:energy_spectra} compares the calculated molecular orbital spectra of completed shell flakes containing 6, 24, 54 and 96 carbon atoms. As the flake size increases, the number of available molecular orbitals increases and so the energy levels become more densely distributed. Increasing the number of states near the occupation boundary reduces the HOMO-LUMO separation. \\
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/4_plots_energies.png}
+    \caption{Calculated H\"uckel molecular orbital energy spectra for $N=6$, $24$, $54$ and $96$ carbon atoms. Energies are expressed in units of $|\beta|$, relative to $\alpha=0$. }
+    \label{fig:energy_spectra}
+\end{figure}
+
+\noindent The spectra are symmetric about $E=0$, as expected for the bipartite nearest neighbour Hamiltonian with $\alpha=0$. Degenerate eigenvalues are also present, reflecting the symmetry of the completed shell geometries. \\
+
+\noindent These observations agree qualitatively with the H\"uckel calculations of \textcite{jeongCalculationElectronicStructures2024}, who identify increasingly dense molecular energy spectra and degeneracies around $E=\pm|\beta|$ for larger graphene nanoflakes. Similar discrete electronic shell structures have been investigated using tight-binding calculations by \textcite{heiskanen_electronic_2008}. \\
+
+\noindent Importantly, these spectra represent the ordered eigenvalues of finite Hamiltonian matrices. They should not be interpreted as electronic band structures, since the horizontal axis is the molecular orbital index rather than a crystal momentum.
+
+
+
+\section{HOMO-LUMO Gap: Completed Shells}
+\label{sec:results_gap}
+
+The HOMO-LUMO gap was calculated for the first seven completed shell structures, containing between 6 and 294 carbon atoms. The results are presented in Table~\ref{tab:completed_gap} and Figure~\ref{fig:completed_gap}. \\
+
+\begin{table}[h!]
+    \centering
+    \caption{Calculated HOMO-LUMO separations for completed shell graphene flakes, using $|\beta|=2.40$ eV. Published reference values for the corresponding H\"uckel systems are included where available.}
+    \label{tab:completed_gap}
+    \begin{tabular}{c c c c}
+        \hline
+        $N$ & $\Delta E_{\mathrm{HL}}/|\beta|$
+        & $\Delta E_{\mathrm{HL}}$ (eV)
+        & Literature (eV) \\
+        \hline
+        6   & 2.000000 & 4.800 & 4.80 \\
+        24  & 1.078378 & 2.588 & -- \\
+        54  & 0.684082 & 1.642 & 1.64 \\
+        96  & 0.458897 & 1.101 & 1.10 \\
+        150 & 0.313382 & 0.752 & -- \\
+        216 & 0.214153 & 0.514 & -- \\
+        294 & 0.145213 & 0.349 & -- \\
+        \hline
+    \end{tabular}
+
+    \vspace{2mm}
+    \footnotesize
+    Literature values are from
+    \textcite{jeongCalculationElectronicStructures2024}.
+\end{table}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/7_shells_lit_gap_vs_size_plot.png}
+    \caption{HOMO-LUMO gap as a function of carbon site count for completed shell graphene flakes. The present numerical results are compared with the rounded H\"uckel values reported by \textcite{jeongCalculationElectronicStructures2024}.}
+    \label{fig:completed_gap}
+\end{figure}
+
+\noindent As the lattice size increases, the HOMO-LUMO gap decreases. The gap decreases from 4.800 eV for benzene to 0.349 eV for the 294-carbon flake, representing a reduction of approximately 92.7\%. Although the gap becomes substantially smaller, it remains finite for the largest structure considered. This behaviour is consistent with the approach towards the gapless electronic spectrum of ideal, infinite graphene, while retaining the effects of the finite size and boundary geometry. \\
+
+\noindent The calculated results closely agree with published H\"uckel values for the corresponding hexagonal zigzag edged nanoflakes. \textcite{jeongCalculationElectronicStructures2024} report gaps of approximately 1.64 eV for the 54-carbon structure and 1.10 eV for the 96-carbon structure. The present calculations give 1.6418 and 1.1014 eV, respectively, differing from these rounded published values by less than 0.002 eV. \\
+
+\noindent For coronene, the calculated gap of $1.07838|\beta|$ agrees with the non-interacting H\"uckel result of $1.07838t_0$ reported by \textcite{prodhan_correlated_2019}, where $t_0$ denotes the hopping magnitude. 
+
+\noindent The close numerical agreement provides evidence that the present implementation correctly reproduces the electronic structure of these systems within the specified H\"uckel approximation. However, agreement between calculations based on essentially the same Hamiltonian does not establish equivalent agreement with experimental gaps.
+
+
+\subsection{Gap Scaling}
+
+\noindent The observed reduction in the HOMO-LUMO gap is qualitatively consistent with the finite size scaling argument discussed in Section~\ref{sec:finite_size_theory}. To investiagte this, the completed shell gaps were fitted to a power law of the form
+
+\begin{equation}
+    \Delta E_{\mathrm{HL}}\propto N^{-p}.
+\end{equation}
+
+\noindent A linear fit to $\log(\Delta E_{\mathrm{HL}})$ against $\log N$ for the seven completed shell structures gives $p\approx0.660$, with $R^2\approx0.965$, as shown in  Figure \ref{fig:scaling}. 
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/294_complete_shell_scaling_test.png}
+    \caption{Log-log plot of the HOMO-LUMO gap against the number of carbon atoms for seven completed shell graphene flakes ($N=6$--$294$). The calculated values are compared with a fitted power law, $\Delta E_{\mathrm{HL}}\propto N^{-0.660}$ ($R^2=0.965$), and the theoretical $N^{-1/2}$ scaling reference, normalised to the benzene gap.}
+    \label{fig:scaling}
+\end{figure}
+
+\noindent The fitted exponent is larger than the approximate $p=1/2$ value suggested by simple 2D confinement arguments. The discrepancy may reflect the importance of finite size corrections, boundary geometry and the detailed distribution of electronic states. The fitted exponent is also sensitive to the restricted range of flake sizes considered, and should therefore not be interpreted as a universal scaling exponent for graphene. \\
+
+\noindent The analysis demonstrates that the gap decreases systematically for this group of hexagonal flakes, providing a quantitative extension of the trends reported by \textcite{jeongCalculationElectronicStructures2024}.
+
+
+\section{Incomplete Shells and Zero-Energy States}
+\label{sec:results_incomplete}
+
+While the completed shell can be used to investigate size dependence, it does not reveal how the electronic spectrum changes as individual carbon sites are added between successive completed configurations. To explore this behaviour, the HOMO-LUMO separation was also calculated for every even value of $N$ between 6 and 294. \\
+
+\noindent Figure~\ref{fig:intermediate_gap} shows that the intermediate structures exhibit greater variation than the completed shell sequence. Although the general trend towards smaller gaps remains evident, the frontier level separation is not monotonic with increasing carbon site count. \\
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/294_gap_comparisons_gap_vs_size_plot.png}
+    \caption{Central eigenvalue separation for even carbon site counts from $N=6$ to $294$, with completed shell configurations highlighted.}
+    \label{fig:intermediate_gap}
+\end{figure}
+
+\noindent For example, as the calculated gap decreases to 1.544 eV at $N=26$, yet increases to 2.249 eV at $N=28$, before decreasing to 1.835 eV at $N=30$. At $N=32$, the separation between the central eigenvalues vanishes. Thus, the addition of carbon atoms does not necessarily reduce the gap using this model. \\
+
+\noindent The zero gap obtained at $N=32$ can be understood through the bipartite structure of the generated carbon network. The two sublattices contain $N_A=17$ and $N_B=15$ sites, giving an imbalance of $|N_A-N_B|=2$.  This guarantees at least two zero energy eigenstates in the nearest neighbour model. The calculated spectrum contains exactly two such states, resulting in a vanishing separation between the central eigenvalues. This behaviour agrees with the relationship between sublattice imbalance and zero-energy states discussed by \textcite{fernandez-rossier_magnetism_2007}. \\
+
+\noindent These results demonstrate that the electronic spectrum depends on the connectivity and symmetry of the carbon network, rather than site count alone. Incomplete shell growth changes the number of atoms together with their local coordination, boundary configuration and sublattice populations. Consequently, the fluctuations cannot be attributed solely to changes in flake size. \\
+
+\noindent Furthermore, the intermediate structures are computationally generated carbon networks and need not correspond to stable, experimentally realisable molecules. A zero separation in the non-interacting Hamiltonian therefore does not establish metallic behaviour, since electron-electron interactions and spin-dependent effects may alter the electronic ground state.
+
+
+\section{Coronene: Orbital Visualisation}
+\label{sec:results_orbitals}
+
+The molecular orbital visualisations provide a spatial interpretation of the Hamiltonian eigenvectors, complementing the energy spectra and HOMO-LUMO analysis. Selected orbitals were reconstructed using Slater-type $2p_z$ functions and visualised as 3D isosurfaces, with the underlying carbon lattice superimposed. \\
+
+\noindent For coronene ($N=24$), the HOMO and LUMO correspond to molecular orbitals 12 and 13, respectively, using the one-based indexing convention adopted in the program. Their eigenvalues are approximately $-0.5392|\beta|$ and $+0.5392|\beta|$, giving the previously calculated gap of $1.0784|\beta|$. The molecular orbitals 1, 12, 13 and 24 for N=24 are shown in Figure \ref{fig:orbitals} \\
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/orbital_24.png}
+    \caption{Selected H\"uckel molecular orbitals of coronene ($N=24$). Molecular orbital (1) represents the lowest energy bonding orbital, (12) corresponds to a HOMO, (23) corresponds to a LUMO and (24) is the highest energy antibonding orbital. The underlying carbon atoms and bonds are superimposed.}
+    \label{fig:orbitals}
+\end{figure}
+
+\noindent These frontier levels are twofold degenerate: molecular orbitals 11 and 12 share the HOMO energy, while 13 and 14 share the LUMO energy. As discussed for benzene, the appearance of an individual orbital within a degenerate subspace depends on the chosen eigenvector basis. The spatial plots therefore illustrate valid orbital representations without uniquely defining the shape of each degenerate state. \\
+
+\noindent Molecular orbital 24, the highest-energy $\pi$ orbital of coronene, was selected for the report cover. Unlike the frontier orbitals, it represents a strongly antibonding combination at the upper end of the calculated spectrum, with an energy of approximately $+2.6751|\beta|$. Its visualisation illustrates the spatial and phase structure obtainable from the reconstructed molecular orbitals, although it is not directly involved in defining the HOMO-LUMO gap. \\
+
+\noindent The orbital visualisations therefore complement the numerical eigenvalues by illustrating the different bonding and antibonding combinations present in finite conjugated carbon networks.
+
+
+
