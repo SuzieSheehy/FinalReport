@@ -1,0 +1,132 @@
+\chapter{Abelian Property of the BTW Model}\label{ch:Abelian}
+
+
+The toppling process is Abelian, which means that the order in which unstable sites topple does not affect the final stable state.
+
+For example:
+\[
+\begin{pmatrix}
+	0 & 4 & 1 \\
+	1 & 4 & 0 \\
+	0 & 0 & 0
+\end{pmatrix}
+\;\rightarrow\;
+\begin{pmatrix}
+	0 & 5 & 1 \\
+	2 & 0 & 1 \\
+	0 & 1 & 0
+\end{pmatrix}
+\;\rightarrow\;
+\begin{pmatrix}
+	1 & 1 & 2 \\
+	2 & 1 & 1 \\
+	0 & 1 & 0
+\end{pmatrix}
+\]
+
+and 
+\[
+\begin{pmatrix}
+	0 & 4 & 1 \\
+	1 & 4 & 0 \\
+	0 & 0 & 0
+\end{pmatrix}
+\;\rightarrow\;
+\begin{pmatrix}
+	1 & 0 & 2 \\
+	1 & 5 & 0 \\
+	0 & 0 & 0
+\end{pmatrix}
+\;\rightarrow\;
+\begin{pmatrix}
+	1 & 1 & 2 \\
+	2 & 1 & 1 \\
+	0 & 1 & 0
+\end{pmatrix}
+\]
+
+When two sites contain four or more grains, the order in which they topple first does not affect the final stable matrix.
+
+\section{Toppling Matrix}
+To examine why the toppling order does not affect the final stable state, I will first introduce a mathematical representation of the toppling operation, the toppling matrix $\Delta (x,y)$. This matrix is used to describe how the number of grains at each site $y$ changes when an unstable site $x$ topples.
+
+The toppling matrix must satisfy the following four conditions: 
+
+\begin{align}
+	&\forall x,y\in L,\ x\ne y,\quad
+	\Delta(x,y)=\Delta(y,x)\geq 0
+	\tag{1}\label{eq:condition1}\\
+	&\forall x\in L,\quad \Delta(x,x)<0
+	\tag{2}\label{eq:condition2}\\
+	&\forall x\in L,\quad \sum_{y\in L}\Delta(x,y)\leq 0
+	\tag{3}\label{eq:condition3}\\
+	&\sum_{x,y\in L}\Delta(x,y)<0
+	\tag{4}\label{eq:condition4}
+\end{align}
+where $L$ represents the set of all positions in the grid.
+
+Condition~\eqref{eq:condition1} means that for two distinct sites $x,y\in L$, the number of sand grains transferred from $x$ to $y$ when $x$ topples is equal to the number transferred from $y$ to $x$ when $y$ topples. Additionally, these quantities must be non-negative. This equality is required to match the basic BTW rule. The non-negativity condition ensures that toppling at one position does not decrease the number of grains at its neighbour, so an already unstable position remains unstable until it topples.
+
+Condition~\eqref{eq:condition2} ensures that the number of grains at the toppling site decreases when it topples. Otherwise, the site would remain unstable after each toppling, allowing it to topple indefinitely.
+
+Condition~\eqref{eq:condition3} means that the total change in the number of sand grains caused by a toppling, including at the toppling site itself, must be non-positive. If this condition does not hold, a toppling increases the number of sand grains, and toppling may continue indefinitely rather than reaching a stable configuration.
+
+Condition~\eqref{eq:condition4} ensures that there is at least one position where toppling causes sand to leave the system. Otherwise, no sand can leave the system through toppling. Once a stable pile contains $3NM$ grains, adding one more grain of sand at any position will cause toppling activity that cannot terminate.
+
+\newpage
+For the BTW model, the toppling matrix is defined as follows:
+
+\begin{equation}
+	\Delta(x,y)=
+	\begin{cases}
+		-2d, & x=y,\\
+		1, & x \text{ and } y \text{ are nearest neighbours},\\
+		0, & \text{otherwise}.
+	\end{cases}
+	\tag{5}\label{eq:btw_toppling}
+\end{equation}
+where $d$ represents the dimension of the grid. For example, for the two-dimensional grid used in this simulation, $-2d=-4$. The value $-2d$ represents the change in the number of grains at the toppling site, because a $d$-dimensional grid has $2d$ nearest-neighbour directions, with one grain transferred in each direction. When toppling occurs, the toppling site transfers one grain of sand to each nearest neighbour and does not transfer any grains to other sites during this single toppling. The stability threshold $k$ is equal to $2d$.
+
+All four conditions above are satisfied by this toppling matrix. Condition~\eqref{eq:condition1} is satisfied because, for every $y \ne x$, $\Delta(x,y)$ is either 1 or 0, both of which are non-negative. Additionally, if $x$ is a nearest neighbour of $y$, then $y$ is also a nearest neighbour of $x$, so $\Delta(x,y)=\Delta(y,x)$.
+
+Since $d$ represents the dimension of the grid and is a positive integer, $-2d$ is negative, satisfying Condition~\eqref{eq:condition2}.
+
+Condition~\eqref{eq:condition3} is also satisfied because each site has at most $2d$ nearest neighbours within $L$. Therefore,
+$$\sum_{y\in L}\Delta(x,y)\leq -2d+2d=0.$$
+
+Since sites on the open boundaries have fewer than $2d$ nearest neighbours within $L$, their row sums are negative, while those of interior sites are zero, making the total sum strictly negative. Therefore, Condition~\eqref{eq:condition4} is also satisfied.
+
+\section{Toppling Operators}
+According to the definition of the toppling matrix, the toppling
+operator $T_x$, which maps a configuration $p$ to a new configuration
+$p'$, is defined as follows:
+
+\begin{equation}
+	(T_xp)(y):=
+	\begin{cases}
+		p(y)+\Delta(x,y), & p(x)\geq -\Delta(x,x),\\
+		p(y), & \text{otherwise}.
+	\end{cases}
+	\tag{6}\label{eq:toppling_operator}
+\end{equation}
+
+Consider two distinct unstable sites $x$ and $x'$, with
+$p(x)\geq k$ and $p(x')\geq k$.
+By Condition~\eqref{eq:condition1}, toppling at either site
+does not decrease the number of grains at the other site.
+For any $y\in L$,
+$$(T_xT_{x'}p)(y) =p(y)+\Delta(x',y)+\Delta(x,y) =(T_{x'}T_xp)(y). $$
+
+Therefore, $T_x$ and $T_{x'}$ commute for unstable configurations.
+
+\section{Stabilisation and Uniqueness}
+
+The stabilisation operator is introduced to map an unstable configuration to a stable configuration and is denoted by $\mathbb{T}: U_L \rightarrow S_L$, where $U_L$ represents the space of all possible height configurations and $S_L \subset U_L$ is the subset of stable height configurations. The stabilisation operator can be represented as:
+$$\mathbb{T} = \prod_{i= 1} ^N T_{x_i}$$
+
+where $N$ is the total number of topplings required to stabilise the configuration, and $x_i$ denotes the site of the $i$th toppling.
+
+Consider an unstable configuration $p$ that is stabilised after $N$ topplings:
+$$\mathbb{T}p = \left(\prod_{i=1}^{N}T_{x_i}\right)p.$$
+
+Different legal toppling sequences starting from $p$ have the same initially unstable sites. Since an unstable site remains unstable until it topples, its toppling can be delayed and exchanged with other legal toppling operations to make the first operation the same in each sequence. This produces the same configuration, including any newly unstable sites. This process is repeated on the remaining operations until stability is reached. Therefore, all sequences produce the same final stable configuration, so $\mathbb{T}$ is well-defined.
