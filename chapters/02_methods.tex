@@ -1,0 +1,112 @@
+\chapter{Methods}\label{ch:methods}
+
+\section{Data: from microscopy movie to single-cell traces}\label{sec:data}
+
+The data come from the Dar lab HIV latency screen \cite{lu2021,idb_dataset}. Jurkat T cells carry a minimal HIV circuit (LTR-d2GFP-IRES-Tat), in which the HIV promoter drives both a green fluorescent protein (GFP) and Tat, which feeds back positively on the promoter \cite{weinberger2005}. The GFP decays relatively fast (half-life 2.55\,h), so a bright cell indicates a recently active promoter; if it lasted for days, dormant periods would still appear bright. One well (K16) was analyzed: 192 frames 15\,min apart, $2044\times2048$ pixels, one GFP channel. Given each movie is about 1.6\,GB and Cellpose takes about 5.5 hours per well on a laptop GPU, processing every well was not feasible in storage or compute, and one well was enough to compare closely with the authors' results.
+
+Cells are segmented in every frame with Cellpose-SAM \cite{pachitariu2025} (Appendix Fig.~\ref{fig:seg}) and tracked frame to frame by matching centroids with the Hungarian algorithm (SciPy's \texttt{linear\_sum\_assignment}; Appendix Fig.~\ref{fig:tracking}). The tracker assumes a cell cannot move more than 15\,$\mu$m in one frame and allows cells to disappear for up to 2 frames; tracks shorter than 72 frames are dropped. The mean brightness inside each cell's mask is the measure of how active its promoter is. When a cell divides, one daughter keeps the track and the other starts a new one, as the authors did. This yielded 479 cells present in all 72 frames from hour 1 to 19, the window the authors' published traces cover, with a median CV$^2$ within 11\% of the authors' 59 published traces (0.0042 vs 0.0047; Appendix Fig.~\ref{fig:sup-published}).
+
+The background (median of non-cell pixels) falls while the cells get brighter, so the population signal roughly doubles over 18 hours in every well, including the untreated controls. Each frame is therefore rescaled to a flat population mean (Eq.~\eqref{eq:detrend}, Fig.~\ref{fig:drift}). This removes the shared rise in brightness and avoids inflating the fitted rates, with the caveat that if some of the rise came from real promoter activity, it was effectively removed from the model; this is tested in Section~\ref{sec:res-checks}. 88\% of the variance is between cells rather than over time: each cell holds its own level, and those levels differ far more from cell to cell than any one cell changes over time.
+
+\begin{equation}
+\tilde y_{c,f} = y_{c,f}\,\frac{\bar y}{\bar y_{f}}, \qquad \bar y_f = \frac{1}{N_c}\sum_c y_{c,f}, \qquad \bar y = \frac{1}{N_f}\sum_f \bar y_f
+\label{eq:detrend}
+\end{equation}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\linewidth]{data_background_drift.png}
+\caption{Left: raw traces (every 24th cell) with the per-frame background (dashed). Middle: the population mean signal doubles over 18\,h; drift removal flattens it. Right: traces after background subtraction and drift removal, the input to inference.}
+\label{fig:drift}
+\end{figure}
+
+\section{Stochastic models of gene expression}\label{sec:models}
+
+The telegraph model, Eq.~\eqref{eq:telegraph-rxns}, is a reaction network \cite{wilkinson2019} and was the obvious choice given the scope of the problem and the work already built around it: the promoter switches ON and OFF at random and makes molecules only while ON. As $k_{on}\to\infty$ it reduces to the birth--death model, whose steady state is Poisson. Simulating birth--death first was a safeguard: if the simulator could not reproduce a Poisson distribution, it could not be trusted on the telegraph model, which is then tested against its exact distribution, Eq.~\eqref{eq:peccoud} \cite{peccoud1995} (moments in Appendix~\ref{sec:sup-sim}). Burst size, Eq.~\eqref{eq:burst}, is a ratio, $k_m/k_{off}$, not a rate: doubling both leaves the data almost unchanged, so burst size can be well determined even when neither rate is.
+
+\begin{equation}
+G_{off} \xrightarrow{k_{on}} G_{on}, \qquad G_{on} \xrightarrow{k_{off}} G_{off}, \qquad G_{on} \xrightarrow{k_m} G_{on} + M, \qquad M \xrightarrow{\gamma} \varnothing
+\label{eq:telegraph-rxns}
+\end{equation}
+
+\begin{equation}
+P(n) = \frac{\lambda^n}{n!}\,\frac{\Gamma(a+n)}{\Gamma(a)}\,\frac{\Gamma(a+b)}{\Gamma(a+b+n)}\;{}_1F_1(a+n;\,a+b+n;\,-\lambda),
+\qquad a = \frac{k_{on}}{\gamma},\; b = \frac{k_{off}}{\gamma},\; \lambda = \frac{k_m}{\gamma}
+\label{eq:peccoud}
+\end{equation}
+
+\begin{equation}
+\text{burst frequency} = k_{on}, \qquad \text{burst size} = \frac{k_m}{k_{off}}, \qquad \text{fraction ON} = \frac{k_{on}}{k_{on}+k_{off}}
+\label{eq:burst}
+\end{equation}
+
+Gillespie's direct method \cite{gillespie1977} draws exact sample paths: it draws when the next reaction happens, Eq.~\eqref{eq:ssa}, then which reaction fires, with probability $a_j/a_0$. It is written once, as a generic \texttt{gillespie} function that takes a propensity function and a list of state changes (Listing~\ref{lst:gillespie}). Both models run through this same function, which is what makes the birth--death safeguard meaningful: with two separate simulators, passing the Poisson test would say nothing about the telegraph one.
+
+\begin{equation}
+\tau = -\frac{\ln u_1}{a_0(\mathbf{x})}, \qquad
+j = \min\Big\{ j' : \sum_{i \le j'} a_i(\mathbf{x}) > u_2\, a_0(\mathbf{x}) \Big\}, \qquad a_0 = \sum_j a_j,\quad u_1,u_2 \sim U(0,1)
+\label{eq:ssa}
+\end{equation}
+
+\section{A telegraph model for fluorescence}\label{sec:fluor-model}
+
+GFP is present at thousands of molecules per cell, so Gillespie would need tens of millions of reactions per simulated movie. In this large-number limit the promoter still switches at random, but between switches the signal relaxes smoothly towards its new level, Eq.~\eqref{eq:relax}, with time in reporter lifetimes ($\tau_{\mathrm{GFP}} = 2.55\,\mathrm{h}/\ln 2 = 3.68$\,h, so frames are 0.068 lifetimes apart). The model agrees closely with full Gillespie at large $k_m$ (Table~\ref{tab:ln-check}). Real cells also differ in brightness for reasons unrelated to switching, such as size or cell-cycle stage: bright cells stay bright, while in the plain model every cell shares one mean (Appendix Fig.~\ref{fig:sup-simvsreal}). So each cell gets its own brightness, Eq.~\eqref{eq:extrinsic}, where $\eta$ is extrinsic noise in Elowitz's sense \cite{elowitz2002} and $\eta = 0$ is the plain telegraph model. Readings add Gaussian noise $\sigma$. $A$ mixes molecules made with brightness per molecule, so burst size is in arbitrary units. Priors are log-uniform except $\eta \sim U(0,1)$ (Appendix Table~\ref{tab:priors}). Reported quantities: bursts per hour $= k_{on}/\tau_{\mathrm{GFP}}$, burst size $= A/k_{off}$, $T_{on} = \tau_{\mathrm{GFP}}/k_{off}$, $T_{off} = \tau_{\mathrm{GFP}}/k_{on}$.
+
+\begin{equation}
+x(t) = A_i\,s + \big(x(t_0) - A_i\,s\big)\, e^{-(t - t_0)}, \qquad s \in \{0, 1\}
+\label{eq:relax}
+\end{equation}
+
+\begin{equation}
+A_i = A\, \exp\!\Big(\eta z_i - \tfrac{\eta^2}{2}\Big),\quad z_i \sim \mathcal{N}(0,1), \qquad
+y_{i,f} = x_i(t_f) + \varepsilon_{i,f},\quad \varepsilon_{i,f} \sim \mathcal{N}(0, \sigma^2)
+\label{eq:extrinsic}
+\end{equation}
+
+\section{Bayesian inference}\label{sec:bayes}
+
+The posterior $p(\theta\mid y) \propto p(y\mid\theta)\,p(\theta)$ needs a likelihood, and for time series from this model there is no tractable formula for one. Approximate Bayesian computation (ABC) needs only a simulator \cite{wilkinson2019,beaumont2002}. A reference table is simulated from the prior, each dataset is reduced to summary statistics, and the draws whose statistics are closest to the data are kept, Eq.~\eqref{eq:abc}. Here $\rho$ is a Euclidean distance with each statistic scaled by its MAD ($m_k = 1.4826\,\mathrm{MAD}$). ABC therefore targets $p(\theta\mid s(y))$ and loses information whenever the statistics are not sufficient and $\epsilon > 0$, which Section~\ref{sec:syn-diagnosis} investigates. The proposal planned particle MCMC, with ABC as a first, simulator-only step. ABC became the main method because it passed the exact-likelihood and coverage checks, and because one reusable reference table made the whole diagnostic study affordable.
+
+\begin{equation}
+p_\epsilon(\theta \mid y) \;\propto\; p(\theta) \int \mathbb{1}\big[\rho\big(s(y'), s(y)\big) \le \epsilon\big]\, p(y' \mid \theta)\, \mathrm{d}y', \qquad
+\rho(s', s) = \sqrt{\textstyle\sum_{k} \big((s'_k - s_k)/m_k\big)^2}
+\label{eq:abc}
+\end{equation}
+
+Rejection treats every kept draw as an equally good match, though none match exactly. Regression adjustment \cite{beaumont2002} weights the kept draws with an Epanechnikov kernel, regresses $\log\theta$ on $(s_i - s_{obs})$, and shifts each draw to where its statistics would match the data, Eq.~\eqref{eq:regadj} (Listing~\ref{lst:regadj}). In the fluorescence model, $\eta$ is adjusted on its natural scale and clipped to $[0, 1]$. This assumes the relationship is roughly linear among the kept draws, which the coverage test checks.
+
+\begin{equation}
+w_i = 1 - (\rho_i/\epsilon)^2, \qquad
+\log_{10}\theta_i^{*} = \log_{10}\theta_i - \big((s_i - s_{obs})/m\big)^\top \hat\beta
+\label{eq:regadj}
+\end{equation}
+
+One synthetic test only shows that the truth landed inside the interval once. A coverage test \cite{prangle2014} uses 300 reference rows in turn as fake data with known $\theta$, runs ABC on the remaining rows, and records $\widehat{C}(\alpha)$, the fraction of $\alpha$-level intervals that contain the truth, with standard error $\sqrt{\alpha(1-\alpha)/300}$. Calibrated means $\widehat{C}(\alpha) = \alpha$. Width matters too, since returning the prior would have perfect coverage.
+
+A particle filter \cite{wilkinson2019} is used only for held-out forecasting. Each particle is a hypothetical cell with its own parameters, promoter state and signal. At each frame the particles are moved forward with the model, weighted by how well they explain the new reading, $w_t^{(i)} \propto \mathcal{N}(y_t;\, x_t^{(i)},\, \sigma^{(i)2})$, and resampled with systematic resampling (Listing~\ref{lst:pf}), so the particles that fit the data survive.
+
+\section{Software design and computation}\label{sec:computing}
+
+The analysis is split into five numbered Jupyter notebooks, each of which runs in order and answers a single question; additionally, there is a small package, \texttt{stochsim}, and a test suite in \texttt{tests/} (layout in Appendix Table~\ref{tab:code}). The raw movie becomes traces (01), the simulator is checked against exact results (02), inference is checked on synthetic data with known rates (03, 04), one script, \texttt{build\_reference\_table.py}, builds the reference tables in parallel, and notebook 05 produces the posterior, model checks and forecasts. Code moved into \texttt{stochsim} only when it was needed by a second piece of code. The clearest example is the reference-table builder, which runs both on EC2 and on the laptop. It has to use exactly the same simulator and summary statistics as the notebooks: if it used a separate copy and one of the two copies was later changed, the table would no longer match the analysis, and nothing would flag the mismatch. So the simulator is written once, as a single \texttt{gillespie} function in \texttt{stochsim}, and notebooks 02--05 and the table builder all import it. In the same way, every figure is saved by one shared function under a fixed file name, and Appendix~\ref{app:reproduce} lists which notebook section produces each figure and table.
+
+The Gillespie function depends on its previous state to determine how long to wait for the next reaction and what that next reaction is. That is to say, the loop cannot be vectorized over time. Instead, vectorization is applied along the independent axes. The fluorescence model updates all 479 cells at once with array masks, touching only the cells whose promoter switches (Listing~\ref{lst:largenumber}), and ABC distances are computed over the whole 100,000-row table in one array operation rather than a simple Python loop. The tests time both versions on the same inputs: the distances take 0.32\,s as a loop and 0.009\,s with NumPy, and the lag autocorrelation of a $400\times72$ movie 5.3\,ms against 0.09\,ms. Vectorizing is not always worth it: evaluating the exact likelihood over its whole grid at once gained little (20\,ms against 17\,ms), because the time is spent inside SciPy's ${}_1F_1$, not in Python overhead.
+
+Independent simulations run in parallel. One script, \texttt{build\_reference\_table.py}, builds both tables (\texttt{--model gillespie} or \texttt{fluorescence}): drawing the prior up front, then cutting the rows into chunks and running the chunks on every core via \texttt{multiprocessing}. The 100,000-row Gillespie table costs about 0.5 CPU-seconds per row, roughly 14 CPU-hours in total. It could have run on the laptop, in an estimated two hours on all eight cores, but it was run on a 64-core AWS EC2 \texttt{c7a.16xlarge} instead, where it took 13 minutes and did not need the laptop to stay on. To replicate, simply copy the script and package over, start the job under \texttt{nohup} so it survives the SSH session closing, copy the results back and terminate the instance. Changing the algorithm gained more than changing the hardware. At the same rates the large-number model (Section~\ref{sec:fluor-model}) simulates a movie about $20\times$ faster than Gillespie (4.8\,ms for 479 cells against 98\,ms for 400 cells in the tests), and a real-data table row costs about 12 CPU-ms against 500 for a Gillespie row. The 200,000-row table for the real data only took 4.9 minutes on eight laptop cores, with no EC2 needed.
+
+Three numerical issues came up. The Gamma functions in Eq.~\eqref{eq:peccoud} overflow for large $n$, so they are summed as logarithms. ${}_1F_1(a+n;\,a+b+n;\,-\lambda)$ loses precision at large $\lambda$ because its terms alternate in sign and cancel, so Kummer's transformation, ${}_1F_1(a+n;\,a+b+n;\,-\lambda) = e^{-\lambda}\,{}_1F_1(b;\,a+b+n;\,\lambda)$, is used instead, in which every term is positive. Then, after subtracting the largest log-weight, the particle weights get normalized, so they never all underflow to zero. To ensure reproducibility, each chunk of a table is seeded from its own child of NumPy's \texttt{SeedSequence} (child 0 draws the prior), so a table depends only on the seed and chunk size, not on the number of workers or the order in which chunks finish. Rebuilding the real-data table with the final script reproduced the saved table exactly, and the Gillespie table built on EC2 and on an M2 Mac agrees to about $10^{-15}$, because the two processors can round the last digit differently. Settings, package versions and run time are saved with each table in \texttt{run\_metadata.json}. Every stage was checked against a known answer before it was trusted, and Chapter~\ref{ch:validation} presents these checks as the project's tests. The fast, repeatable ones are automated in \texttt{tests/test\_stochsim.py}: nine tests, run in a few seconds with \texttt{python -m pytest tests}, covering the Poisson birth--death limit, the Kummer-transformed distribution against the direct formula, the large-number model against Gillespie, each vectorized function against its loop, regression adjustment on a known linear relationship, and a table that is identical whatever the number of workers.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Task & Simulations & Hardware & Wall time & Note \\
+\midrule
+Cell segmentation (Cellpose-SAM) & 192 frames & laptop (Apple GPU) & 5.5\,h & $\approx$100\,s per frame \\
+Baseline ABC table (Gillespie) & 10,000 & laptop, 1 core & 5\,min & 10 cells each \\
+Diagnostic ABC table (Gillespie) & 100,000 & EC2, 64 cores & 13\,min & $\approx$14 CPU-hours \\
+Real-data ABC table (large-number) & 200,000 & laptop, 8 cores & 4.9\,min & 12 vs 500 CPU-ms/row \\
+\bottomrule
+\end{tabular}
+\caption{Computational cost of each stage. Gillespie cannot be vectorized in time, so speed came from parallelism across simulations and from the large-number approximation. Segmentation time is GPU compute; the run spanned 9.2\,h of wall time because the laptop slept.}
+\label{tab:runtime}
+\end{table}

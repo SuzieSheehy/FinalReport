@@ -1,0 +1,71 @@
+\chapter{Results: the HIV Latency Circuit}\label{ch:results}
+
+\section{Calibration on the fluorescence model}\label{sec:res-coverage}
+
+The model changed from Section~\ref{sec:syn-diagnosis}, so coverage must be rerun. On 300 synthetic datasets, the 95\% intervals contain the truth 96--97\% of the time for all five parameters (Appendix Fig.~\ref{fig:res-coverage}). Coverage averages over the whole prior, so recovery was also tested at the posterior median for K16: over 20 movies simulated there and refitted, the truth was inside the 95\% interval 20 times for $k_{on}$, $k_{off}$, $A$ and $\sigma$, and 19 times for $\eta$. The intervals there are as wide as on the real data ($\times$29 for $k_{on}$, $\times$178 for $k_{off}$), so the wide switching intervals in Section~\ref{sec:res-posterior} seem to be a property of the data at these values, rather than a failure of this particular method.
+
+\section{Posterior for well K16}\label{sec:res-posterior}
+
+The posterior statistics for the K16 well are summarized in Table~\ref{tab:posterior} and Fig.~\ref{fig:res-posterior}. The extrinsic spread is $\eta = 0.59$ [0.53, 0.66], and $\eta = 0$, the plain telegraph model, is ruled out, consistent with 88\% of the variance being between cells (Section~\ref{sec:data}). The switching rates are weakly determined. Burst frequency is about 0.5 per hour, but its interval spans a factor of 29, and burst size spans a factor of 124. The fluctuations caused by switching are small next to the fixed differences in brightness between cells, meaning they carry little information about the rates. Hence, only $A$, $\sigma$ and $\eta$ are well determined.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+Quantity & Median & 95\% credible interval \\
+\midrule
+Burst frequency (bursts per hour) & 0.48 & 0.08 -- 2.3 \\
+Burst size (a.u., $A/k_{off}$) & 460 & 35 -- 4,300 \\
+Fraction of time ON & 0.67 & 0.32 -- 0.97 \\
+Mean ON / OFF period (h) & 5.0 / 2.1 & 0.3 -- 48 / 0.4 -- 12.7 \\
+Always-ON brightness $A$ (a.u.) & 350 & 295 -- 444 \\
+Measurement noise $\sigma$ (a.u.) & 18 & 6 -- 32 \\
+Extrinsic spread $\eta$ & 0.59 & 0.53 -- 0.66 \\
+\bottomrule
+\end{tabular}
+\caption{Posterior summary for well K16 (479 cells, regression-adjusted ABC).}
+\label{tab:posterior}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\linewidth]{hiv_posterior.png}
+\caption{Posterior distributions for well K16 from rejection and regression-adjusted ABC, against the prior. $A$, $\sigma$ and $\eta$ are well determined; the switching rates are only loosely constrained.}
+\label{fig:res-posterior}
+\end{figure}
+
+\section{Model checks and held-out tests}\label{sec:res-heldout}\label{sec:res-checks}
+
+The posterior predictive check passes: all 13 statistics of the real data lie within 2 standard deviations of 200 movies simulated from the posterior (Appendix Fig.~\ref{fig:res-ppc}). $\eta$ and burst frequency are robust to the background level and to which traces are used, but the fraction of time ON depends on how the drift is handled, rising to 0.90 when only hours 1--10 are used and falling to 0.48 without drift removal (Table~\ref{tab:sensitivity}).
+
+These checks compare the model with the same cells it was fitted to. Fitting on half the cells and predicting the other half works well, with 97\% of held-out statistics within $\pm2$ standard deviations (Appendix Fig.~\ref{fig:sup-cellsplit}). Splitting by time does not. Fitting hours 1--10 and predicting hours 10--19, only 83\% fall within range and the mean misses at $z=+4.1$. Fitted separately, the two halves give $A$ = 226 [193, 271] and 447 [373, 588]\,a.u., roughly double with no overlap (Appendix Fig.~\ref{fig:sup-timesplit}). So even after drift removal, the process is not stationary over the movie.
+
+The most direct test is to forecast each cell's own trace. A bootstrap particle filter with 2,000 particles per cell conditions on hours 1--10 and forecasts hours 10--19. I compared it with two simple forecasters: persistence, where the cell stays where it was at hour 10, and the cell's own average. Persistence wins (Table~\ref{tab:forecast}, Fig.~\ref{fig:res-forecast}). Its 95\% bands contain 93\% of held-out readings against 62\% for the model, and its median error is 60\,a.u. against 90. A poor forecast could come from the model or from a bug in the filter. To separate the two, the same filter was run on cells simulated from the model itself, where the model is correct by construction. There it is calibrated (53, 82 and 95.5\% for nominal 50, 80 and 95\%), so the problem is the model, not the code. Real cells keep drifting in the same direction for hours, whereas the model expects them to return to their own level within about one reporter lifetime. The drift was also removed using all 72 frames, which hands the model the population trend in advance. Persistence still wins, and that makes the result stronger.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lccccc}
+\toprule
+Forecaster & 50\% band & 80\% band & 95\% band & Median abs.\ error & 95\% width \\
+\midrule
+Particle filter (model) & 0.19 & 0.40 & 0.62 & 90 & 152 \\
+Persistence & 0.45 & 0.77 & 0.93 & 60 & 295 \\
+Cell average & 0.16 & 0.35 & 0.61 & 91 & 177 \\
+\midrule
+Particle filter on model-simulated cells & 0.53 & 0.82 & 0.955 & 23 & -- \\
+\bottomrule
+\end{tabular}
+\caption{Forecast coverage for hours 10--19 (fraction of held-out readings inside each band) and errors in a.u. The bottom row shows the filter is calibrated when the model is correct.}
+\label{tab:forecast}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.9\linewidth]{hiv_forecast.png}
+\caption{Particle-filter forecasts. Top: four cells seen for hours 1--10 (black), held-out readings (red) and the model's 50\% and 95\% bands. Bottom: coverage, error and band width against forecast horizon for the model, persistence and cell-average forecasters.}
+\label{fig:res-forecast}
+\end{figure}
+
+\section{Comparison with the published analysis}\label{sec:res-paper}
+
+The paper does not report switching rates, so the comparison was done in two steps. First, I checked the code. Applied to the authors' 59 traces, my implementation of the Lu et al.\ \cite{lu2021} noise metrics reproduces $\langle FL\rangle$ and HF-CV$^2$ exactly and HF-$\tau_{1/2}$ to within 7\% (Appendix Table~\ref{tab:paper-metrics}). The fitted model also reproduces both noise metrics on simulated movies, even though neither was used in the fit (Appendix Fig.~\ref{fig:sup-papermetrics}). Second, the rates were compared with the lab's own model for untreated cells \cite{dar2012} (Appendix Table~\ref{tab:lab-rates}). Burst frequency (0.48 against 0.42 per hour) and the mean OFF period (2.1 against 2.37\,h) agree. The ON fraction and ON period do not, which is expected. Without an mRNA step, ``ON'' in this model really means ``GFP is being made'', and that covers the promoter's ON period plus the $\sim$2.4\,h lifetime of the mRNA it produced (Appendix Fig.~\ref{fig:res-rates}).
