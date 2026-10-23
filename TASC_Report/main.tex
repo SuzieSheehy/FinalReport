@@ -1,0 +1,50 @@
+\documentclass[a4paper, 12pt, oneside]{report}
+%------------PREAMBLE
+\include{preamble}
+\usepackage{morefloats}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{question}{Question}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\soc}{\textsc{soc}}
+\newcommand{\btw}{\textsc{btw}}
+
+
+%---------------------------
+                                          
+\begin{document}
+
+%---------------------------TITLE PAGE
+\include{cover}
+%---------------------------
+
+%---------------------------TABLE OF CONTENTS
+\tableofcontents
+%---------------------------
+
+%---------------------------MAIN BODY
+\input{chapter1}
+\input{chapter2}
+\input{chapter3}
+\input{chapter4}
+%---------------------------
+
+%---------------------------APPENDICES
+\begin{appendices}
+ \input{appendix1}
+\end{appendices}
+%---------------------------
+
+%---------------------------BIBLIOGRAPHY
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{abbrv}
+\bibliography{biblio}
+%---------------------------
+
+\end{document}

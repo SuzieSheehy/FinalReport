@@ -1,0 +1,194 @@
+\section{Bak-Tang-Wiesenfeld Model}
+
+The Bak-Tang-Wiesenfeld (\btw) model is an easy-to-implement way we can observe \soc. It imagines a grid where grains of sand are dropped onto cells, stacking on top of each other until they reach a particular ``height'' (the \emph{stability threshold}), at which point the grains of sand ``topple'' onto the adjacent cells. The topples can result in an adjacent cell reaching the stability threshold, which then causes that cell to topple. We call such a sequence of topples an ``avalanche''. It is through the statistics of these avalanches which we observe \soc.
+
+We now describe the formal construction of the \btw\ model. We define a subset\footnote{In our implementation, $L$ will be a subset of the form $[1,\ldots, N]\times [1,\ldots, N]$ for some $N\in \ZZ_{\ge 1}$. Further, the model can easily be generalised to consider subsets of $\ZZ^d$ for any $d\ge 1$.} $L\subseteq \ZZ^2$ which we will call the ``sandpile'', and a function $p_t: L\rightarrow \ZZ_{\ge 0}$ for each time point $t\in \ZZ_{\ge 0}$. We call an element of $L$ a \emph{site} in the sandpile, and the function $p_t(x)$ is the number of grains of sand at the site $x$ at time $t$. We set $p_0(x)=0$ for every $x\in L$. At each time point $t$, a site $x\in L$ is sampled uniformly and we set $p_{t+1}(x)=p_t(x) + 1$. Then, if any site $y\in L$ has $p_{t+1}(y)\ge k$, where $k=4$ is the stability threshold, we decrease $p_{t+1}(y)$ by $k$ and increase $p_{t+1}(z)$ by $1$ for all $z\in L$ such that $|y-z|=1$. This process is repeated until $p_{t+1}(y) < k$ for all $y\in L$.
+
+
+\begin{question}
+    In what ways does the \btw\ model satisfy the properties required for a system to exhibit \soc?
+\end{question}
+
+The \btw\ model exhibits \soc\ because it can develop the critical behaviour through its own dynamics, without needing to calibrate particular parameters. It is self-organising, because the repeated avalanches and addition of grains bring the system into a critical state. The fact that most of the grains are conserved in the lattice allows the system reach and maintain the critical state, and in this critical state, the avalanches can occur over different scales.
+
+Further, the model is slow driving, since the grains being dropped are small localised changes to the system. If we add a grain of sand to the pile, the sand pile can either remain stable or produce an avalanche. The microscopic phenomena is the same in both cases. The size of an avalanche depends on the configuration of the pile, not just the initial disturbance by the dropped grain of sand.
+
+
+\begin{question}
+    Why is it important for the lattice to have finite boundaries? What if we had an infinite lattice, but dropped the sand on only a (finite) subset of the lattice?
+\end{question}
+
+It is necessary to have finite boundaries so that sand can be dissipated, allowing the pile to reach a statistically stationary state. If we had a finite lattice but the lattice ``wraps around'', then the total amount of sand would strictly increase every time a grain is added. As a consequence, the pile would eventually have so many grains that it can never reach a stable state. If we had an infinite lattice but only dropped sand on a finite subset, then the avalanche statistics would change as the number of grains outside the finite subset grows.
+
+
+\begin{question}
+    We can define the average height of each pile to be
+    \[ p_t\coloneq \frac{1}{NM}\sum_{i,j}p_t(i,j)\]
+    Without simulating anything, what might you expect this to be once the system has reached a steady state (if it ever does so)?
+\end{question}
+
+We can say, for certain that the average height in a stable state can be at most $3$. If the average height is more than $3$, then (by the pigeonhole principle) at least one site must be unstable. On one hand, if the average height were close to $3$, then it is unlikely that every site would have a height less than $4$. On the other hand, if the average height is too low then it is unlikely that the pile has reached the critical state, since grains of sand can only be lost at the boundary. Caracciolo and Sportiello \cite{Car12} proved that the average height approaches $2.125$ in the limit as the grid size increases, so we expect the average height to be smaller than this, increasing as the grid size increases.
+
+
+
+
+\begin{question}
+    Explain the difference between: a steady state, a statistically stationary state, and an equilibrium state. Do you expect the btw model reach an equilibrium state or statistically stationary state? In terms of system observables, how might we characterise this state?
+\end{question}
+
+A steady state is where the behaviour of a system no longer changes over time. For the \btw\ model, this refers to the period once the transient effects of the grid starting empty disappear. A statistically stationary state is where the statistical properties of a system stay the same, while an equilibrium state is where the system has no external driving.
+
+The \btw\ model will reach a statistically stationary state and not an equilibrium state. In particular, it will reach a state where the average number of grains lost will match the number of grains added, and at this point the system will be in a statistically stationary state. The dropping of grains is an external driving which will cause the system to never enter an equilibrium state.
+
+We can characterise the state through the various statistics we can measure. The long-time average height will stabilise and the avalanche statistics will have a fixed distribution. We can also characterise it by when the net change in the number of grains over a period of time becomes $0$.
+
+
+\begin{question}
+    Is there a difference between sampling a system over time and sampling an ensemble of systems? If so, under what circumstances?
+\end{question}
+
+A system is ergodic if there exists a limiting distribution of its state, and the limit is independent of its current state. This means that the system can reach any state it should be able to reach, rather than being trapped in a subset of possible states. Sampling a system over time and sampling an ensemble of systems is fundamentally different, however, if the system is ergodic then the two methods are equivalent. 
+
+The \btw\ model is ergodic, since the random grain additions allow the system to enter any of its recurrent configurations. Consequently, we will sample the system over time rather than sampling an ensemble of systems, as it is more computationally feasible to only have to get past the transient period of the system a limited number of times.
+
+
+
+
+
+\begin{question}
+    Do you expect any correlation between the four properties we are recording for the avalanche? Justify why/why not.
+\end{question}
+
+We define an avalanche to be the sequence of topples that occur between the pile entering an unstable state after a grain has been dropped and the pile returning to a stable state. The four properties of an avalanche which we are recording are as follows:
+\begin{itemize}
+    \item[Topples] The number of topples in the avalanche;
+    \item[Area] The number of unique sites that were toppled in the avalanche;
+    \item[Loss] The number of grains which were deleted from the system by toppling off the lattice in the avalanche; and
+    \item[Length] The maximum distance between two sites which toppled in the avalanche.
+\end{itemize}
+
+We use the maximum distance between topples as our measure of length because it best describes the size of the avalanche (compared to, for instance, measuring the maximum distance between a topple and the site of the grain being dropped). We use the $L^2$ norm, since this is a more realistic measurement of distance.
+
+We expect all four properties to be pairwise correlated because, for any of these properties, each additional topple that occurs in an avalanche either leaves the property the same or increases it. Roughly speaking, each property increases as the size of the avalanche increases.
+
+
+
+\section{Abelian Property}
+
+In this section, we prove that the topples of the \btw\ model are \emph{abelian}. This means that in an unstable state, the order in which the unstable sites are toppled does not change the final stable configuration.
+
+Let $L\subseteq \ZZ^d$ be the \emph{sand pile lattice}, where $d\ge 1$ is the dimension of the lattice. Corresponding to a configuration of the sand pile $p$, we define a function $p: L\rightarrow \ZZ_{\ge 0}$, where $p(x)$ is the number of grains of sand on the lattice point $x$ in the configuration $p$. Define $k$ to be the \emph{stability threshold} (i.e., the pile topples when a lattice point is of height at least $k$). Then $p$ is a \emph{stable} configuration if $p(x)<k$ for all $x\in L$, and it is \emph{unstable} if $p(x)\ge k$ for at least one $x\in L$.
+
+We define the \emph{toppling matrix} $\Delta$, which has rows and columns indexed by $L$. For $x,y\in L$, the entry $\Delta(x,y)$ describes the change in height of site $y$ when there is a toppling at site $x$. The matrix $\Delta$ must satisfy the following conditions:
+
+\begin{align}
+    \forall x,y\in L \text{ where } x\ne y, \quad &\Delta(x,y)=\Delta(y,x) \ge 0 \label{eq:delta1} \\
+    \forall x\in L, \quad & \Delta(x,x) < 0 \label{eq:delta2}\\
+    \forall x\in L, \quad & \sum_{y\in L}\Delta(x,y) \le 0 \label{eq:delta3}\\
+    & \sum_{x,y\in L}\Delta(x,y) < 0 \label{eq:delta4}
+\end{align}
+
+
+
+\begin{question}
+    For Equation \ref{eq:delta1} to \ref{eq:delta4}, explain the significance and justify its necessity.
+\end{question}
+
+Equation~\ref{eq:delta1} demands that when a site topples, no other site loses any grains. This is consistent with how we defined toppling. Equation~\ref{eq:delta1} also insists that there is some symmetry in how toppling works, in the sense that the number of grains that go to a site $y$ when $x$ is toppled should be the same as the number of grains that go to $x$ when $y$ is toppled. 
+
+Equation~\ref{eq:delta2} means that a site should lose grains when it is toppled. If Equation~\ref{eq:delta2} does not hold for a site $x$, then when the height at $x$ reaches $k$ (which it eventually will do with probability $1$), the pile will never be able to reach a stable configuration. 
+
+Equation~\ref{eq:delta3} can be written as $-\Delta(x,x) \ge \sum_{y\in L\setminus \{x\}}\Delta(x,y)$ for all $x\in L$, meaning that when a site $x$ is toppled, the number of grains gained by other sites is no more than the number of grains which are lost by $x$ (i.e., we are not creating new grains when toppling). 
+
+Equation~\ref{eq:delta4} demands that there is at least one site where toppling will result in at least one grain leaving the pile. If Equation~\ref{eq:delta4} does not hold, the pile will end up enough grains that it can never reach a stable configuration. 
+
+In the \btw\ model, the toppling matrix is defined as follows:
+
+\[
+\Delta_{\btw}(x,y)=\begin{cases}
+    -2d \quad & x=y\\
+    1 & \text{$x$ and $y$ are nearest neighbours}\\
+    0 & \text{else}
+\end{cases}
+\]
+
+
+\begin{question}
+    Explain and justify the definition of the toppling matrix in the btw model and verify that it satisfies Equation \ref{eq:delta1} to \ref{eq:delta4}.
+    What is the stability threshold k?
+\end{question}
+
+The \btw\ toppling matrix $\Delta_{\btw}$ removes $2d$ grains from a toppled site $x$ and adds $1$ grain to each nearest neighbour of $x$. It is also a symmetric matrix, so it clearly satisfies Equation \ref{eq:delta1} and \ref{eq:delta2}. Each site in the interior of the pile has $2d$ nearest neighbours, and each site on the boundary of the pile has less than $2d$ nearest neighbours. Therefore for each $x\in L$,
+\begin{align*}
+    \sum_{y\in L}\Delta_{\btw}(x,y) &= \Delta_{\btw}(x,y) +  \sum_{y\in L\setminus \{x\}} \Delta_{\btw}(x,y) \\
+    & = -2d + \#\{\text{nearest neighbours of x}\} \\
+    & \le 0
+\end{align*}
+Hence $\Delta_{\btw}$ also satisfies Equation \ref{eq:delta3}. Since at least one site is on the boundary of the pile, we have
+\[ \sum_{x,y\in L}\Delta_{\btw}(x,y) = \sum_{x\notin \partial L}\sum_{y\in L\setminus \{x\}} \Delta_{\btw}(x,y) + \sum_{x\in \partial L}\sum_{y\in L\setminus \{x\}} \Delta_{\btw}(x,y) < 0 \]
+so $\Delta_{\btw}$ also satisfies Equation~\ref{eq:delta4}. The stability threshold is $k=2d$.
+
+For each $x\in L$, we then define the toppling operator $T_x$, which maps a configuration $p$ to a new configuration $T_xp$, by
+
+\[
+(T_xp)(y)=\begin{cases}
+    p(y) + \Delta_{\btw}(x,y) \quad & p(x)\ge k\\
+    p(y) & \text{else}
+\end{cases}
+\]
+
+\begin{question}
+    Show that $T_x$ and $T_{x'}$ commute for an unstable configuration $p$.
+\end{question}
+
+\begin{proof}
+Let $x,x'\in L$ be distinct unstable sites and let $y\in L$ be any site. Then $p(x)\ge k$ and $p(x') \ge k$. It follows that for any $y\in L$, we have 
+
+\begin{align*}
+    (T_{x'}p)(y)& = p(y) + \Delta_{\btw}(x',y) \\
+    (T_{x'}p)(x)& =p(x) + \Delta_{\btw}(x',x) \\
+    (T_{x}p)(y)& =p(y) + \Delta_{\btw}(x,y) \\
+    (T_{x}p)(x')& =p(x') + \Delta_{\btw}(x,x')
+\end{align*}
+Since $x\ne x'$, and $p(x)$ and $p(x')$ are both at least $k$, it follows that $p(x) + \Delta_{\btw}(x',x) \ge k$ and $p(x') + \Delta_{\btw}(x,x') \ge k$.
+Therefore,
+
+\begin{align*}
+    (T_xT_{x'}p)(y) & = 
+    \begin{cases}
+        (T_{x'}p)(y) + \Delta_{\btw}(x,y) \quad & (T_{x'}p)(x)\ge k\\
+        (T_{x'}p)(y) & \text{else}
+    \end{cases}\\
+    & = (T_{x'}p)(y) + \Delta_{\btw}(x,y) \\
+    & = p(y) + \Delta_{\btw}(x',y) + \Delta_{\btw}(x,y) \\
+    & = (T_{x'}T_xp)(y) \qedhere
+\end{align*} 
+\end{proof}
+
+
+
+
+\begin{question}
+    Show that T is well defined. In other words, show that given some unstable configuration $p,p'=\TT p$ is unique (you can’t end with two different stable configurations). This is equivalent to the sequence of $T_{x_i}$ required is unique up to re-ordering.
+\end{question}
+
+Suppose that $p'$ and $p''$ are distinct configurations for $\TT p$, and let $A$ and $B$ be the corresponding sequence of topplings. Since they start from the same stable configuration $p$, there is a site where the number of topples in one sequence is more than the number of topples in the other. Let $a(x)$ denote the number of topples at site $x$ in $A$, and $b(x)$ denote the number of topples at site $x$ in $B$. Without loss of generality, suppose $a(x)>b(x)$ for some $x\in L$. 
+
+Let $x_0$ be the site of the first toppling in $A$ that causes the number of topplings in any site to be greater than the total number of topplings at that site in $B$. Let $a_0(x)$ denote the number of topplings in $A$ at site $x$ before this toppling. So $a_0(x_0)=b(x_0)$ and $a_0(x)\le b(x)$ for all $x\in L$. If we denote the set of nearest neighbours of $x_0$ by $I$, then the height before this this toppling at $x_0$ is given by 
+
+\begin{align*}
+    &p(x_0) - 4a_0(x_0) +\sum_{x\in I}a_0(x) \\
+    \le &p(x_0) - 4b(x_0) +\sum_{x\in I}b(x) \\
+    = &p''(x_0)
+\end{align*}
+
+This value is at most $3$, since $p''$ is a stable configuration, contradicting that $x_0$ is the next topple in $A$. We conclude that $p'=p''$.
+
+
+\section{Aim}
+The aim of this project is to study \soc\ within the non-Gaussian statistics of the sandpile model. We will implement the basic \btw\ model and determine whether the statistics display scale invariance. Then, we will extend the \btw\ model and see how the behaviour of the system changes as a larger number of grains of sand are dropped at once.
+
+
+
+
+

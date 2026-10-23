@@ -1,0 +1,149 @@
+\chapter{Implementation of the model}
+
+In this section, we describe the implementation of the sandpile model. The full code can be found in the file \emph{sandpile$\_$project}.
+
+
+\section{Test Model}
+
+We began by building a test model. This was broken up into four steps. The first was to create an array for the lattice and build a function which could drop grains of sand onto the lattice.
+
+\begin{lstlisting}[
+    style=pythonstyle,
+    caption={Sand dropping function},
+    label={lst:sandpile}
+]
+def random_drop_sand(pile, rng):
+    """
+    Drops a grain onto the pile at a random site.
+\end{lstlisting}
+
+Then we implement a function which can topple the pile at a particular site.
+
+\begin{lstlisting}[
+    style=pythonstyle,
+    caption={Toppling function},
+    label={lst:sandpile}
+]
+def topple(pile, unstable_site):
+    """
+    Applies the basic toppling rule to the pile, removing 4 grains from an unstable site and 1 to each adjacent site.
+\end{lstlisting}
+
+Next, a function which can take an unstable pile and return it to a stable state.
+
+\begin{lstlisting}[
+    style=pythonstyle,
+    caption={Avalanche function},
+    label={lst:sandpile}
+]
+def avalanche(pile):
+    """
+    Repeatedly applies the basic toppling rule to the pile until it is stable (i.e., an avalanche). For the avalanche, we record the number of topples, the area, the total loss, and the length.
+\end{lstlisting}
+
+
+We then want to test the avalanche function to make sure it behaves as expected. We input some test piles to see if it correctly outputs the final grid and avalanche statistics.
+
+\begin{verbatim}
+Test Sandpile 1:
+[[3 3 3]
+ [3 4 3]
+ [3 3 3]]
+After avalanche:
+[[1 3 1]
+ [3 0 3]
+ [1 3 1]]
+Topples:  10  Area:  9  Total Loss:  12  Length:  2.8284271247461903
+
+Test Sandpile 2:
+[[4 3 3 3 3]
+ [3 0 3 0 3]
+ [3 3 0 0 3]
+ [0 0 0 0 3]
+ [0 0 0 0 0]]
+After avalanche:
+[[2 2 2 1 1]
+ [2 0 1 3 1]
+ [1 1 2 1 1]
+ [1 1 0 1 0]
+ [0 0 0 0 1]]
+Topples:  13  Area:  13  Total Loss:  12  Length:  5.0
+\end{verbatim}
+
+
+With these small grids, it is easy to check by hand that the final configurations and the statistics are correctly output by the avalanche function. We are now ready to test-run the simulation of the \btw\ model.
+
+\begin{lstlisting}[
+    style=pythonstyle,
+    caption={Test simulation function},
+    label={lst:sandpile}
+]
+def test_simulation(height, width, time_limit, rng):
+    """
+    Simulates the sandpile model for a given number of time steps.
+\end{lstlisting}
+
+
+
+
+
+\section{Base Model}
+
+Having identified several computational inefficiencies in the test model, we now implement the \btw\ model in earnest. Firstly, we create a more efficient version of the avalanche function.
+
+\begin{lstlisting}[
+    style=pythonstyle,
+    caption={Optimised avalanche function},
+    label={lst:sandpile}
+]
+def fast_avalanche(pile, initial_sites):
+    """
+    A faster version of the avalanche function. Takes a pile and an initial unstable site and applies the 
+    basic toppling rule to the pile until it is stable (i.e., an avalanche).
+\end{lstlisting}
+
+Then, a more efficient version of the function which runs a simulation.
+
+\begin{lstlisting}[
+    style=pythonstyle,
+    caption={Optimised simulation function},
+    label={lst:sandpile}
+]
+def simulation(height, width, time_limit, rng, burnin=0):
+    """
+    Simulates the sandpile model for a given number of time steps.
+\end{lstlisting}
+
+We will run a simulation for a 10x10 grid, a 20x20 grid, and a 50x50 grid for 400,000 time steps. We will have burn-in periods of 2,000, 8,000, and 50,000 time steps respectively (equivalent to 20 times the number of sites in the grid).
+
+Given that we expect the data may show power law behaviour, we define a function that makes a frequency scatter plot on log-log axes. It also fits a linear regression to the part of the data which is linear (after having taken the logarithm of the data values and the frequency). The function determines which part of the data is linear by finding the where the $R^2$ value of a linear regression drops below a certain threshold.
+
+\begin{lstlisting}[
+    style=pythonstyle,
+    caption={A graph-making function},
+    label={lst:sandpile}
+]
+def make_graph(data, title):
+    """
+    Prepares a log-log frequency scatter plot of the data, and fits a linear regression to the linear part of the data.
+\end{lstlisting}
+
+
+
+
+\section{Extension}
+
+We now wish to compare how the avalanche statistics vary when multiple grains are dropped simultaneously at each time step. For this, we implement a new version of the simulation function with a parameter that allows a varying number of grains to be dropped.
+
+
+\begin{lstlisting}[
+    style=pythonstyle,
+    caption={A graph-making function},
+    label={lst:sandpile}
+]
+def simulation_multigrain(height, width, time_limit, rng, burnin=0, grains_per_drop=1):
+    """
+    Simulates the sandpile model where multiple grains are dropped at each time step.
+\end{lstlisting}
+
+We then run simulations where we add 1, 2, 5, and 10 grains at each time step to a 20x20 grid for 100,000 time steps with a burn-in period of 8,000 time steps.
