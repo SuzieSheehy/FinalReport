@@ -1,0 +1,255 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{nyt/global//global/global/global}
+  \entry{berruto_using_2000}{article}{}{}
+    \name{author}{2}{}{%
+      {{hash=BR}{%
+         family={Berruto},
+         familyi={B\bibinitperiod},
+         given={Remigio},
+         giveni={R\bibinitperiod},
+      }}%
+      {{hash=MDE}{%
+         family={Maier},
+         familyi={M\bibinitperiod},
+         given={Dirk\bibnamedelima E.},
+         giveni={D\bibinitperiod\bibinitdelim E\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{BRMDE1}
+    \strng{fullhash}{BRMDE1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2000}
+    \field{labeldatesource}{}
+    \field{sortinit}{B}
+    \field{sortinithash}{B}
+    \verb{doi}
+    \verb 10.1016/S1474-6670(17)40919-0
+    \endverb
+    \field{issn}{1474-6670}
+    \field{note}{1st IFAC International Conference on Modelling and Control in
+  Agriculture, Horticulture and Post-Harvest Processing (Agricontrol 2000),
+  Wageningen, The Netherlands, 10--12 July 2000}
+    \field{number}{19}
+    \field{pages}{245\bibrangedash 250}
+    \field{title}{Using Modeling Techniques to Test the Feasibility of
+  Segregating Non-{GMO} Soybeans at Commercial Elevators}
+    \field{volume}{33}
+    \field{journaltitle}{IFAC Proceedings Volumes}
+    \field{year}{2000}
+  \endentry
+
+  \entry{berruto_analyzing_2001}{article}{}{}
+    \name{author}{2}{}{%
+      {{hash=BR}{%
+         family={Berruto},
+         familyi={B\bibinitperiod},
+         given={Remigio},
+         giveni={R\bibinitperiod},
+      }}%
+      {{hash=MDE}{%
+         family={Maier},
+         familyi={M\bibinitperiod},
+         given={Dirk\bibnamedelima E.},
+         giveni={D\bibinitperiod\bibinitdelim E\bibinitperiod},
+      }}%
+    }
+    \list{language}{1}{%
+      {en}%
+    }
+    \strng{namehash}{BRMDE1}
+    \strng{fullhash}{BRMDE1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2001}
+    \field{labeldatesource}{}
+    \field{sortinit}{B}
+    \field{sortinithash}{B}
+    \verb{doi}
+    \verb 10.13031/2013.6090
+    \endverb
+    \field{issn}{0001-2351}
+    \field{number}{3}
+    \field{pages}{631\bibrangedash 638}
+    \field{title}{Analyzing the Receiving Operation of Different Grain Types in
+  a Single-Pit Country Elevator}
+    \field{volume}{44}
+    \field{journaltitle}{Transactions of the ASAE}
+    \field{year}{2001}
+  \endentry
+
+  \entry{franx_simple_2001}{article}{}{}
+    \name{author}{1}{}{%
+      {{hash=FGJ}{%
+         family={Franx},
+         familyi={F\bibinitperiod},
+         given={G.\bibnamedelima J.},
+         giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{FGJ1}
+    \strng{fullhash}{FGJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2001}
+    \field{labeldatesource}{}
+    \field{sortinit}{F}
+    \field{sortinithash}{F}
+    \verb{doi}
+    \verb 10.1016/S0167-6377(01)00108-0
+    \endverb
+    \field{issn}{0167-6377}
+    \field{number}{5}
+    \field{pages}{221\bibrangedash 229}
+    \field{title}{A simple solution for the {M/D/c} waiting time distribution}
+    \field{volume}{29}
+    \field{journaltitle}{Operations Research Letters}
+    \field{month}{12}
+    \field{year}{2001}
+  \endentry
+
+  \entry{hassanizadeh_discrete_2024}{misc}{}{}
+    \name{author}{2}{}{%
+      {{hash=HB}{%
+         family={Hassanizadeh},
+         familyi={H\bibinitperiod},
+         given={Behnam},
+         giveni={B\bibinitperiod},
+      }}%
+      {{hash=KP}{%
+         family={Kenkel},
+         familyi={K\bibinitperiod},
+         given={Phil},
+         giveni={P\bibinitperiod},
+      }}%
+    }
+    \list{language}{1}{%
+      {en}%
+    }
+    \strng{namehash}{HBKP1}
+    \strng{fullhash}{HBKP1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2024}
+    \field{labeldatesource}{}
+    \field{sortinit}{H}
+    \field{sortinithash}{H}
+    \verb{doi}
+    \verb 10.2139/ssrn.4943169
+    \endverb
+    \field{howpublished}{SSRN}
+    \field{title}{Discrete Event Simulation for Truck Waiting Time at a Grain
+  Elevator}
+    \field{year}{2024}
+  \endentry
+
+  \entry{kryukova2025optimizing}{misc}{}{}
+    \name{author}{6}{}{%
+      {{hash=KI}{%
+         family={Kryukova},
+         familyi={K\bibinitperiod},
+         given={Irina},
+         giveni={I\bibinitperiod},
+      }}%
+      {{hash=DD}{%
+         family={Diachkov},
+         familyi={D\bibinitperiod},
+         given={Dmytro},
+         giveni={D\bibinitperiod},
+      }}%
+      {{hash=PY}{%
+         family={Polyakova},
+         familyi={P\bibinitperiod},
+         given={Yevheniya},
+         giveni={Y\bibinitperiod},
+      }}%
+      {{hash=SS}{%
+         family={Selikhov},
+         familyi={S\bibinitperiod},
+         given={Serhii},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=TV}{%
+         family={Tsupak},
+         familyi={T\bibinitperiod},
+         given={Volodymyr},
+         giveni={V\bibinitperiod},
+      }}%
+      {{hash=YA}{%
+         family={Yehiozarian},
+         familyi={Y\bibinitperiod},
+         given={Artur},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{KI+1}
+    \strng{fullhash}{KIDDPYSSTVYA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2025}
+    \field{labeldatesource}{}
+    \field{sortinit}{K}
+    \field{sortinithash}{K}
+    \verb{doi}
+    \verb 10.2139/ssrn.7081618
+    \endverb
+    \field{howpublished}{SSRN}
+    \field{note}{Available at SSRN: \url{https://ssrn.com/abstract=7081618}}
+    \field{title}{Optimizing Agribusiness Service Systems: A Queueing Theoretic
+  Framework for Capacity Planning and Maintenance Scheduling}
+    \verb{url}
+    \verb https://ssrn.com/abstract=7081618
+    \endverb
+    \field{month}{10}
+    \field{year}{2025}
+  \endentry
+
+  \entry{sztrik2016basic}{book}{}{}
+    \name{author}{1}{}{%
+      {{hash=SJ}{%
+         family={Sztrik},
+         familyi={S\bibinitperiod},
+         given={J{\'a}nos},
+         giveni={J\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {GlobeEdit, OmniScriptum GmbH \& Co. KG}%
+    }
+    \strng{namehash}{SJ1}
+    \strng{fullhash}{SJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelyear}{2016}
+    \field{labeldatesource}{}
+    \field{sortinit}{S}
+    \field{sortinithash}{S}
+    \field{isbn}{978-3-639-73471-3}
+    \field{title}{Basic Queueing Theory}
+    \verb{url}
+    \verb https://irh.inf.unideb.hu/user/jsztrik/publications/books.htm
+    \endverb
+    \list{location}{1}{%
+      {Saarbr{\"u}cken, Germany}%
+    }
+    \field{year}{2016}
+  \endentry
+\enddatalist
+\endinput

@@ -1,7 +1,23 @@
 \documentclass[a4paper, 10.5pt, oneside]{report}
 %------------PREAMBLE
-\include{preamble}
+\input{preamble}
 \usepackage{morefloats}
+\usepackage[backend=bibtex, style=authoryear]{biblatex}
+\addbibresource{bibliography_new.bib}
+\usepackage{booktabs, pgfplotstable}
+\pgfplotstableset{
+  granary/.style={
+    col sep=comma,
+    every last row/.style={after row=\bottomrule},
+    columns/trucks_per_day_mean/.style={column name=Mean, fixed, precision=2, zerofill},
+    columns/trucks_per_day_sem/.style={column name=SEM, fixed, precision=2, zerofill},
+    columns/mean_wait_visit_mean/.style={column name=Mean, fixed, precision=2, zerofill},
+    columns/mean_wait_visit_sem/.style={column name=SEM, fixed, precision=2, zerofill},
+    columns/p95_mean/.style={column name=Mean, fixed, precision=2, zerofill},
+    columns/p95_sem/.style={column name=SEM, fixed, precision=2, zerofill},
+  },
+}
+
 %---------------------------
                                           
 \begin{document}
@@ -15,19 +31,440 @@
 %---------------------------
 
 %---------------------------MAIN BODY
-\input{chapter1}
-%---------------------------
 
-%---------------------------APPENDICES
-\begin{appendices}
- \input{appendix1}
-\end{appendices}
-%---------------------------
+\chapter{Introduction}
+Granaries are storage structures for grain, used to protect harvested grain from poor weather and pests.
+To prevent spoilage grain needs to be kept at a low moisture content; this state may initially be achieved
+by harvesting during dry conditions, or by drying harvested grain. Drying sometimes happens at the granary.
+It is typical for a granary to service all of the farms in an area, often operating either as a collective or
+under commercial agreements (\cite{hassanizadeh_discrete_2024}).
 
-%---------------------------BIBLIOGRAPHY
-\addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{abbrv}
-\bibliography{biblio}
-%---------------------------
+Grain must be harvested at the correct time of year, and the need for dry conditions leads to busy peak periods
+for granaries corresponding with appropriate weather. Deliveries cluster, as farmers restart harvesting
+operations after inclement weather or race to harvest as much as possible before rain.
+
+These high demand periods can lead to significant queues, incurring costs of time and money as trucks sit idle
+and farms run out of buffer storage. Understanding the likely demands placed on a granary is therefore important
+to decisions regarding its design and operation. Planners may wish to invest in equipment to reduce unloading
+time or add additional service bays; managers may wish to alter policy regarding opening hours or the order in
+which trucks are served. Mathematical models are a useful way of investigating these demands and evaluating different investments and
+policies (\cite{berruto_using_2000, kryukova2025optimizing, berruto_analyzing_2001}).
+
+In this investigation we implement three simulation models of a granary, and investigate where the models
+agree and disagree. We compare to closed form results for queueing systems, and consider where the models likely
+fall short of reality.
+
+
+
+\chapter{Background}
+This section derived from (\cite{sztrik2016basic}).
+
+Before considering the specifics of granaries, it is worth establishing some basic queueing theory.
+
+In the typical terminology, a customer is an entity subject to a queue, and a server is an entity that
+provides some resource to customers. In the usual case a queue is FIFO - First In First Out, a system familiar
+to anyone who has visited a grocery store. It is worth being aware of an alternative structure, the priority queue,
+where customers have a priority value, with servers always serving the next highest priority customer.
+
+Queueing systems are classified with Kendall's notation, a shorthand to quickly communicate the behaviour of the system.
+A classification is shown as A/S/c, where A denotes the probability distribution driving customer arrival,
+S denotes the distribution driving service time, and c denotes the number of servers in the system.
+
+We will consider some examples to get an idea of the scheme.
+
+A D/D/1 system has deterministic arrivals, deterministic service time, and a single server. In other words, customers
+always show up the same amount of time after the previous customer, and they are always served in a fixed amount
+of time. This system is of little interest, if the server processes customers faster than they arrive
+there is never a queue, and if it is slower the queue grows without bound.
+
+An M/D/1 system has Poisson arrivals, deterministic service times, and a single server. M stands for memoryless; Poisson
+arrivals means the time between arrivals is an exponential random variable.
+
+An M/M/1 system possesses Poisson arrivals, exponentially distributed service times, and a single server.
+
+An M/M/c system possesses Poisson arrivals, exponentially distributed service times, and c servers.
+
+The nice thing about the above systems is they possess simple service functions and memoryless (Poisson) arrival functions,
+permitting simple closed form solutions to the behaviour of the queue in the long term.
+
+A G/D/1 queue on the other hand, with a general (arbitrary) distribution for arrivals, does not necessarily
+have a closed form solution, meaning analysis must rely on approximation or simulation. For completeness it is worth noting that
+M/G/1 queues do possess closed form results; memoryless arrival is the important condition for closed form solutions to exist.
+
+M/D/1 queue behaviour can be predicted in the long run analytically using the Pollaczek-Khinchine
+formula.
+
+\begin{equation}
+  W_q = \frac{\rho D}{2(1-\rho)}, \qquad L_q = \lambda W_q = \frac{\rho^2}{2(1-\rho)},
+  \label{eq:md1}
+\end{equation}
+
+Where:
+
+\begin{description}
+  \item[$\lambda$] is the mean arrival rate;
+  \item[$D$] is the service time;
+  \item[$\rho$] is the utilisation, the fraction of the time the server will be busy
+  \item[$W_q$] is the average wait time for a customer;
+  \item[$L_q$] is the time-averaged queue length;
+  \item[$P_0$] is the probability that an arriving customer finds the server idle
+    and so does not wait. Because Poisson arrivals see time averages, this
+    equals the long-run fraction of time the server is idle.
+\end{description}
+
+We can go further than just average behaviour. For the M/D/1 queue, the full
+distribution of the waiting time $W$ is also known in closed form, a result due to Erlang (\cite{franx_simple_2001}):
+
+\begin{equation}
+  P(W \le t) = (1-\rho) \sum_{k=0}^{\lfloor t/D \rfloor}
+    \frac{\left[\lambda (kD - t)\right]^k}{k!}\, e^{-\lambda (kD - t)},
+    \qquad t \ge 0,
+  \label{eq:md1cdf}
+\end{equation}
+
+giving the probability that a customer waits no longer than $t$ before being served,
+with $W_q = \mathbb{E}[W]$.
+
+
+Lastly worth mentioning Little's law as another classic result that we'll lean on for verification.
+Essentially a conservation law, it demands that the long-run average number of customers in a system
+equals the rate at which customers arrive multiplied by the average time each one spends there:
+
+\begin{equation}
+  L = \lambda W,
+\end{equation}
+
+where $L$ is the time-averaged number of customers in the system and $W$ is the average time a customer
+spends in it. This law makes no assumptions about distributions, the number of servers, or the type of
+queueing. This makes it a good check in situations where we lack nice closed form results.
+
+
+
+
+
+
+\chapter{Models}
+Before discussing the three specific models, we will touch on their commonalities, and the behaviour
+we want to capture. All models feature a single FIFO queue at the granary determining service order.
+Further, the granary possesses a single server with deterministic service time. The granary operates between
+7am and 5pm, trucks that are in line at closing time are processed in overtime.
+
+Shared between all three models in one weather and moisture system. This system generates synthetic
+hourly rainfall data, and then uses that to predict crop moisture minute by minute, which the individual
+models may then consult to determine their behaviour. Synthetic generation is achieved by defining the
+expected length of wet and dry periods and toggling between them based on the draw of parameterised geometric
+distributions, then each hour of wet periods drawing an exponentially distributed value for rainfall. This
+is translated to moisture by defining maximum and minimum moistures, and stepping up and down linearly towards them
+based on time of day and rainfall intensity.
+
+
+
+
+\section{Open model}
+The first model at its simplest it is an M/D/1 queueing system, with Poisson arrivals.
+
+Interarrival time is driven by a parameter $\lambda$, trucks arrive, queue, unload at the granary, before
+disappearing into the aether.
+
+We can run the simulation in this simple form to confirm against closed form results, but in practice
+we want to incorporate opening hours and weather effects.
+
+To that end, we track the moisture level in the grain throughout the season. Any trucks arriving while
+moisture is above some threshold value are rejected with linearly increasing probability. At a certain
+point, all arrivals are rejected. This has the effect of increasing the interarrival time as conditions
+become unfavourable to the harvest. Similarly, if the granary is closed for the night,
+all arrivals are rejected.
+
+
+\section{Closed model with abstract farm}
+The second model increases fidelity by closing the loop and no longer consigning trucks to the void.
+Instead, we introduce a new entity with its own queue, the farm. Grain accumulates at the farm as
+it is harvested, trucks queue there to pick up grain, travel to the granary to unload it, before
+returning to the farm to queue again.
+
+There is a fixed fleet of trucks available, each truck possesses its own travel time between the granary
+and the farm. Travel times are drawn uniformly from a circle, accounting for the fact that area of farmland
+available increases as the square of the distance from the granary. Each trip noise is applied to the travel
+time reflecting variance in conditions on the road.
+
+Again we must deal with weather and opening hours.
+
+Weather enters this model through the rate at which grain is harvested. Similarly to the open model, below
+a moisture threshold harvest proceeds at full speed, above it the rate decreases linearly until it eventually
+reaches zero.
+
+Opening hours enter this model in the step where trucks attempt to depart the farm and head to the granary.
+The decision was made that farms would operate continuously except as prevented by moisture levels, whereas
+the granary keeps to its opening hours, except for serving trucks in its queue at closing time,
+which we allow as overtime. To that end, trucks expected to arrive after closing time are instead scheduled
+to arrive the next morning, with some travel noise. This matches morning clustering often seen in reality.
+
+We also wish to promote clustering after a stoppage due to rainfall. To that end, when such an event occurs,
+trucks are prohibited from leaving the farm until a threshold of stored grain is reached. The intention
+here is to reflect that this farm is intended as an abstraction of a number of farms. If all of the farms
+possess between them only enough grain to fill a single truck, no truck will be filled. Assuming they harvest
+at a similar rate, all of them would be expected to release trucks at similar times; thus, the threshold. Away from
+stoppages it's assumed that if the abstract farm has grain to dispatch then the hypothetical farm any given
+truck is serving would have grain to dispatch after its round trip. In the case of trucks with short round trips
+that may not be a good assumption.
+
+Another flaw of this model is the bottleneck around truck dispatch. If the time it takes to fill an individual truck
+is set to a plausible level, then with a single server the rate at which grain can be dispatched is limited compared
+to a model with multiple farms, each with their own server. A better model might feature multiple servers drawing
+from the farms queue, but this was not implemented.
+
+
+\section{Closed model with farms}
+Our third model partakes of most of the characteristics of the second model. The crucial difference is this
+time we consider multiple farms with their own fleet of trucks and their own queue; the other differences
+all follow from this.
+
+Travel time to and from each farm is drawn uniformly from a circle, each truck in a farms fleet possesses the
+same travel time. Noise is still applied independently to each trip.
+
+Weather is treated the same, except each farm of course has its own grain. Each farm experiences the same weather.
+We no longer need to enforce a threshold of grain before releasing trucks after a stoppage, each farm will
+naturally wait until it has sufficient grain to fill a truck before dispatching one, producing the desired clustering.
+
+
+
+\chapter{Implementation}
+This section will convey the implementation as it stands, alongside some details of the journey to get there.
+
+The initial intention was to use SimPy, a Python library for discrete event simulation. This progressed so far as
+building a prototype for the first model using the library. To determine whether the library would work a test run
+of 100 long seasons was run, and found to take around 15 seconds, which was slower than desired given the
+desired parameter sweep. Profiling with
+cProfile revealed a substantial amount of the runtime was spent on initialising the simulation, I decided to handroll
+my own discrete event simulator.
+
+Initially I built a class holding state information and defined functions that acted upon a state object, but as the
+project grew and I wanted to model several situations this grew unwieldy. I decided to go for an object-oriented approach,
+defining a parent class holding fundamental data and methods, and having child classes with their own data and methods to
+implement specific models.
+
+The core of the simulation is a priority queue of events, stored as a binary heap managed by Python's heapq, where priority is
+decided by scheduled time, with ties broken by an insertion counter. The simulator draws the next element from the event queue, updates
+the time, and calls whatever method was passed with the event.
+
+Once the first model was implemented with the handrolled system a similar test ran in ~1 second, a significant improvement.
+
+The classes and their behaviour are as follows
+
+- Weather: Stores weather parameters. Generates hourly rainfall for the season, then converts to grain moisture at each minute.
+
+- Truck: Stores fields describing an individual truck.
+
+- BasicState: Stores the event priority queue, the granary queue, and methods to run the simulation loop and for trucks
+arriving at, being served by, and departing the granary. Also reports on visits to and state of the granary, for later analysis.
+
+- OpenState: Child of BasicState. Contains fields and methods necessary to implement Model 1. Has fields and behaviour allowing
+weather and open hours to be ignored for verification.
+
+- Farm: Contains a fleet of trucks, a farm queue, and fields and methods required to manage that queue.
+
+- ClosedState: Child of BasicState. Contains a list of farms, and the fields and methods required to implement Models 2 and 3. Model 2
+is Model 3 with a single farm and different parameters reflecting the abstraction of all farms. Notably the restart threshold is
+much higher for Model 2, and its truck fleet has a spread of travel times. Possesses fields and behaviour
+allowing weather and open hours to be ignored for verification.
+
+Seeding for randomisation follows recommended NumPy practices, a root SeedSequence spawns one child per replication, and each replication
+creates its own generator with default\_rng. Weather recieves seperate seeding to the other classes. Weather is generated
+outside of the simulation loop and passed in, so different parameters can be compared against the same weather.
+
+Experiments are parallelised with joblib. This is straightforward as replications are entirely independent, so the problem is embarrassingly
+parallel. Each task recieves an explicit seed and pregenerated moisture array, so results are identical regardless of the number of workers or job order.
+
+\chapter{Validation}
+\includegraphics{figures/rainfall.png}
+
+First we consider our weather generator. Across 20 harvest long iterations we seem to be averaging around 1mm of rain in a day, give or take fifty percent, spread
+relatively evenly but lumpily over the duration. By physical intuition this seems about right. Given we aren't modeling a particular system and the relationship
+with moisture is itself by fiat, this seems good enough for our purposes.
+
+
+\begin{table}[htbp]
+\centering
+\pgfplotstabletypeset[
+  granary,
+  columns={arrival_param, rho,
+           mean_wait_visit_mean, mean_wait_visit_sem, Wq_theory,
+           probability_no_wait_mean, probability_no_wait_sem, P0_theory},
+  columns/arrival_param/.style={column name=$\lambda$, fixed, precision=2},
+  columns/rho/.style={column name=$\rho$, fixed, precision=2},
+  columns/mean_wait_visit_mean/.style={column name=Sim., fixed, precision=2, zerofill},
+  columns/mean_wait_visit_sem/.style={column name=SEM, fixed, precision=2, zerofill},
+  columns/Wq_theory/.style={column name=Theory, fixed, precision=2, zerofill},
+  columns/probability_no_wait_mean/.style={column name=Sim., fixed, precision=3, zerofill},
+  columns/probability_no_wait_sem/.style={column name=SEM, fixed, precision=3, zerofill},
+  columns/P0_theory/.style={column name=Theory, fixed, precision=3, zerofill},
+  every head row/.style={
+    before row={\toprule
+      & & \multicolumn{3}{c}{Mean wait (min)} & \multicolumn{3}{c}{Prob.\ no wait} \\
+      \cmidrule(lr){3-5}\cmidrule(lr){6-8}},
+    after row=\midrule},
+]{model1_verification.csv}
+\caption{Verification of Model 1 against M/D/1 closed-form results, with weather and
+opening hours disabled.}
+\label{tab:model1_verification}
+\end{table}
+
+Here we compare the behaviour of Model 1 against closed form expectations, finding strong agreement.
+Service time $D = 4$ minutes, so $\rho = 4\lambda$. SEM is the standard error of the mean across replications,
+note that simulated values are typically within one or two SEM of theory, with disagreement
+growing somewhat at higher $\rho$ values.
+
+
+\includegraphics{figures/erlang_cdf.png}
+
+Here we plot simulated wait time distribution against Erlang's closed form result, and observe
+strong agreement across the whole range.
+
+It appears as though the simulation and at least the open model is behaving appropriately.
+
+For Models 2 and 3 there aren't closed form results to compare against, but we can use Little's
+law to check for bookkeeping errors. Since $L = \lambda W$, we expect $L / (\lambda W) = 1$.
+On the parameter sweep this was reported for all settings, and always found to be true.
+Otherwise, we examine queue length over time against its expected behaviour and check for
+and check for behaviour that is obviously wrong. This can be done on the graphs in the next chapter.
+
+
+\chapter{Results and discussion}
+\begin{table}[htbp]
+\centering
+\pgfplotstabletypeset[
+  granary,
+  columns={arrival_param, trucks_per_day_mean, trucks_per_day_sem,
+           mean_wait_visit_mean, mean_wait_visit_sem, p95_mean, p95_sem},
+  columns/arrival_param/.style={column name=$\lambda$, fixed, precision=2},
+  every head row/.style={
+    before row={\toprule
+      & \multicolumn{2}{c}{Trucks/day} & \multicolumn{2}{c}{Mean wait}
+      & \multicolumn{2}{c}{95th pct.\ wait} \\
+      \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}},
+    after row=\midrule},
+]{model1.csv}
+\caption{Model 1 results. Arrival rate $\lambda$ in trucks per minute; waits in minutes.}
+\label{tab:model1}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\pgfplotstabletypeset[
+  granary,
+  columns={n_trucks, harvest_rate, trucks_per_day_mean, trucks_per_day_sem,
+           mean_wait_visit_mean, mean_wait_visit_sem, p95_mean, p95_sem},
+  columns/n_trucks/.style={column name=Trucks, fixed, precision=0},
+  columns/harvest_rate/.style={column name=Harvest rate, fixed, precision=2},
+  every head row/.style={
+    before row={\toprule
+      & & \multicolumn{2}{c}{Trucks/day} & \multicolumn{2}{c}{Mean wait}
+      & \multicolumn{2}{c}{95th pct.\ wait} \\
+      \cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}},
+    after row=\midrule},
+  every row no 2/.style={after row=\addlinespace},
+  every row no 5/.style={after row=\addlinespace},
+]{model2.csv}
+\caption{Model 2 results. Waits in minutes.}
+\label{tab:model2}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\pgfplotstabletypeset[
+  granary,
+  columns={n_farms, trucks_per_farm, harvest_rate, trucks_per_day_mean, trucks_per_day_sem,
+           mean_wait_visit_mean, mean_wait_visit_sem, p95_mean, p95_sem},
+  columns/n_farms/.style={column name=Farms, fixed, precision=0},
+  columns/trucks_per_farm/.style={column name=Trucks/farm, fixed, precision=0},
+  columns/harvest_rate/.style={column name=Harvest rate, fixed, precision=2},
+  every head row/.style={
+    before row={\toprule
+      & & & \multicolumn{2}{c}{Trucks/day} & \multicolumn{2}{c}{Mean wait}
+      & \multicolumn{2}{c}{95th pct.\ wait} \\
+      \cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}},
+    after row=\midrule},
+  every row no 1/.style={after row=\addlinespace},
+  every row no 3/.style={after row=\midrule},
+  every row no 5/.style={after row=\addlinespace},
+]{model3.csv}
+\caption{Model 3 results. Waits in minutes.}
+\label{tab:model3}
+\end{table}
+
+Tables 6.1-3 show the results of a sweep over model parameters, over three weather systems
+with eight replications each. This lets us compare mean and tail wait times for the different
+models at comparable throughputs. Using this we can choose parameter settings for the
+next experiment, where we observe queue length over time for each model with comparable
+settings.
+
+Worth noting here that for Model 3 the number of farms multiplies the harvest rate to get
+overall harvest rate. Comparison with model 2 is appropriate when the product of those numbers
+matches Model 2's harvest rate. Note that when this occurs, throughput matches.
+
+It's interesting to note that for Model 3 rows with 5 farms, wait time is lower
+than comparable entries for Model 2, whereas when we jump to 20 farms wait time is
+consistently higher than comparable entries for Model 2. I don't have a good model
+of why this is a case, but my intuition is that at a certain point more farms leads
+to more severe clustering and thus higher wait times. However, this doesn't explain the decrease
+in wait time when increasing the number of farms from 1 farm in Model 2 to 5 farms in Model
+3.
+
+
+\includegraphics{figures/queue_traces.png}
+
+Looking at the figure we see a few things.
+
+Across all models we see periodic periods without queueing. This is good, it means the granary
+is shutting down for the night as intended.
+
+Model 1 sees queues spread throughout the active period, without any real trend towards clustering.
+This makes sense for a memoryless model.
+
+Model 2 sees sharp spikes when the granary opens, with some smaller spikes afterwards, and then little
+queueing throughout the day. Matches our desire for clustering, but reflects a weakness of the model.
+The throughput bottleneck on the single farm is the same as on the granary, and so I suspect
+after the initial spike the granary releases trucks at a certain rate, and those trucks return
+a rate the granary can handle, thus there's little queueing.
+
+Model 3 sees sharp initial spikes followed by second still significant spikes later in the day.
+This time with multiple farms the return rate isn't bottlenecked, and so the spike can stick around.
+
+
+
+
+
+\chapter{Conclusion}
+We successfully implemented a few different models of a granary. None were particularly realistic,
+but Model 3 is perhaps getting close enough to be useful, if properly tuned against real data.
+
+Key areas I would find interesting to investigate further are the behaviour of Model 2 if more servers
+were implemented, more complicated behaviour like drying or partitioning grain at the granary,
+and the use of real weather data.
+
+One of the original intentions of the project was to look at how weather variability affected
+queueing behaviour, however this fell to the wayside as we focussed more on the comparison of different models.
+Returning to this in a future investigation would be worthwhile.
+
+In terms of scientific computing learning my key take-aways were:
+
+- Git isn't scary and is fantastic. Being secure in being able to return to a known working version
+of one's software makes experimenting with different approaches much less daunting.
+
+- Using profiling tools is much easier than spamming timers everywhere and provides
+a much better picture of what is actually using resources.
+
+- Parallelisation is much easier than I expected provided the problem is appropriate.
+
+- Proper seeding makes everything easier and also isn't that hard.
+
+- Learning about granaries and queueing theory was fun!
+
+
+
+
+\printbibliography
+
+
 
 \end{document}
