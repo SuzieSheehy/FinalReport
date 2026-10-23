@@ -1,22 +1,22 @@
-\chapter{Introduction}\label{ch:introduction}
+\chapter{Sandpile Model}\label{ch:introduction}
 
-This project is based on the ``Complex Systems'' project outline \cite{comsys}.
+This project is based on the ``Complex Systems'' project outline \cite{comsys}. In this section, we introduce the sandpile model.
 
 \section{Self-Organised Criticality and Scale Invariance}
 
-\begin{enumerate}
-    \item The concept of \emph{self-organised criticality} (\soc) was introduced in 1987 by Bak, Tang and Wiesenfeld \cite{BTW87,BTW88}.
-    \item If we add a grain of sand to the pile, the sand pile can either remain stable or produce an avalanche. The microscopic phenomena is the same in both cases. The size of an avalanche depends on the configuration of the pile, not just the initial disturbance by the dropped grain of sand.
-    \item The \emph{Gutenberg-Richter law} \cite{GR44} describes how, for a given region, the number of earthquakes $N$ of a magnitude $M$ are related by \[N=10^{a-bM}\] for some constants $a$ and $b$. Since magnitude is a logarithmic measure of earthquake size (i.e., seismic energy $E$ is related to magnitude by a relationship of the form $E\propto c^{dM}$ for some constants $c$ and $d$), it follows that the number of earthquakes is a power law in the energy of the earthquake.
-\end{enumerate}
+The concept of \emph{self-organised criticality} (\soc) was introduced in 1987 by Bak, Tang and Wiesenfeld \cite{BTW87,BTW88}. Self-organised criticality is a behaviour exhibited by certain complex systems which naturally evolve towards a particular critical state. Further, a system with \soc\ should develop the critical behaviour through its own dynamics, without needing to calibrate particular parameters.
 
+An example of a critical system with \soc\ is given by the occurrence of earthquakes in a region. The \emph{Gutenberg-Richter law} \cite{GR44} describes how, for a given region, the number of earthquakes $N$ of a magnitude $M$ are related by \[N=10^{a-bM}\] for some constants $a$ and $b$. Since magnitude is a logarithmic measure of earthquake size (i.e., seismic energy $E$ is related to magnitude by a relationship of the form $E\propto c^{dM}$ for some constants $c$ and $d$), it follows that the number of earthquakes is a power law in the energy of the earthquake.
+
+This power-law behaviour is typical of systems with \soc. More generally, systems with \soc\ typically display \emph{scale invariance} in one form or another, meaning that some statistical properties remain similar when the scale of system changes.
 
 \begin{question}
     Why is it that a system exhibiting scale invariance will have phenomena which are described by a power law?
 \end{question}
 
+A power law has the property that the form of the distribution is unchanged by changing the scale. For instance, if we have a distribution of the form $f(x)\propto x^a$ for a constant $a$, and we scale $x$ by a factor of $\lambda$, then $f(\lambda x) = \lambda^a f(x) \propto x^a$. So the resulting distribution of $f(\lambda x)$ is of the same form as that of $f(x)$.
 
-\section{Aim}
+
 
 
 
