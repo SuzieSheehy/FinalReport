@@ -1,0 +1,22 @@
+\chapter{Conclusion}
+
+The study found that avalanche size and area are well-modelled by the distribution family 
+\[p(x) \propto x^{-\tau} e^-\left(\frac{x}{c}\right)^\beta\]
+
+Avalanche area appeared to obey finite scaling with $c = k L^D$, and we obtained estimates of the scaling coefficient $\tau_a \approx 1.02$ and fractal dimension $D_a \approx 1.97$. The latter is consistent with previous work \cite{tebaldi1999multifractal}, which suggests $D_a \approx 2$, but the former is somewhat lower than their calculation $\tau_a = 1.2$. Further analysis is required to obtain confidence intervals for the estimated parameters, to test whether $\tau_a=1.2$ is plausible.
+
+While we obtained sensible estimates $D_s \approx 2.2$ and $D_d \approx 1$, reflecting the 2D and 1D nature of the statistics, the finite size scaling fit was visually less convincing than for avalanche area. For avalanche size and length, the stretching coefficient $\beta$ varied substantially depending on the lattice size $L$. While the power law coefficient remained relatively constant for avalanche size, $\tau_s \approx 1.02$, it was highly $L$-dependent for $L_1$ distance and exhibited an increasing trend.
+
+\section{Further Study}
+Further study is needed to quantify the fits obtained. Additional computation can re-run the simulations and optimisation procedure performed to obtain empirical distributions for the estimated parameters for each model, which can be used to construct confidence intervals. 
+
+Likewise, bootstrap estimation techniques can provide an indication of the variance of the observed distributions, which can help inform the dependency structure of the data required to perform formal goodness-of-fit hypothesis tests.
+
+Additional proposed distributions are required for avalanche length, as the distributions examined above appear inadequate.
+
+\section{Reflection}
+This project extended my knowledge in several ways. First, on the implementation side, I was unfamiliar with the \texttt{numba} library and had to think about how to convert my Python simulation into code that could be pre-compiled. In particular, this meant re-thinking how I implemented queues, counted avalanche sizes and areas, and required me to bring in data structure knowledge from my C programming experience into Python. I also had limited experience with \texttt{numpy} vectorisation, which I used throughout my implemented pmf and likelihood functions to calculate probabilities for an array of inputs. I also learned a lot about plot functions, from how to use axes to draw multiple plot figures, to visualising asymptotes.
+
+Second, this project made me think carefully about how we can statistically justify certain estimation procedures, especially regression of log-log plots. While this appears correct, once I carefully considered the assumptions of the linear model, it was clearly not justifiable. I learned about various power law distributions, derived the log likelihood functions, and thought about how to adjust the distributional assumption to capture variation that was not well-explained by the previous model, such as introducing the exponential truncation and stretching coefficients. I also had to justify the estimation technique from dependent samples using the Markov Chain formulation. 
+
+Finally, I increased my understanding of the abelian sandpiles model and self-organised criticality. I drew connections between my statistical models and finite size scaling, and thought about how I could assess finite size scaling by imposing restrictions on my model parameters. When the results showed that avalanche size and area differ in their pooled parameter estimation, I proposed the interpretation that avalanche size should decay more slowly as $L$ increases, as opportunities for repeat topples increase.

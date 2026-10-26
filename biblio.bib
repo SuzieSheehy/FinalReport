@@ -1,13 +1,132 @@
-@BOOK{abramowitz1970,
-  author    = {M. Abramowitz and I. Stegun},
-  title     = {Handbook of Mathematical Functions},
-  publisher = {Dover Publishing Inc. New York},
-  year      = {1970}
+% REFERENCES
+
+% --------
+% References for: introducing the Sandpiles Model
+% --------
+
+% BTW model introduced (foundational paper)
+@article{btw1987intro,
+  title = {Self-organized criticality: An explanation of the 1/f noise},
+  author = {Bak, Per and Tang, Chao and Wiesenfeld, Kurt},
+  journal = {Phys. Rev. Lett.},
+  volume = {59},
+  issue = {4},
+  pages = {381--384},
+  numpages = {0},
+  year = {1987},
+  month = {Jul},
+  publisher = {American Physical Society},
+  doi = {10.1103/PhysRevLett.59.381},
+  url = {https://link.aps.org/doi/10.1103/PhysRevLett.59.381}
 }
 
-@BOOK{press1992,
- author    = {W. H. Press and S. A. Teukolsky and W. T. Vetterling and B. P. Flannery},
- title     = {Numerical recipes in Fortran (Cambridge)},
- year      = {1992},
- publisher = {Cambridge Univ. Press}
+%--------
+% References for: Mathematical Background
+%--------
+
+% abelian
+@article{dhar1990self,
+  title={Self-organized critical state of sandpile automaton models},
+  author={Dhar, Deepak},
+  journal={Physical review letters},
+  volume={64},
+  number={14},
+  pages={1613},
+  year={1990},
+  publisher={APS}
 }
+
+% mathematical formulation and probability setup
+@article{jaraisandpilenotes,
+author = {Antal A. J{\'a}rai},
+title = {{Sandpile models}},
+volume = {15},
+journal = {Probability Surveys},
+number = {none},
+publisher = {Institute of Mathematical Statistics and Bernoulli Society},
+pages = {243 -- 306},
+keywords = {Abelian sandpile, burning bijection, chip-firing, height probabilities, Loop-erased random walk, Uniform spanning tree, Wilson’s algorithm},
+year = {2018},
+doi = {10.1214/14-PS228},
+URL = {https://doi.org/10.1214/14-PS228}
+}
+
+% power law MLE
+@article{clauset2009power,
+  title={Power-law distributions in empirical data},
+  author={Clauset, Aaron and Shalizi, Cosma Rohilla and Newman, Mark EJ},
+  journal={SIAM review},
+  volume={51},
+  number={4},
+  pages={661--703},
+  year={2009},
+  publisher={SIAM}
+}
+
+
+%--------
+% References for: Implementation Details
+%--------
+
+% numba library
+@inproceedings{lam2015numba,
+  author    = {Lam, Siu Kwan and Pitrou, Antoine and Seibert, Stanley},
+  title     = {Numba: A LLVM-based Python JIT Compiler},
+  booktitle = {Proceedings of the Second Workshop on the LLVM Compiler Infrastructure in HPC},
+  series    = {LLVM '15},
+  year      = {2015},
+  isbn      = {978-1-4503-4005-2},
+  pages     = {7:1--7:6},
+  articleno = {7},
+  numpages  = {6},
+  doi       = {10.1145/2833157.2833162},
+  publisher = {ACM},
+  address   = {New York, NY, USA}
+}
+
+% optimisation algorithm used in scipy
+@article{byrd1995limited,
+  title={A limited memory algorithm for bound constrained optimization},
+  author={Byrd, Richard H and Lu, Peihuang and Nocedal, Jorge and Zhu, Ciyou},
+  journal={SIAM Journal on scientific computing},
+  volume={16},
+  number={5},
+  pages={1190--1208},
+  year={1995},
+  publisher={SIAM}
+}
+
+
+%--------
+% References for: Finite Size Scaling
+%--------
+
+% Breakdown of simple scaling
+@article{PhysRevE.58.R2677,
+  title = {Rare events and breakdown of simple scaling in the Abelian sandpile model},
+  author = {De Menech, M. and Stella, A. L. and Tebaldi, C.},
+  journal = {Phys. Rev. E},
+  volume = {58},
+  issue = {3},
+  pages = {R2677(R)--R2680(R)},
+  numpages = {0},
+  year = {1998},
+  month = {Sep},
+  publisher = {American Physical Society},
+  doi = {10.1103/PhysRevE.58.R2677},
+  url = {https://link.aps.org/doi/10.1103/PhysRevE.58.R2677}
+}
+
+
+% Topplings do not obey FSS but area does
+@article{tebaldi1999multifractal,
+  title={Multifractal scaling in the Bak-Tang-Wiesenfeld sandpile and edge events},
+  author={Tebaldi, Claudio and De Menech, Mario and Stella, Attilio L},
+  journal={Physical review letters},
+  volume={83},
+  number={19},
+  pages={3952},
+  year={1999},
+  publisher={APS}
+}
+

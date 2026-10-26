@@ -1,0 +1,38 @@
+\begin{thebibliography}{1}
+
+\bibitem{btw1987intro}
+P.~Bak, C.~Tang, and K.~Wiesenfeld.
+\newblock Self-organized criticality: An explanation of the 1/f noise.
+\newblock {\em Phys. Rev. Lett.}, 59:381--384, Jul 1987.
+
+\bibitem{byrd1995limited}
+R.~H. Byrd, P.~Lu, J.~Nocedal, and C.~Zhu.
+\newblock A limited memory algorithm for bound constrained optimization.
+\newblock {\em SIAM Journal on scientific computing}, 16(5):1190--1208, 1995.
+
+\bibitem{clauset2009power}
+A.~Clauset, C.~R. Shalizi, and M.~E. Newman.
+\newblock Power-law distributions in empirical data.
+\newblock {\em SIAM review}, 51(4):661--703, 2009.
+
+\bibitem{dhar1990self}
+D.~Dhar.
+\newblock Self-organized critical state of sandpile automaton models.
+\newblock {\em Physical review letters}, 64(14):1613, 1990.
+
+\bibitem{jaraisandpilenotes}
+A.~A. J{\'a}rai.
+\newblock {Sandpile models}.
+\newblock {\em Probability Surveys}, 15(none):243 -- 306, 2018.
+
+\bibitem{lam2015numba}
+S.~K. Lam, A.~Pitrou, and S.~Seibert.
+\newblock Numba: A llvm-based python jit compiler.
+\newblock In {\em Proceedings of the Second Workshop on the LLVM Compiler Infrastructure in HPC}, LLVM '15, pages 7:1--7:6, New York, NY, USA, 2015. ACM.
+
+\bibitem{tebaldi1999multifractal}
+C.~Tebaldi, M.~De~Menech, and A.~L. Stella.
+\newblock Multifractal scaling in the bak-tang-wiesenfeld sandpile and edge events.
+\newblock {\em Physical review letters}, 83(19):3952, 1999.
+
+\end{thebibliography}

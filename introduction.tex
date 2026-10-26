@@ -1,0 +1,150 @@
+\chapter{Introduction}
+
+%--------
+% MOTIVATION
+%--------
+
+The concept of self-organised criticality was first introduced by Bak, Tang, and Wiesenfeld in 1987 \cite{btw1987intro}. The central idea is that some slowly-varying complex systems drive themselves towards critical attractor states over time. In these states, consequences of a tiny perturbation are scale invariant. This means that colossal events can be triggered by miniscule changes to the system; such events may often follow a power law distribution. Many observed physical phenomena obey power law scaling - including earthquakes, forest fires, epidemics, etc. However, there is often a physical limit to the size of the event, which we characterise by the constant $L$.
+
+The goal of this project is to simulate a complex system which evolves based only on rules connecting small units, and study the distributions of resulting system-level phenomena. To do so, we implement the Abelian (BTW) Sandpiles Model discussed in \cite{btw1987intro}. This model is formalised below, but in short, a grain of sand is randomly deposited on a square $L \times L$ lattice at each step of the simulation, and adds to the height of the sandpile at the site where it is deposited. When a site on the lattice reaches a critical height, it topples, distributing its grains to its neighbouring sites. This can trigger a chain of topplings, called an avalanche.
+
+The system can be analysed through a range of statistics. In this report, we focus on the avalanche size (number of topplings), the avalanche area (number of sites toppled), and the $L_1$ distance between the deposition site and the furthest site toppled in an avalanche. 
+
+The research question investigated in this report is: \textit{How can we model the distribution of key avalanche statistics, including the power law coefficient and lattice size-dependent tail decay?} To do so, we model the distributions and finite lattice size effects explicitly, using the method of (marginal) maximum likelihood estimation to fit distribution parameters from the simulated model. Finally, we examine evidence supporting and opposing the finite-size scaling hypothesis, which supposes the form of $L$-dependence in the probability mass function, in each of the studied statistics.
+
+%--------
+% Mathematical Formulation
+%--------
+
+\section{Mathematical Formulation of the BTW Model}
+Here, we formally introduce the Abelian Sandpiles Model and argue why the methods used in this report are appropriate. Below, we adapt the notation and arguments of Járai, 2018 \cite{jaraisandpilenotes}.
+
+Begin by defining a two-dimensional square lattice, which can be thought of as a grid with integer rows and columns. With lattice size $L$, this is the graph $G_L = (V_L, E_L)$, where 
+\[V_L := \{(x, y) \in \Z^2: 1 \leq x, y \leq L\}\] 
+defines the set of vertices and 
+\[E_L := \{\mathbf{xy}: \mathbf{x}, \mathbf{y}\in V_L \land \norm{\mathbf{x}-\mathbf{y}}_1=1\}\] 
+defines the set of edges, where $\norm{\mathbf{x}-\mathbf{y}}_1$ denotes the $L_1$ norm, i.e. $\norm{(x_1, x_2)-(y_1, y_2)}_1 = \abs{x_1 - y_1} + \abs{x_2 - y_2}$.
+
+Each cell in the grid connects with its vertical and horizontal neighbours. Let $N(\mathbf{x}) = \{\mathbf{y} \in V_L: \mathbf{xy} \in E_L\}$ be this neighbourhood of $\mathbf{x}$ in $G$.
+
+A sandpile is a pile of grains sitting on the lattice, defined by a height at each cell. Formally, it is a map $\eta: V_L \to \Z_{\geq 0}$, where $\eta(\mathbf{x})$ represents the height of the sandpile at site $\mathbf{x}$.
+
+In the BTW model, sandpiles cannot support sites that are too high. Define the critical height as $\eta_c := \max_{\mathbf{x}\in V_L} \deg_G(\mathbf{x})$. In the above setup, $\eta_c = 4$ provided $L \geq 3$. A site $\mathbf{x} \in V_L$ is called stable iff $\eta(\mathbf{x}) < \eta_c$ and is otherwise unstable. The sandpile $\eta$ is stable iff it is stable at each site $\mathbf{x} \in V_L$.
+
+Let $U_\eta = \{\mathbf{x} \in V_L: \eta(\mathbf{x}) \geq \eta_c\}$ be the set of unstable sites.
+
+Let $\Psi_{G_L} = \Z_{\geq 0}^{V_L}$ be the set of possible sandpiles and let $\Omega_{G_L} = \{0, 1, 2, ..., \eta_c - 1\}^{V_L}\subseteq \Psi_{G_L}$ be the set of stable sandpiles.
+
+In the BTW model, when site heights exceed the critical height, they topple and redistribute their grains to their neighbours. We represent toppling as a function $\phi: \Psi_{G_L} \times V_L \to \Psi_{G_L}$ mapping $(\eta, \mathbf{x}) \mapsto \eta'$ where 
+\[\eta'(\mathbf{y}) = \begin{cases}
+    \eta(\mathbf{y}) + 1 & \mathbf{y} \in N(\mathbf{x}) \land \mathbf{x} \in U_\eta \\
+    \eta(\mathbf{y}) - \eta_c & \mathbf{y} = \mathbf{x} \in U_\eta \\
+    \eta(\mathbf{y}) & \text{otherwise}
+\end{cases}\]
+
+Note that we allow open boundary conditions in this study. When a toppling is initiated at a boundary site, we lose grains from the system. The number of grains lost by toppling $\eta$ at $\mathbf{x}$ is \[\ell(\eta, \mathbf{x}) := \sum_{\mathbf{x} \in V_L} \eta(\mathbf{x}) - \sum_{\mathbf{x} \in V_L} \eta'(\mathbf{x}) \geq 0\].
+
+Topplings can create additional unstable sites because of the grain redistribution effect, creating chains of topplings called avalanches, which propagate until all sites are stable. The avalanche (stabilising) function $\xi: \Psi_{G_L} \to \Omega_{G_L}$ maps $\eta = \eta^{(0)} \mapsto \eta^{(s)}$ where $\eta^{(s)}$ is the stable sandpile output by the following algorithm:
+
+\needspace{8\baselineskip}
+\underline{\textbf{Algorithm: Avalanche Function}} \\
+$i \gets 0$ \\
+\textbf{while} $U_{\eta^{(i)}} \neq \emptyset$ \textbf{do}:\\
+choose $\mathbf{x}^{(i+1)} \in U_{\eta^{(i)}}$ \\
+$\eta^{(i+1)} \gets \phi(\eta^{(i)}, \mathbf{x}^{(i+1)})$ \\
+$i \gets i + 1$ \\
+\textbf{end while} \\
+\textbf{return} $\eta^{(i)} = \eta^{(s)}$
+
+When $\eta^{(s)} \neq \eta$, we say that an avalanche has occurred. Figure \ref{fig:toy_sandpiles} illustrates the Avalanche Function on an example sandpile.
+
+Avalanches can be described by a range of properties: 
+\begin{enumerate}
+    \item The avalanche (toppling) size is the final index $s(\eta) = s$
+    \item The avalanche (toppling) area $a(\eta)$ is the size of the set $\{\mathbf{x}^{(i)}: i\in \{1, \cdots, s\}\}$
+    \item The loss is $\ell(\eta) := \sum_{i=1}^{s} \ell(\eta^{(i-1)}, \mathbf{x}^{(i)})$
+    \item The $L_1$ length is $d(\eta) := \max_{i\in\{1, \cdots, s\}}\norm{\mathbf{x}^{(1)} - \mathbf{x}^{(i)}}_1$.
+\end{enumerate} 
+
+When an avalanche occurs, note the following constraints: 
+\begin{enumerate}
+    \item $0 < a(\eta) \leq s(\eta)$
+    \item $a(\eta) \leq L^2$
+    \item $0\leq \ell(\eta) \leq \sum_{\mathbf{x} \in V_L}\eta(\mathbf{x})$
+    \item $0 \leq d(\eta) \leq 2L$
+\end{enumerate}
+
+When no avalanche occurs, we define $s(\eta) = a(\eta) = \ell(\eta) = d(\eta) = 0$ for convenience. However, our focus in this project is on the distribution of these statistics where they are non-zero. For avalanche size and area, this is conditional on an avalanche occurring. For loss, this is conditional on at least one boundary site topple. For $L_1$ length, this is conditional on $a(\eta) \geq 2$.
+
+A proof that $\xi$ is well-defined and independent of the choice of $\mathbf{x}^{(j)}$ in the loop can be found in Járai, 2018 \cite{jaraisandpilenotes}. The abelian nature of the topplings were first shown by Dhar in 1990 \cite{dhar1990self}.
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\linewidth]{figures/toy_sandpiles.png}
+\end{center}
+\caption{Example computation of $\xi(\eta)$ for an unstable sandpile with lattice size $L=4$ and $\eta_c = 4$. Numbers written at each grid cell represent the sandpile height $\eta(x, y)$, and correspond to the cell colour. $\eta$ is first toppled at site $\mathbf{x}^{(1)} = (4, 4)$ to produce $\eta^{(1)}$, which is also unstable. $\eta^{(1)}$ is subsequently toppled at site $\mathbf{x}^{(2)} = (4, 3)$ to produce the stable sandpile $\eta^{(2)} \in \Omega_{G_L}$. The algorithm terminates with $s(\eta)=2$. In the above example, we have $a(\eta) = 2$, $\ell(\eta) = 2 + 1 = 3$, and $d(\eta) = 1$.}
+\label{fig:toy_sandpiles}
+\end{figure} 
+
+%--------
+% Probability & Markov Chains
+%--------
+
+\section{Probabilistic Framework}
+
+Randomness in the model comes from how new grains are deposited on the lattice. 
+
+Define the deposition function $\delta: \Psi_{G_L} \times V_L \to \Psi_{G_L}$ as the map $\eta \mapsto \eta '$ with rule 
+\[\eta'(\mathbf{y}) = \begin{cases}
+    \eta(\mathbf{y}) + 1 & \mathbf{y} = \mathbf{x} \\
+    \eta(\mathbf{y}) & \mathbf{y} \neq \mathbf{x}
+\end{cases}\]
+
+Figure \ref{fig:toy_deposition} illustrates the deposition function applied to an example sandpile and site.
+
+We describe the sandpile evolution process by considering the sequence of iid random variables $\mathbf{X}_1, \mathbf{X}_2...$, each with support $V_L$ and pmf \[p(\mathbf{X}_j = \mathbf{x}) = L^{-2}\]
+
+This represents a sequence of uniformly chosen random vertices, which are taken as locations for grain deposition. The model evolves as follows: a random grain is deposited on the existing sandpile, topplings are carried out until the resulting sandpile is stable, and the process repeats.
+
+Mathematically, we build the sequence of stable sandpiles from the sequence $\{\mathbf{X}_j\}_{j\geq 1}$by taking $\eta_0 = \mathbf{0}$ and $\eta_j = \xi(\delta(\eta_{j-1}, \mathbf{X}_j))$ for $j\geq 1$.
+
+Likewise, we obtain the sequence of avalanche sizes $\{S_j\}_{j\geq 1}$ where $S_j := s(\delta(\eta_{j-1}, \mathbf{X}_j))$. A similar construction yields sequences of avalanche areas, losses, and $L_1$ lengths.
+
+The sequence $\{\eta_j\}_{j \geq 0}$ forms a discrete Markov Chain with finite state space $\Omega_{G_L}$; the distribution of $\eta_{j+1}$ depends only on the previous state $\eta_j$ and the transition probability is determined by the distribution of $\mathbf{X}_{j}$.
+
+Jarai \cite{jaraisandpilenotes} discusses the Markov structure in detail, and proves that the distribution of states $\eta_j$ converges to a stationary distribution $\pi(\eta)$ as $j \to \infty$, where $\pi(\eta) > 0$ iff $\eta$ is a recurrent state in the Markov Chain.
+
+Consequently, the sequence of avalanche sizes $\{S_j\}_{j\geq 1}$ and the other avalanche statistic sequences, which are functions of the states $\eta_j$ and the random vertices $\mathbf{X}_j$, also converge in distribution to stationary distributions as $j\to\infty$. 
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.80\linewidth]{figures/toy_deposition.png}
+\end{center}
+\caption{Example deposition function $\delta$ applied to a sandpile with lattice size $L=4$. A grain is deposited at site $\mathbf{x} = (4, 3)$, increasing the site height from 1 to 2 and producing $\eta'$. Numbers written at each grid cell represent the sandpile height at vertex $(x, y)$, and correspond to the cell colour.}
+\label{fig:toy_deposition}
+\end{figure} 
+
+%--------
+% Statistics
+%--------
+
+\section{Statistical Models} \label{sec:stats}
+
+This project builds and compares statistical models for the distribution of positive avalanche size, area, and $L_1$ length as truncated power laws. Three distribution families are fit and compared, which are discrete power law distributions inspired by distributions described in Clauset et al. (2009) \cite{clauset2009power}. All three have support $X \in \{1, \cdots, x_{max}\} \subseteq \Z_{>0}$.
+
+\begin{align*}
+    &\text{Bounded Power Law} & p(x) &\propto x^{-\tau} \\
+    &\text{Exponentially Truncated Power Law} & p(x) &\propto x^{-\tau} e^{-x/c} \\
+    &\text{Stretched Exponentially Truncated Power Law} & p(x) &\propto x^{-\tau} e^{-(x/c)^\beta}
+\end{align*}
+
+Of particular interest is the finite scaling hypothesis described by Tebaldi et al. (1999) in \cite{tebaldi1999multifractal}, which hypothesises that the finite size lattice $L$ influences the distribution via:
+
+\[p(x) \propto x^{-\tau} f\left(\frac{x}{L^D}\right)\]
+
+Here, $D$ is the fractal dimension of the statistic. The truncated distributions above suggest forms for $f$, with $c = k L ^D$.
+
+As discussed in \cite{clauset2009power}, estimating the power law coefficient using linear regression on the log-log plot of the pmf is not statistically justified, nor can it capture the finite size effect on the distribution tail. In this report, we apply the method of Maximum Likelihood Estimation recommended in \cite{clauset2009power}, using exactly specified discrete distributions.
+
+Particular care must be taken when performing inference because the samples collected are not independent. While Markov Chain stationarity supports the distribution of the observed samples approximating their stationary distribution, this does not mean that samples can be treated as independent and identically distributed samples from the stationary distribution. Consequently, standard goodness of fit tests, tests of statistical significance, and most quantitative comparison methods become computationally complex and highly approximate. Fortunately, maximum likelihood estimation is still justifiable. While it is not technically maximum likelihood, since dependence means that the likelihood cannot be written as the product of marginal pmfs, we will still refer to it as such in this report.
