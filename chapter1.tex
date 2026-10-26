@@ -1,155 +1,284 @@
-\chapter{Formatting options}\label{ch:introduction}
+\chapter{Introduction}
+\section{Motivation}
+Respiratory rate is the number of complete breathing cycles per minute. The course project asks whether respiratory information can be recovered from an existing electrocardiogram (ECG) to support automated breathing-rate measurement. An ECG measures the electrical activity of the heart rather than respiration directly, so this task requires an observable link between breathing and changes in the cardiac signal.
 
-The best way to view this document is in a split-view format, with the \texttt{.tex} file open and the corresponding portion of the \texttt{.pdf} output also visible.
+One such link is respiratory sinus arrhythmia (RSA), in which the interval between successive heartbeats varies with the respiratory cycle. Hirsch and Bishop showed that the magnitude of this variation depends on breathing frequency and tidal volume \cite{hirsch}. This provides a reason to investigate heartbeat intervals, but does not guarantee that their strongest periodic component represents breathing. Noise, missed or duplicated heartbeat detections, and other sources of heart-rate variation can interfere with the estimate.
 
-\section{Equations and tables}\label{sec:equationexamples}
+Several approaches derive respiratory information from ECG. PhysioNet distinguishes interval-based approaches from methods based on changes in ECG morphology or the cardiac electrical axis. This project follows the interval-based approach: it examines periodic changes in R--R intervals and compares the resulting rate estimates with synchronized respiratory signals. Evaluation must address both error in usable windows and the proportion of windows for which a usable estimate is available.
 
-You can write an equation without a label by using an asterisk:
-\begin{equation*}
-f(x) = (x+a)(x+b).
-\end{equation*}
-Alternatively, you can number and label your mathematical expressions:
-\begin{equation}\label{eq:Lagrangian_EM}
-\mathcal{L}_{\text{EM}} 
-  = \frac{1}{2} \biggl( \epsilon_{0} \left| \vect{E} \right|^{2} + \frac{1}{\mu_{0}} \left| \vect{B} \right|^{2} \biggr)
-   - \phi \varrho_{\text{free}} + \vect{A} \cdot \vect{J}_{\text{free}}
-   + \vect{E} \cdot \vect{P} + \vect{B} \cdot \vect{M}.
-% = \mathcal{L}_{\text{field}} + \mathcal{L}_{\text{int}}
-% = - \frac{1}{4 \mu_{0}} F^{\alpha \beta} F_{\alpha \beta} - A_{\alpha} J^{\alpha}.
-\end{equation}
-This way, we can later reference something we wrote earlier, like the electromagnetic Lagrangian density in non-relativistic vector notation shown in Equation (\ref{eq:Lagrangian_EM}).\\
+ECG can also support a separate task: classifying an entire recording according to its apnea-related category. The PhysioNet/Computing in Cardiology Challenge 2000 distinguished record classification from minute-level apnea detection. This project includes A/C record classification alongside respiratory-rate estimation. These tasks have different outputs and evaluation criteria, so success in either task cannot establish success in the other.
 
-The equation environment allows you to construct a number of objects, such as arrays and algined sets of equations. For instance, we might want to write a general matrix:
-\begin{equation}
-\vect{c} = 
-  \left(\begin{array}{c c c c c}
-    c_{11} & c_{12} & c_{13} & \ldots & c_{1n} \\
-    c_{21} & c_{22} & c_{23} & \ldots & c_{2n} \\
-    c_{31} & c_{32} & c_{33} & \ldots & c_{3n} \\
-    \vdots & \vdots & \vdots & \ddots & \vdots \\
-    c_{m1} & c_{m2} & c_{m3} & \ldots & c_{mn} \\
-  \end{array}\right).
-\end{equation}
-We might alternatively want to write a set of simultaneous equations. If future descriptions require for all of them to have unique labels, try using the `subequations' environment as well as the `eqnarray' environment.
-\begin{subequations}\label{eq:simulALL}
-\begin{eqnarray}
- 3x + 5y +  z &=& 5\\ \label{eq:simulB}
- 7x - 2y + 4z &=& 3\\
--6x + 3y + 2z &=& 1.
-\end{eqnarray}
-\end{subequations}
-This will allow you to talk about the set of simultaneous equations as a whole by referring the reader to Equation (\ref{eq:simulALL}), or else to a specific statement like Equation (\ref{eq:simulB}).\\
+\Needspace{6\baselineskip}
+\section{Research questions}
+The project has two principal questions:
+\begin{enumerate}
+\item How closely do respiratory rates estimated from ECG R--R interval variation agree with rates derived from synchronized chest effort, abdominal effort and oronasal airflow signals? How often is a reference available, and how often does the ECG method provide a computable estimate when a reference is computable?
+\item Can record-level ECG features distinguish class A from class C? How do Logistic Regression (LR) and Random Forest (RF) compare during development validation, and how does the selected, fixed model perform on the original x test recordings?
+\end{enumerate}
+Supporting analyses for Experiment 1 will examine agreement between respiratory channels, differences between recordings and annotation states, and examples of estimation failure. Experiment 2 will compare the two classifiers and retain predictions for class B as separate boundary cases. Any claim that estimated respiratory-rate features improve classification would require an explicit feature inclusion/removal comparison under the same validation protocol.
 
-Sometimes you'll want to derive a result, which in its clearest form requires more than one line of algebra. There are a few ways to accomplish this, and the best choice will depend on the task at hand and your personal taste. You can instruct the compiler \textit{not} to give a label to one or more of the lines as you go.
-\begin{eqnarray}\notag
-\lefteqn{R_{x} (\varepsilon) R_{y} (\varepsilon) - R_{y} (\varepsilon) R_{x} (\varepsilon)} \\ \notag
-& = &  \left( 1 - \frac{i J_{x} \varepsilon}{\hbar} - \frac{J_{x}^{2} \varepsilon^{2}}{2 \hbar^{2}} \right) 
- \left( 1 - \frac{i J_{y} \varepsilon}{\hbar} - \frac{J_{y}^{2} \varepsilon^{2}}{2 \hbar^{2}} \right) - 
- \left( 1 - \frac{i J_{y} \varepsilon}{\hbar} - \frac{J_{y}^{2} \varepsilon^{2}}{2 \hbar^{2}} \right)
- \left( 1 - \frac{i J_{x} \varepsilon}{\hbar} - \frac{J_{x}^{2} \varepsilon^{2}}{2 \hbar^{2}} \right) \\
-& = &  \left( 1 - \frac{i J_{z} \varepsilon^{2}}{\hbar} \right) - 1 + \mathcal{O} (\varepsilon^{3}). 
-\end{eqnarray}
+\section{Study scope}
+Experiment 1 detects R peaks, calculates and cleans R--R intervals, estimates respiratory frequency through windowed spectral analysis, and compares it with synchronized respiratory signals. All complete candidate windows are retained. Rates are reported wherever they are numerically computable, without rejecting a window for signal quality or reference disagreement. Sections 3 and 4 describe this implemented method and its measured results; genuinely undefined computations are recorded separately.
 
-A table of data is sometimes necessary, for which there is a dedicated environment. An example of this is given in Table (\ref{tab:measuredconstants}) -- note that the counter for tables is separate from the counter for equations. If this isn't to your liking, you can change the enumeration style of one or both. (Google has plenty of suggestions).
+The project is an evaluation of computational methods using public recordings. Respiratory signals provide comparison references rather than inputs to the ECG rate estimator. The classification task uses ECG features to predict a recording's A/C category. Correct classification does not establish accurate respiratory-rate estimation, and accurate rate estimation does not establish classification benefit.
 
-\begin{table}[h!]
-\begin{center}
-\begin{tabular}{ l l l c l}\hline
-\textbf{description}  & \textbf{} & \textbf{value} \\ \hline
-electronic charge & $e$ & $1.6021766 \times 10^{-19} \coulomb$ \\
-proton mass            & $m_{p}$ & $1.6726218 \times 10^{-27} \kilo\gram$ &  
- or & $938.27203 \mega\electronvolt\per c^{2}$ \\
-electron mass          & $m_{e}$ & $9.1093822 \times 10^{-31} \kilo\gram$ & or & $510.99891 \kilo\electronvolt\per c^{2}$ \\
-permittivity of vacuum & $\epsilon_{0}$ & $8.8541878 \times 10^{-12} \farad\per\meter $ \\
-permeability of vacuum & $\mu_{0}$         & $1.2566371 \times 10^{-6} \; \henry\per\meter$ & 
- or & $4 \pi \times 10^{-7} \henry\per\meter $ \\
-speed of light in vacuum & $c$               & $2.9979246 \times 10^{+8} \; \meter\per\second $ \\ 
-electrostatic constant   & $k_{e}$ & $8.9875518 \times 10^{+9} \; \meter\per\farad$ & 
- or & $1/4 \pi \epsilon_{0}$ \\
-Planck constant        & $h$ & $6.6260696 \times 10^{-34} \; \joule\cdot\second$ & 
- or & $4.1356675 \times 10^{-15} \electronvolt\cdot\second$ \\
-reduced Planck constant        & $\hbar$ & $1.0545717 \times 10^{-34} \; \joule\cdot\second$ & 
- or & $6.5821193 \times 10^{-16} \electronvolt\cdot\second$ \\
-\hline
-\end{tabular}
-\end{center}
-\caption{A table of measured constants.}
-\label{tab:measuredconstants}
+Although the course brief motivates respiratory measurement in children, the selected database contains adult recordings. This study does not establish performance in children, clinical diagnostic validity or medical risk thresholds.
+
+\clearpage
+\chapter{Background, Dataset and Experimental Design}
+\section{ECG, R peaks and heartbeat intervals}
+An ECG records cardiac electrical activity over time. Within a heartbeat, the QRS complex is associated with ventricular depolarization; the R peak provides a timing landmark for identifying successive beats. Waveform shape and polarity can vary, so identifying heartbeats is more demanding than counting every upward local maximum.
+
+The R--R interval is the time between two consecutive R peaks, measured in seconds. For example, peaks at 1.0 and 1.8 seconds give an interval of 0.8 seconds and an interval-based heart rate of 75 beats/min. This is an illustrative calculation, not a project result.
+
+Heart rate counts heartbeats, while respiratory rate counts breathing cycles. The proposed estimator examines how heartbeat intervals become shorter and longer over time; it does not treat heart rate as respiratory rate. A periodic component in this sequence is a candidate breathing frequency, which must be checked against respiratory signals \cite{hirsch}. A frequency measured in Hz is converted to breaths/min by multiplication by 60.
+
+\section{Respiratory effort, airflow and reference rates}
+The synchronized respiratory channels measure different aspects of breathing. Chest and abdominal effort channels describe breathing-related movement, while the oronasal airflow channel reflects sensor changes associated with air passing through the nose and mouth. In Apnea-ECG, effort was measured using inductance plethysmography and airflow using nasal thermistors. Effort and airflow need not have identical waveforms or clearly matching cycles in every window.
+
+These channels contain sampled waveforms rather than precomputed respiratory rates. Reference rates must be derived from detected cycles, which can be affected by noise, weak signals, missed cycles and double counting. A derived reference is uncertain rather than an error-free gold standard. A window without a complete detected cycle cannot supply a cycle-derived rate and is marked unavailable rather than assigned zero. Detected cycles are reported without rejecting a window for reference quality; numerical availability does not establish reliability.
+
+Experiment 1 compares ECG estimates with all computable cycle-derived references, using Resp N as the primary airflow-related reference and retaining effort channels separately. An auxiliary median summarizes available channels without imposing agreement. Section 3 specifies the implemented method. Oxygen saturation (SpO$_2$) does not directly count breaths and is not an estimator or classifier input. Plots of uncalibrated respiratory sensor readings will use raw A/D units rather than calibrated flow or volume units.
+
+\section{Dataset and annotation meanings}
+The project uses the PhysioNet Apnea-ECG Database, version 1.0.0 \cite{penzel}. It contains 70 recordings: 35 original learning recordings, named a01--a20, b01--b05 and c01--c10, and 35 original test recordings, named x01--x35. The x prefix denotes the original test set rather than a fourth condition. A recording count must not be interpreted as a count of independent participants.
+
+Classes A, B and C are recording-level categories defined for the original challenge. Class A requires at least one hour with an apnea index of 10 or more and at least 100 apnea minutes in the recording. Class B requires at least one hour with an apnea index of 5 or more and 5--99 apnea minutes. Class C contains fewer than five apnea minutes. These are dataset category rules, not new clinical decision thresholds proposed by this project. Class C does not necessarily mean that a record contains no apnea annotations.
+
+Recording categories differ from the A/N markers in \texttt{.apn} files. The latter provide annotations at 60-second intervals. Although the dataset overview and supplementary statistics describe apnea minutes, the dedicated annotation documentation specifies whether apnea was in progress at the beginning of the associated minute. These markers provide context for exploratory analysis; they do not establish exact event boundaries, continuous apnea throughout a minute, or a zero reference respiratory rate. The supplementary statistics also count minutes containing hypopnea as apnea minutes.
+
+\section{Data roles}
+Only a01--a04, b01 and c01--c03 have publicly supplied synchronized respiratory channels. These form the paired evaluation pool for Experiment 1: four A, one B and three C recordings. All eight records are included in the methods and results in Sections 3 and 4. Signals are compared within their common time range. The files used are stored at 100 samples/s according to their headers; storage frequency differs from the original respiratory sensor acquisition rates described by the challenge.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Data roles. Classification counts describe the planned protocol, not completed training or scoring.}
+\label{tab:roles}
+\begin{tabularx}{\textwidth}{@{}p{0.21\textwidth}p{0.12\textwidth}YY@{}}
+\toprule
+Subset & Records & Experiment 1 & Experiment 2 \\
+\midrule
+a01--a04 & 4 A & Paired rate evaluation & Development ECG \\
+b01 & 1 B & Paired rate evaluation & Separate boundary case \\
+c01--c03 & 3 C & Paired rate evaluation & Development ECG \\
+Remaining a/c & 22 before exclusion & No public paired reference & Development ECG; exclude c05 \\
+b02--b05 & 4 B & No paired evaluation & Separate boundary predictions \\
+x01--x35 & 20 A, 5 B, 10 C & No reference evaluation & Fixed-model predictions; score true A/C \\
+\bottomrule
+\end{tabularx}
 \end{table}
 
-\section{Pictures and figures}\label{sec:figures}
-Try to stick to a few data formats if possible. Vector and pdf data types are ideal, because they minimise the overall size of the document and you can zoom/print to any quality without pixelisation.\\
+The classification development pool originally contains 20 A and 10 C records. PhysioNet reports that c05 and c06 originate from the same recording, with c05 starting 80 seconds later. Treating them as independent could place overlapping signal in both training and validation. The specified protocol therefore excludes c05 and retains c06, giving a planned pool of 20 A and nine C records. Neither record is in Experiment 1, so this exclusion does not change its eight-record pool. All true B records in x will be excluded from primary A/C scoring under the predefined rule, with their predictions reported separately.
 
-You can write a program that returns data or a visual representation of it (graph, coloured array, surface plot etc.), and in the latter case, you can take the resulting image and copy to your `figures' folder (this keeps the internal address conventions neat and tidy) and link the document directly to your report, like so:\\
+\section{Evaluation units and validation boundaries}
+A \emph{recording} is a continuous signal acquisition, a \emph{window} is a finite interval within it, and a \emph{participant} is the person who supplied the signal. Experiment 1 produces window-level rate estimates; Experiment 2 aggregates features into one row per recording. The existing Experiment 1 implementation uses 60-second windows at 30-second steps. These settings define the implemented analysis and are not claimed to be optimal. Adjacent windows overlap, so their number does not represent the number of independent observations or participants.
 
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=0.40\linewidth]{figures/random_matrix.pdf}
-\end{center}
-\caption{A random square matrix, generated by a \texttt{Fortran} program.}
-\label{fig:random_matrix}
-\end{figure} 
+Experiment 1 reports error together with reference availability and computable-estimate coverage. Error is calculated only when both the ECG estimate and reference are computable. Reference availability uses all candidate windows as its denominator; coverage uses reference-computable windows. Different channels can be computable in different windows, so channel comparisons must distinguish their individual computable sets from a shared computable set. Pooled-window results and equal-weight record summaries answer different questions and will be reported separately.
 
+Development validation is used to compare candidate methods and choose settings; final testing evaluates a method after those choices have been fixed. Experiment 1 evaluates fixed engineering parameters on all eight records without reference-based tuning; it is not a held-out tuned evaluation. For Experiment 2, windows from the same recording must not be randomly divided between training and validation, and x is reserved for predictions and scoring after model selection.
 
-If you need to provide a diagram of your own creation, there are several options available. You can feel free to choose whichever method your experience has endowed you with, or else represents the best compromise between effort spent and professional appearance of the final product. For instance, you could hand-draw your diagram, scan or take a photo of it, upload the resulting image to the correct directory, crop/filter it and add to your document, as shown in the LHS of Figure (\ref{fig:handcomp}).\\
+Known overlap between c05 and c06 is addressed by exclusion, but the supplied materials do not provide a reliable participant identifier for every record. Matching demographics alone does not establish identity. Other associations, including those between development and x, require further audit. Without evidence of participant independence, x results should be described as testing on the original records rather than generalization to new participants. Experiment 1 includes only one B record, b01, whose results cannot characterize the whole B group.
 
-Alternatively, you could use some available computer software to get the job done. Here we will give you an example made in Inkscape, because it is an open-source package which is available for most operating systems. Here you will make your diagram (there are plenty of tutorials and examples available online), adjust the document borders to your satisfaction, save a vector-type copy for later editing purposes (for instance, `\texttt{diagram.svg}', and then also save a pdf version (`\texttt{diagram.pdf}'). It is the second file-type which you can link to your \LaTeX document with the usual features. The comparison between a hand-drawn and computer-rendered image is fairly stark -- see the RHS of Figure (\ref{fig:handcomp}).\\
+\clearpage
+\chapter{Methodology}
+\section{Data integrity and window inclusion}
+Experiment 1 includes a01--a04, b01 and c01--c03: four A, one B and three C recordings. The data audit verifies official SHA256 hashes, byte lengths and WFDB channel checksums for 48 required files. ECG and respiratory headers share the same origin and have no declared sample skew. Both are stored at 100 samples/s. Respiratory files end 204 samples (2.04 s) before the corresponding ECG; analysis uses their common duration. ECG is converted to mV using header calibration. Respiratory sensor values remain raw A/D units, and SpO$_2$ is not analyzed.
 
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=0.50\linewidth]{figures/dipole_hand.png}\hspace{1cm}
-\includegraphics[width=0.40\linewidth]{figures/dipole_vector.pdf}
-\end{center}
-\caption{A sketch of some electric field lines around an ideal electric dipole.}
-\label{fig:handcomp}
+All complete 60 s windows starting at 30 s steps within the common duration are retained, including windows at record edges. No window is rejected for low amplitude, irregularity, spectral ambiguity or disagreement between reference channels. A computed rate is reported whenever the estimator has the required numerical inputs. If computation is undefined, the window remains in the output with a missing value and an explicit reason; missing does not mean zero respiration. This is a fixed signal-processing evaluation on all eight records, with no supervised respiratory-rate regression, reference-based parameter search or held-out model selection.
+
+\section{ECG processing and beat timing}
+The custom detector applies a third-order Butterworth bandpass at 8--25 Hz using forward--backward filtering. The filtered ECG is squared and smoothed by an 80 ms moving average to obtain a QRS energy signal. Candidates are selected within 10-second blocks, with one-second padding for local threshold calculation. The height threshold is the maximum of the local median plus five median absolute deviations (MAD), 20\% of the local 99th percentile, and $10^{-6}$ mV$^2$. Prominence must exceed the larger of 10\% of that percentile and $10^{-6}$ mV$^2$; candidates are separated by at least 300 ms. Each timing location is refined to the largest absolute filtered extremum within $\pm80$ ms, duplicates are removed, and the 300 ms separation is reapplied. Absolute extrema accommodate positive and negative QRS polarity, although changing fiducial morphology can still introduce timing error. Filtering and peak selection use SciPy routines.
+
+The detector is implemented by the project using SciPy operations; it is not PhysioNet's supplied morphology-based EDR software. The database \texttt{.qrs} annotations are not used as heartbeat truth. Stored beat times and R--R intervals are read by the analysis runner, with interval durations and midpoints checked against consecutive beat times. No expert heartbeat annotation study is claimed.
+
+\section{R--R intervals and spectral rate estimation}
+For beat times $t_i$, the interval $RR_i=t_{i+1}-t_i$ is assigned to midpoint $(t_i+t_{i+1})/2$. Each target window uses interval midpoints within three seconds of either boundary. Individual intervals outside 0.3--2.0 s or more than 25\% from an 11-interval local median are removed as preprocessing. The window itself remains included, irrespective of the removed fraction or temporal gaps. At least two cleaned interval samples are needed to construct its interpolated sequence.
+
+Intervals are linearly interpolated onto a 4 Hz grid over the full window. Interpolation bridges available sample gaps, and constant endpoint values extend unsupported boundaries. The sequence is linearly detrended and analyzed with a Hann periodogram without zero padding. The largest spectral bin in 0.10--0.50 Hz gives
+\begin{equation}
+\widehat r=60f_{\mathrm{peak}}\quad\text{breaths/min}.
+\end{equation}
+The 60 s window yields 1 breath/min Fourier-bin spacing; this is not measurement accuracy. The estimate is restricted to 6--30 breaths/min. A weak or ambiguous spectral maximum is still reported. Spectral concentration, band fraction, peak ratio, interval modulation and gap size are diagnostics, not rejection criteria. A spectrum without finite positive power in the search band cannot identify a candidate rate and is marked undefined.
+
+\section{Independent respiratory references}
+Each respiratory channel is resampled from 100 to 10 Hz by polyphase resampling and filtered forward--backward with a third-order Butterworth bandpass: 0.05--0.8 Hz for chest/abdomen and 0.05--0.7 Hz for airflow. Peak detection uses a 2 s minimum separation and a prominence of 0.5 times the window standard deviation for effort or 0.4 for airflow, with a $10^{-9}$ numerical floor. Consecutive detected peaks define periods $T_j$, and
+\begin{equation}
+r_{\mathrm{ref}}=\frac{60}{\mathrm{median}(T_j)}\quad\text{breaths/min}.
+\end{equation}
+One complete positive peak-to-peak period is sufficient. Low amplitude, irregular periods, long gaps, limited cycle span, peak/trough differences, spectral disagreement and a rate outside the ECG search band do not suppress the reference. Trough periods and the reference spectrum are recorded as diagnostics. These detector-derived rates are uncertain references rather than an error-free gold standard; a low-amplitude periodic sensor fluctuation need not correspond to a breath. When no complete peak period exists, the cycle-derived rate is undefined and is not replaced by zero or a spectral estimate.
+
+Resp N is the primary airflow-related reference, while chest and abdominal effort rates are evaluated separately. An auxiliary channel median uses every computable reference in the window, even when channels disagree. Its composition and count (one to three) are recorded. A one-channel median provides no multichannel corroboration; effort-only and airflow-containing medians have different physiological interpretation. Reference signals and annotations are never inputs to the ECG estimator.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Implemented parameters. Beat and cycle detection and interval cleaning are signal-processing steps; no window quality threshold suppresses a computable rate.}
+\label{tab:parameters}
+\begin{tabularx}{\textwidth}{@{}p{0.25\textwidth}Y@{}}
+\toprule
+Component & Setting \\
+\midrule
+Data and windows & 8 synchronized records; 100 Hz storage; 60 s windows / 30 s step \\
+ECG processing & Third-order 8--25 Hz Butterworth; forward--backward; 80 ms energy smoothing \\
+Beat timing & 10 s blocks; 1 s padding; 300 ms refractory; extremum refinement within 80 ms \\
+Interval cleaning & 0.3--2.0 s; deviation at most 25\% from an 11-interval median \\
+Interpolation / spectrum & 4 Hz; linear interpolation; linear detrending; Hann periodogram; no zero padding \\
+ECG search band & 0.10--0.50 Hz (6--30 breaths/min) \\
+Reference filters & 10 Hz resampling; 0.05--0.8 Hz effort / 0.05--0.7 Hz airflow \\
+Reference peaks & Minimum separation 2 s; prominence 0.5 SD effort / 0.4 SD airflow \\
+Output requirements & Two cleaned interval samples and positive band power; one complete reference peak period \\
+Window inclusion & All candidates, including record edges; no window quality rejection \\
+Auxiliary reference & Median of one to three computable channels; channel count recorded \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Evaluation and diagnostic figures}
+Let $N$ denote all candidate windows, $R$ those with a computable reference and $P$ those with both a computable ECG estimate and reference. Reference availability is $R/N$, conditional estimate coverage is $P/R$, and paired coverage over all windows is $P/N$. Numerical computability is distinguished from accuracy. On the $P$ pairs, with error $e_i=\widehat r_i-r_i$, the report uses
+\begin{equation}
+\mathrm{MAE}=\frac{1}{P}\sum_i|e_i|,\qquad
+\mathrm{Bias}=\frac{1}{P}\sum_ie_i,\qquad
+\mathrm{RMSE}=\sqrt{\frac{1}{P}\sum_ie_i^2}.
+\end{equation}
+Pooled metrics weight each paired window equally. Macro-record metrics average the eight record-level values with equal weight. Channel comparisons distinguish separate computable sets from windows on which all three references and ECG are computable. The many overlapping windows are correlated; no significance test or independent-window confidence interval is reported.
+
+Exploratory annotation groups use the minute-boundary markers overlapping a window. Uniform A or N markers yield that group, different known markers yield mixed, and any missing marker yields unknown. These groups do not establish exact event duration. The diagnostic figures use fixed illustrative intervals: a03 at 6150--6210 s, a01 at 7200--7260 s, the full a03 timeline and window starts at 7200--9000 s. Rates displayed in panels are checked against the saved window CSV. No rate is manually corrected after plotting, and these illustrations are not expert breath adjudication or a representative performance sample.
+
+\section{Experiment 2}
+\textit{Record-level feature extraction, LR/RF development validation and x scoring remain to be completed. No classification results are reported.}
+
+\chapter{Results}
+\section{Signal processing and full-record estimates}
+Figure~\ref{fig:example} shows a03 at 6150--6210 s, linking the ECG, beat locations, interval sequence, spectrum and three reference waveforms. The ECG estimate and airflow reference are both 10.00 breaths/min; chest and abdomen are 10.00 and 10.34. This illustrates agreement at a selected interval, not performance over the recording. Stronger slow spectral variation can lie outside the predefined search band, so the estimate is the largest peak within that band rather than across all frequencies.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth,height=.78\textheight,keepaspectratio]{signal_example.pdf}
+\caption{Record a03, 6150-6210 s. ECG, detected beat landmarks, cleaned and interpolated R-R intervals, Hann periodogram, and independent chest, abdominal and airflow cycle references. ECG rate 10.00; reference rates 10.00, 10.34, 10.00 breaths/min. Respiratory amplitudes are raw A/D units; troughs are shown for diagnosis and do not determine output availability. This is a selected illustration, not a representative sample.}
+\label{fig:example}
 \end{figure}
 
-If you wish to take the last example further, try exploring some of Inkscape's features. It allows you to plot functions, write mathematical expressions (although this option does not always work) and vectorise/edit a surprisingly large assortment of existing images. If you would like your final document to look seamlessly consistent, you can even make diagrams with text and equations of the same formatting. (This involves writing everything in a dummy \LaTeX document, exporting and vectorising it online, importing that vector document into Inkscape, playing around with character size compared to final drawing size in the document, and then exporting that diagram as a pdf to be placed back into \LaTeX ... possibly not a worthwhile pursuit for the purposes of this subject.)
+Figure~\ref{fig:timeline} shows the complete a03 recording. All 1043 candidate windows have ECG and three-channel reference outputs. Continuous numerical output includes both periods of closer agreement and sustained departures from the references; continuity alone does not indicate accuracy.
 
-\section{Computer code}\label{sec:code}
-\subsection{Code input/output}\label{subsec:codeinout}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth,height=.46\textheight,keepaspectratio]{rate_timeline.pdf}
+\caption{Record a03, 0-31320 s, 60 s windows and 30 s steps. All 1043 candidate windows have computable ECG and channel-reference rates. Chest, abdominal, airflow and channel-median references are plotted separately against the same ECG estimates. Rates describe windows beginning at the displayed times; connecting lines are visual guides.}
+\label{fig:timeline}
+\end{figure}
 
-Talk about the language that you used, maybe referencing an integral in \cite{abramowitz1970} or a numerical algorithm in \cite{press1992} if you used \texttt{Fortran}.
+\FloatBarrier
+\section{Error, availability and coverage}
+The eight recordings contain 7920 candidate windows. ECG rates are computable in 7889 (99.61\%). Airflow-cycle references are computable in all 7920, chest in 7917 and abdomen in 7918. The primary airflow comparison therefore uses 7889 pairs, with reference availability 100.00\%, conditional estimate coverage 99.61\% and all-window paired coverage 99.61\%.
 
-\subsection{Code written verbatim}\label{subsec:verbatim}
+On these pairs, pooled MAE is 6.392, bias $-6.010$ and RMSE 8.219 breaths/min (Table~\ref{tab:pooled}). The negative bias indicates generally lower ECG estimates than airflow-derived rates. Equal-record macro MAE is 6.329, bias $-5.959$, RMSE 7.661 and coverage 99.61\%; the near-complete availability should not be interpreted as expert validation of the reference.
 
-This can be done with the \texttt{listings} and \texttt{verbatim} packages. You should modify the preamble document so that these packages correctly interpret the programming language that you used.
+\begin{table}[htbp]
+\centering\small
+\caption{Pooled window results for 7920 candidates. R: computable references; P: computable pairs; availability: R/N (\%); coverage: P/R (\%). MAE, bias and RMSE use breaths/min. Computability does not establish reference accuracy.}
+\label{tab:pooled}
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+Reference & R & P & Avail. & Cover. & MAE & Bias & RMSE \\
+\midrule
+Chest & 7917 & 7886 & 99.96 & 99.61 & 6.088 & -5.582 & 7.922 \\
+Abdomen & 7918 & 7887 & 99.97 & 99.61 & 6.527 & -6.097 & 8.427 \\
+Airflow & 7920 & 7889 & 100.00 & 99.61 & 6.392 & -6.010 & 8.219 \\
+Channel median & 7920 & 7889 & 100.00 & 99.61 & 6.399 & -6.023 & 8.221 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\newpage
+\begin{table}[htbp]
+\centering\small
+\caption{Airflow comparisons by record. N: candidates; R: computable references; P: computable pairs; coverage: P/R (\%). MAE and bias use breaths/min.}
+\label{tab:records}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Record & N & R & P & Coverage & MAE & Bias \\
+\midrule
+a01 & 984 & 984 & 984 & 100.00 & 8.743 & -8.470 \\
+a02 & 1059 & 1059 & 1059 & 100.00 & 10.852 & -9.623 \\
+a03 & 1043 & 1043 & 1043 & 100.00 & 5.111 & -4.744 \\
+a04 & 992 & 992 & 992 & 100.00 & 9.940 & -9.794 \\
+b01 & 971 & 971 & 971 & 100.00 & 3.903 & -3.706 \\
+c01 & 965 & 965 & 949 & 98.34 & 3.764 & -3.404 \\
+c02 & 1001 & 1001 & 986 & 98.50 & 3.026 & -2.713 \\
+c03 & 905 & 905 & 905 & 100.00 & 5.294 & -5.218 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\begin{lstlisting}
-      FUNCTION PINEWT(N)
-      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
-C**********************************************************************C
-C     PINEWT EVALUATES THE INFINITE SERIES REPRESENTATION              C
-C     FOR PI AS A TRUNCATED SUM.                                       C
-C**********************************************************************C
-C
-C     ENSURE N IS A LEGAL VALUE
-      IF(N.LT.0) THEN
-        WRITE(6,*) 'In PINEWT: illegal value for N.',N
-        RETURN
-      ELSEIF(N.EQ.0) THEN
-        PINEWT = 2.0D0
-      ENDIF
-C
-C     INITIALISE SOME COUNTERS
-      TWOPOW = 1.0D0
-      FACKNM = 1.0D0
-      FACKDM = 1.0D0
-      PINEWT = TWOPOW*FACKNM*FACKNM/FACKDM
-C
-C     LOOP OVER SERIES ORDER N TIMES, ADDING EACH TERM TO TOTAL
-      DO I=1,N
-        TWOPOW = 2.0D0*TWOPOW
-        FACKNM = DFLOAT(I)*FACKNM
-        FACKDM = DFLOAT(2*I+1)*DFLOAT(2*I)*FACKDM
-        PINEWT = PINEWT + TWOPOW*FACKNM*FACKNM/FACKDM
-      ENDDO
-C
-C     DOUBLE THE RESULT (SEE WIKIPEDIA FORMULA)
-      PINEWT = 2.0D0*PINEWT
-C
-      RETURN
-      END
-\end{lstlisting}
+Record-level airflow MAE ranges from 3.026 in c02 to 10.852 in a02 (Table~\ref{tab:records}). The errors are not uniform across recordings. Figure~\ref{fig:agreement} shows departures below the identity line. Of the 7889 ECG outputs, 2644 (33.52\%) equal the 6 breaths/min search boundary. This concentration suggests that low-frequency interval variation often dominates the permitted spectral search; it does not establish the physiological source of that variation.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth,height=.46\textheight,keepaspectratio]{reference_agreement.pdf}
+\caption{All eight recordings, 7889 computable ECG-airflow pairs from 7920 candidates. Dashed line: identity. Hexagonal bins show window counts on a logarithmic scale. ECG output is restricted to 6-30 breaths/min. Overlapping windows are not independent participants.}
+\label{fig:agreement}
+\end{figure}
+
+\FloatBarrier
+\section{Reference-channel agreement}
+There are 7886 windows on which ECG and all three references are computable. On this identical set, MAE is 6.088 against chest, 6.527 against abdomen and 6.392 against airflow. These values distinguish channel comparisons from their slightly different separate pair sets, but do not establish which reference is closest to true breathing.
+
+Without selecting on ECG availability, chest--abdomen reference MAE is 1.338 over 7917 windows, chest--airflow MAE is 1.391 over 7917, and abdomen--airflow MAE is 1.144 over 7918. Reference disagreement therefore remains relevant to interpreting ECG error. The auxiliary median uses three channels in 7917 windows, two in one window and one in two windows. It remains computable in all 7920; its pooled ECG MAE is 6.399. Aggregating channels does not resolve disagreement or create independent breath truth.
+
+\section{Exploratory record classes and annotation groups}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Exploratory airflow comparisons. All group references are computable. Coverage is pairs/candidates (\%). Record classes and minute-boundary annotation groups are distinct; no significance tests were performed. Errors use breaths/min.}
+\label{tab:groups}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Group & Candidates & Pairs & Coverage & MAE & Bias \\
+\midrule
+Class A & 4078 & 4078 & 100.00 & 8.653 & -8.139 \\
+Class B & 971 & 971 & 100.00 & 3.903 & -3.706 \\
+Class C & 2871 & 2840 & 98.92 & 3.995 & -3.742 \\
+Annotation A & 3183 & 3183 & 100.00 & 9.711 & -9.195 \\
+Annotation N & 4645 & 4614 & 99.33 & 4.089 & -3.797 \\
+Annotation mixed & 66 & 66 & 100.00 & 7.258 & -7.032 \\
+Annotation unknown & 26 & 26 & 100.00 & 6.379 & -6.322 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The A-class pooled airflow MAE is 8.653, compared with 3.903 for b01 and 3.995 for the three C recordings (Table~\ref{tab:groups}). The A minute-marker group has MAE 9.711 over 3183 pairs; the N group has MAE 4.089 over 4614. These descriptive differences can reflect ECG-estimator behavior, detected reference cycles and recording characteristics. They do not identify a causal effect of apnea or a clinically useful threshold. B is represented by one recording; mixed and unknown groups are small. Record class A does not mean that all its windows carry an A marker.
+
+\FloatBarrier
+\section{Undefined computations and failure examples}
+The 31 windows without ECG output are retained: 22 have no selected interval samples and nine have fewer than two samples after interval cleaning. The missing ECG outputs occur in c01 (16) and c02 (15). Chest has three and abdomen two undefined reference outputs because no complete peak period is detected; airflow has none. These are failures to construct a numerical rate, not evidence of zero respiration or proof that other references are correct.
+
+Figure~\ref{fig:failure} shows a01 at 7200--7260 s. ECG is 6.00 while chest and airflow are 21.43 and abdomen is 20.34 breaths/min; the airflow absolute error is 15.43. All estimates are reported despite disagreement. Slow interval variation and the selected in-band maximum fail to follow the detected respiratory cycles in this example, but the figure cannot establish a unique cause.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth,height=.78\textheight,keepaspectratio]{failure_example.pdf}
+\caption{Record a01, 7200-7260 s. ECG, detected beat landmarks, cleaned and interpolated R-R intervals, Hann periodogram, and independent chest, abdominal and airflow cycle references. ECG rate 6.00; reference rates 21.43, 20.34, 21.43 breaths/min. Respiratory amplitudes are raw A/D units; troughs are shown for diagnosis and do not determine output availability. This is a selected illustration, not a representative sample.}
+\label{fig:failure}
+\end{figure}
+
+\FloatBarrier
+\section{Local temporal detail}
+Figure~\ref{fig:local} expands a03 window starts at 7200--9000 s. All 61 displayed windows provide ECG and three-channel rates. Chest, abdomen and airflow broadly track one another, while the ECG sequence frequently stays lower. At a02, 12330--12390 s, the reported values are ECG 6.00, chest 5.36, abdomen 21.82 and airflow 24.00 breaths/min, illustrating that reference channels themselves can strongly disagree. No channel value is discarded to make the curves agree.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth,height=.30\textheight,keepaspectratio]{local_timeline.pdf}
+\caption{Record a03, window starts from 7200 to 9000 s (2.0-2.5 h); each rate uses a 60 s window with a 30 s step. All 61 displayed windows have computable ECG and three-channel references. Dots denote window outputs; connecting lines are visual guides. This fixed local interval illustrates disagreement without discarding windows.}
+\label{fig:local}
+\end{figure}
+
+\FloatBarrier
+\section{Experiment 2}
+\textit{LR/RF validation, x A/C metrics, a confusion matrix and B predictions remain to be completed.}
+
+\FloatBarrier
+\chapter{Discussion}
+\section{Respiratory-rate estimation and reference uncertainty}
+\section{Classification evidence and limitations}
+
+\chapter{Conclusion}
+\textit{To be completed from the verified findings.}
