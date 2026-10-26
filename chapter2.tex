@@ -1,0 +1,20 @@
+\chapter{Data}\label{ch:data}
+
+AEMO publishes the outcomes of certain variables every 5 minutes. Such quantised data is a dispatch run in its Market Management System (MMS) database. We use seven MMS tables for the year 13 September 2025 00:05 to 13 September 2026 00:00 (105,120 five-minute intervals). All are indexed by SETTLEMENTDATE, the end of the interval (AEST). They differ in data types, and in how many rows they carry per interval:
+\begin{itemize}
+    \item one row per region: DISPATCHPRICE (RRP, FCAS prices, the 7-day cumulative price
+    and the administered-pricing flag) and DISPATCHREGIONSUM (demand, available
+    generation, semi-scheduled wind and solar availability, net interchange, battery state)
+    \item one row per interconnector: DISPATCHINTERCONNECTORRES (flow and import/-
+    export limits)
+    \item one row per binding constraint: DISPATCHCONSTRAINT, about 100 million rows over
+    2,213 distinct constraints
+    \item one row per locally constrained unit or blocked constraint, and one row per interval for the solver summary (CASE\_SOLUTION)
+\end{itemize}
+
+\section{Data processing}\label{sec:dataprocessing}
+At the judgment of the AEMO, the dispatch engine will be overridden by manually constructed energy prices, under what is called market intervention. We only used non-interventioned data (INTERVENTION=0), because all the variables from the dispatch inform the market engine, and also because there has not been an intervention in the year interval chosen. 
+
+Initial data filtration meant data types with no variance were discarded, as nothing can be gleaned from invariable data.  Furthermore, the constraints file reports too many constraints - 100 million rows of data simply is not feasible in a more complicated model. To resolve this over-reporting, based on the AEMO constraint FAQ \cite{aemofaq}, we dropped all \emph{non-binding} data, where the associated loss with not-adhering to the constraint was zero, keeping just those that impose rules on the optimisation of the system.  
+
+Other features were chosen based on the descriptions given by the AEMO; With many legacy variables and heavily correlated variables, such as a duplicate of the price variable which would be unaffected by the rarely reached upper limit price, a large amount of compression was done by judgment. Because of the models chosen down the line, occasionally when a variable had a very large range in the positive direction, it was log-scaled due to the sensitivities of said model to absolute range. 

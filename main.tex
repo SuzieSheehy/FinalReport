@@ -1,6 +1,6 @@
-\documentclass[a4paper, 10.5pt, oneside]{report}
+\documentclass[a4paper, 10pt, oneside]{report}
 %------------PREAMBLE
-\include{preamble}
+\input{preamble}
 \usepackage{morefloats}
 %---------------------------
                                           
@@ -16,6 +16,10 @@
 
 %---------------------------MAIN BODY
 \input{chapter1}
+\input{chapter2}
+\input{chapter3}
+\input{chapter4}
+\input{chapter5}
 %---------------------------
 
 %---------------------------APPENDICES
@@ -26,8 +30,7 @@
 
 %---------------------------BIBLIOGRAPHY
 \addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{abbrv}
-\bibliography{biblio}
+\printbibliography
 %---------------------------
 
 \end{document}

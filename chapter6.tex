@@ -1,0 +1,7 @@
+\chapter{Discussion and Conclusion}\label{ch:conclusion}
+
+Price spikes in the NEM are rare, heavy tailed and clustered. Their timing follows the evening demand peak and the season, and on top of that a third to two thirds of spike onsets are triggered by earlier ones, within about an hour. This self-excitation is real but short lived, and it is the main reason spikes are predictable at all: five minutes ahead, a forecast can find most spikes with high precision.
+
+Most of that skill, though, comes from the price itself. A function of the current price is a strong baseline that boosted trees beat convincingly only in NSW1 at a 30 minute horizon, although the trees' advantage grows at 2 hours, where the current price says less. Predicting the \emph{start} of a spike remains hard at every horizon. The trees only work at all once they are anchored on Persistence, because the training months for SA1, TAS1 and VIC1 contain few of the extreme prices seen in the winter test months. Adding more data columns made things worse rather than better, for the same reason.
+
+The main limitation is the amount of data: one year, and in QLD1, TAS1 and VIC1 fewer than 60 spike episodes. A longer history would allow the season to be learned rather than extrapolated, and the number of trees to be tuned per region. Natural extensions are a multivariate Hawkes model linking the regions along the interconnectors, and forecasting the size of a spike as well as its occurrence.
