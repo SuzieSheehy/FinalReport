@@ -1,0 +1,186 @@
+\chapter{The Voter Model}\label{sec:voter}
+Our first model of opinion dynamics is the threshold voter model \cite{Vieira_2018}.
+\section{Definitions}
+\begin{defn}[The Threshold Voter Model]
+	Let \(G=(V,E)\) be an undirected graph with vertex set \(V\) and edge set \(E\).
+	If \(x\in V\) we will write \(V(x)\subseteq V\) for the set of vertices with an edge connecting them to \(x\).
+	Fix \(T\in \ZZ_{\ge 0}\).
+	We define a continuous time Markov process with configuration space \(C=\prod_{v\in V}\{0,1\}\) and for a fixed configuration \(\eta\in C\) rates given by
+	\be
+	c(x,\eta)=\begin{cases}
+		1, & \text{if}\quad \lvert\{y\in V(x)\mid \eta(x)\ne\eta(y)\}\rvert\ge T\\
+		0, & \text{otherwise}
+		\end{cases},
+	\ee
+	for all \(x\in V\).
+	Instead of dealing with this continuous time Markov process directly, it is common to take the discrete time Markov process underlying it.	
+	In this paper we will call this underlying discrete time Markov process the threshold voter model.
+\begin{comment}
+	The threshold voter model is a discrete time Markov process with configuration space \(C=\{0,1\}^{\lvert V\rvert}\).
+	Note if \(\eta\in C\) then \(\eta\) is a \(\lvert V\rvert\) length vector whose entries are indexed by \(V\), we will write \(\eta(x)\) with \(x\in V\) for the component corresponding to the \(x\) index.
+
+	We define the Markov process by the transition matrix \(M\) for configuration \(\eta\in C\) and vertex \(x\inV\),
+
+	\be
+		(M\eta)(x)=
+		\begin{cases}
+			N_{\eta}(1-\eta(x))+(1-N_{\eta})\eta(x), & \text{if}\quad \lvert\{y\in V(x)\mid \eta(x)\ne\eta(y)\}\rvert\ge T\\
+			\eta(x), & \text{otherwise}
+		\end{cases},
+	\ee
+	where 
+	\be
+	N_{\eta}=\left\lvert \left\{x\in V\mid \left\lvert\left\{y\in V(x)\mid \eta(x)\ne\eta(y)\right\}\right\rvert\ge T\right\}\right\rvert^{-1}.
+	\ee
+	Here \(N_{\eta}\) is the reciprocal of the number of vertices who have more then \(T\) neighbours disagreeing with them.
+	In words this discrete time Markov process only effects vertices who have at least \(T\) neighbours disagreeing with them.
+	Amongst these vertices it uniformly selects a vertex which it then flips to the opposite opinion, \(\eta(x)\rightarrow 1-\eta(x)\).
+\end{comment}
+	Equivalently this process can be thought of as the procedure of randomly sampling the vertices with more than or equal to \(T\) neighbours disagreeing with them and then flipping the value of the sampled vertex.
+\end{defn}
+\begin{defn}[Integer Lattice Graph]\label{def:lattice}
+	We consider the graph with vertices given by the integer lattice \(\ZZ^2\).
+	To define our edges we consider the \(\ell^1\) metric for \((x,y),(a,b)\in\ZZ^2\) given by
+	\be
+	d((x,y),(a,b))= \lvert x-a\rvert +\lvert y-b\rvert
+	\ee
+	and say that there is an edge between \((x,y)\) and \((a,b)\) if \(d((x,y),(a,b))\le  1\),
+	i.e our graph is the standard square integer lattice with an additional reflex edges at each vertex.
+\end{defn}
+
+
+\section{Limiting Behaviour}\label{sec:limit}
+\begin{thm}\label{thm:convergence}
+		Using the integer lattice as our graph if \(T>2\) then each site will change values finitely often, we say the process fixates\cite{ergo}.
+\end{thm}
+
+We will verify this theorem and explore what happens for \(T\le 2\) via an implementation of the voter model in python.
+Our implementation will be on a lattice defined similarly to \cref{def:lattice} however due to hardware constraints we are unable to simulate an infinite lattice and instead consider the lattice on the torus, i.e we have a finite \(N\times M\) integer lattice and connect the boundaries, so the vertex \((x,0)\) will be connected to \((x,M-1)\) for all \(x\in\{0,\dots  N-1\}\) and the vertex \((0,y)\) will be connected to \((N-1,y)\) for all \(y\in\{0,\dots, M-1\}\).
+To choose our initial conditions we uniformly sample a configuration from the configuration space, this will provide us with a noisy initial condition, good for seeing what the generic dynamics are. 
+
+We experimentally find that for \(T\ge 2\) the process will always end up in a stationary state.
+We briefly discuss the difference between the dynamics in the \(T=2,3\) cases.
+
+For \(T=3\) we observe that the dynamics are `sticky'.
+That is, since the threshold variable is so high there are many possible stable configurations in the configuration space.
+Where by stable configuration we mean a configurations which does not evolve with time.
+This abundance of stable configurations means that the initial configuration does not need to change drastically to reach a stable configuration.
+We see this qualitatively in \cref{fig:T3} where some of the features of the initial configuration remain in the final configuration.
+\def\SC{0.18}
+\def\W{0.18}
+\begin{figure}[h]
+	\centering
+	\(\begin{matrix}
+\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T3_1.png}
+		\caption{0 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T3_2.png}
+		\caption{4 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T3_3.png}
+		\caption{8 time steps}
+	\end{subfigure} & 
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T3_4.png}
+		\caption{12 time steps}
+	\end{subfigure}\\ 
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T3_5.png}
+		\caption{16 time steps}
+	\end{subfigure} & 
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T3_6.png}
+		\caption{20 time steps}
+	\end{subfigure} & 
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T3_7.png}
+		\caption{24 time steps}
+	\end{subfigure}	 & 
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T3_8.png}
+		\caption{28 time steps}
+	\end{subfigure}
+	\end{matrix}\)
+	\caption{\(10\times10\) grid with \(T=3\) evolving in time steps of size \(4\).}\label{fig:T3}
+\end{figure}
+
+For \(T=2\) the process has far less stable configuration and so the process will evolve to look quite different from its initial configuration.
+Experimentally the only stable configurations we observed were configurations with solid bands of one opinion crossing the entire lattice, we see an example of such a configuration in \cref{fig:T2}.
+We also still have the trivial stable configurations of all one opinion.
+\def\SC{0.24}
+\def\W{0.24}
+\begin{figure}[H]
+	\centering
+	\[
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T2_1.png}
+		\caption{0 time steps}
+	\end{subfigure}  
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T2_2.png}
+		\caption{7,750 time steps}
+	\end{subfigure} 
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T2_3.png}
+		\caption{15,500 time steps}
+	\end{subfigure} 
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T2_4.png}
+		\caption{23,250 time steps}
+	\end{subfigure} \]
+	\vspace{-4mm}
+	\[\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T2_5.png}
+		\caption{31,000 time steps}
+	\end{subfigure}  
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T2_6.png}
+		\caption{38,750 time steps}
+	\end{subfigure}  
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T2_7.png}
+		\caption{46,500 time steps}
+	\end{subfigure}\]
+	\caption{\(65\times65\) grid with \(T=2\) evolving in steps of \(7750\).}\label{fig:T2}
+\end{figure}
+
+We will now quantify this difference in behaviour.
+We consider the statistic given by the average number of changed opinions from the uniformly sampled initial configuration to the final stationary configuration divided by the size of the lattice.
+We plot this statistic in \cref{fig:change} and observe that it is a scale invariant, that is it remains invariant under scaling the lattice.
+We see that as \(T\) increase the change from initial to final configuration decreases rapidly until at \(T\ge 5\) the process is static.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale = 0.47]{figures/voter/Avg_Change}
+	\caption{We consider an \(N\times N\) lattice and average over 25 randomly sampled initial configurations.}\label{fig:change}
+\end{figure}
+
+We omit the \(T\le 1\) case in the above discussion as for this choice the process no longer fixates.
+This can be seen in \cref{fig:T1} where even after substantial time steps the configuration is still qualitatively just noise.
+
+\def\SC{0.25}
+\def\W{0.24}
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T1_1.png}
+		\caption{0 time steps}
+	\end{subfigure}
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T1_2.png}
+		\caption{7,750 time steps}
+	\end{subfigure}
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T1_3.png}
+		\caption{15,500 time steps}
+	\end{subfigure}
+	\begin{subfigure}{\W\textwidth}
+		\includegraphics[scale = \SC]{figures/voter/Figure_T1_4.png}
+		\caption{23,250 time steps}
+	\end{subfigure}
+	\caption{\(65\times65\) grid with \(T=1\) evolving in steps of \(7750\).}\label{fig:T1}
+\end{figure}
+

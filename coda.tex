@@ -1,0 +1,342 @@
+\chapter{CODA Model}\label{sec:coda}
+
+\section{definition}
+The CODA model \cite{MARTINS_2008} is a process on a graph, \(G=(V,E)\), where we associate a probability to each vertex.
+We follow \cite{martins2010} for the definition of a generalisation of the CODA model.
+We imagine we have two mutually exclusive outcomes \(A,B\) and at each vertex \(v\) we associate a probability \(p_v\in[0,1]\) where \(p_v\) is thought of as the probability that \(v\) believes in outcomes \(A\) and thus \(1-p_v\) is the probability that \(v\) believes in outcome \(B\).
+We associate an action to each vertex, notated \(\sigma_{v}\in\pm 1\) with \(\sigma_{v}=1\) if \(p_v\ge \frac{1}{2}\) and \(\sigma_v=-1\) if \(p_v<\frac{1}{2}\).
+We then define the following constants
+\be
+\begin{align*}
+	a &= P_v(\sigma_u=1\mid A,\sigma_v=1),& P_v(\sigma_u=1\mid A,\sigma_v=-1) & = c,\\
+	b &= P_v(\sigma_u=-1\mid B,\sigma_v=-1),& P_v(\sigma_u=-1\mid B,\sigma_v=1)& = d.
+\end{align*}
+\ee
+for all vertices \(u,v\in V\), we assume that these are in fact constants not depending on \(u,v\).
+Here \(P_v\) refers to the probability distribution at site \(v\) i.e \(P_v(A)=p_v\).
+This assumption is saying that we are not providing any kind of `spatial bias' in our model.
+We then update our model by randomly sampling a vertex \(v\in V\) and a neighbour \(u\in V(v)\) then using Bayes' rule in the following way to get an updated probability at vertex \(v\) denoted \(p_v'\).
+We have different cases depending on the opinion of the neighbour and the opinion of the vertex itself.
+
+If \(\sigma_u=1\) and \(\sigma_v=1\) then
+\be
+\begin{align*}
+	p_v'=P_v(A\mid \sigma_u=1, \sigma_v=1)&=\frac{P_v(\sigma_u=1\mid A,\sigma_v=1) P_v(A\mid\sigma_v=1)}{P_v(\sigma_u=1\mid\sigma_v=1)}\\
+										  &=\frac{a p_v}{P_v(\sigma_u=1\mid\sigma_v=1)},
+\end{align*}
+\ee
+and
+\be
+\begin{align*}
+	1-p_v'=P_v(B\mid \sigma_u=1, \sigma_v=1)&=\frac{P_v(\sigma_u=1\mid B,\sigma_v=1) P_v(B\mid\sigma_v=1)}{P_v(\sigma_u=1\mid\sigma_v=1)}\\
+										  &=\frac{(1-d) (1-p_v)}{P_v(\sigma_u=1\mid\sigma_v=1)}.
+\end{align*}
+\ee
+If \(\sigma_u=-1\) and \(\sigma_v=1\) then
+\be
+\begin{align*}
+	p_v'=P_v(A\mid \sigma_u=-1, \sigma_v=1)&=\frac{P_v(\sigma_u=-1\mid A,\sigma_v=1) P_v(A\mid\sigma_v=1)}{P_v(\sigma_u=-1\mid\sigma_v=1)}\\
+										  &=\frac{(1-a) p_v}{P_v(\sigma_u=1\mid\sigma_v=1)},
+\end{align*}
+\ee
+and
+\be
+\begin{align*}
+	1-p_v'=P_v(B\mid \sigma_u=-1, \sigma_v=1)&=\frac{P_v(\sigma_u=-1\mid B,\sigma_v=1) P_v(B\mid\sigma_v=1)}{P_v(\sigma_u=-1\mid\sigma_v=1)}\\
+										  &=\frac{d (1-p_v)}{P_v(\sigma_u=1\mid\sigma_v=1)}.
+\end{align*}
+\ee
+If \(\sigma_u=1\) and \(\sigma_v=-1\) then
+\be
+\begin{align*}
+	p_v'=P_v(A\mid \sigma_u=1, \sigma_v=-1)&=\frac{P_v(\sigma_u=1\mid A,\sigma_v=-1) P_v(A\mid\sigma_v=-1)}{P_v(\sigma_u=1\mid\sigma_v=-1)}\\
+										  &=\frac{c p_v}{P_v(\sigma_u=1\mid\sigma_v=-1)},
+\end{align*}
+\ee
+and
+\be
+\begin{align*}
+	1-p_v'=P_v(B\mid \sigma_u=1, \sigma_v=-1)&=\frac{P_v(\sigma_u=1\mid B,\sigma_v=-1) P_v(B\mid\sigma_v=-1)}{P_v(\sigma_u=1\mid\sigma_v=-1)}\\
+										  &=\frac{(1-b) (1-p_v)}{P_v(\sigma_u=1\mid\sigma_v=1)}.
+\end{align*}
+\ee
+If \(\sigma_u=-1\) and \(\sigma_v=-1\) then
+\be
+\begin{align*}
+	p_v'=P_v(A\mid \sigma_u=-1, \sigma_v=-1)&=\frac{P_v(\sigma_u=-1\mid A,\sigma_v=-1) P_v(A\mid\sigma_v=-1)}{P_v(\sigma_u=-1\mid\sigma_v=-1)}\\
+										  &=\frac{(1-c) p_v}{P_v(\sigma_u=-1\mid\sigma_v=-1)},
+\end{align*}
+\ee
+and
+\be
+\begin{align*}
+	1-p_v'=P_v(B\mid \sigma_u=-1, \sigma_v=-1)&=\frac{P_v(\sigma_u=-1\mid B,\sigma_v=-1) P_v(B\mid\sigma_v=-1)}{P_v(\sigma_u=-1\mid\sigma_v=-1)}\\
+										  &=\frac{b (1-p_v)}{P_v(\sigma_u=-1\mid\sigma_v=-1)}.
+\end{align*}
+\ee
+
+To avoid having to deal with the terms on the denominators of the above expressions it is convention to consider the odds at a given site instead of a probability.
+For example when \(\sigma_u=1\) and \(\sigma_v=1\) then
+\be
+\frac{p_v'}{1-p_v'}=\frac{a}{1-d}\frac{p_v}{1-p_v}.
+\ee
+Additionally to make our computations easier one considers the \emph{log-odds} at a given site by taking the log of the odds.
+We write \(\eta_v\) for the log-odds at a site \(v\) and have the update rule where \(\eta_v'\) is the updated log odds
+\be\label{eq:updaterule}
+	\eta_v'=\begin{cases}
+		\eta_v+\log\frac{a}{1-d}, & \text{if}\quad\sigma_u=1,\sigma_v=1\\
+		\eta_v-\log\frac{d}{1-a}, & \text{if}\quad\sigma_u=-1,\sigma_v=1\\
+		\eta_v+\log\frac{c}{1-b}, & \text{if}\quad\sigma_u=1,\sigma_v=-1\\
+		\eta_v-\log\frac{b}{1-c}, & \text{if}\quad\sigma_u=-1,\sigma_v=-1
+		\end{cases}.
+\ee
+
+We summarise the process as follows.
+We have at each vertex \(v\in V\) an associated log-odds \(\eta_v\in(-\infty,\infty)\). 
+To evolve this system we first uniformly sample our vertex set \(v\in V\) and its neighbourhood \(u\in V(v)\), we then apply the update rule \cref{eq:updaterule} to update the log-odds at \(v\). 
+Note that in this log-odds setting, \(\sigma_v=1\) if \(\eta_v\ge 0\) and \(\sigma_v=-1\) if \(\eta_v<0\).
+
+We would like to think of this model in the context of opinion dynamics with this update rule representing an interaction between site \(v\) and its neighbour site \(u\) with site \(u\) imparting some of its opinion on site \(v\).
+In this context it is physical to set \(a+d\ge 1\) and \(c+d\ge 1\), as this ensures that the update rule will cause the preference of site \(v\) to move in the direction of the preference of site \(u\) after an interaction.
+
+\section{Dynamics}
+As we did in \cref{sec:limit} we will simulate this process on a graph corresponding to an \(N\times N\) integer torus, however unlike in \cref{def:lattice} we will define our edges by \(d(x,y)=1\) i.e excluding the reflexive edge going from each vertex to itself.
+To sample an initial conditions we uniformly sample a probability \(p_v\in[0,1]\) for each vertex \(v\in V\) in the lattice, and then transform these initial probabilities into the log-odds picture. 
+
+We see the dynamics in an `unbiased' regime in \cref{fig:unbiased} where we take \(a=b=c=d=\frac{3}{4}\).
+We qualitatively observe that regions of positive log-odds and regions of negative log-odds emerge with borders of `undecided' vertices with opinions close to zero in between the regions.
+\begin{figure}[h]
+	\(\begin{matrix}
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_1}
+	\caption{0 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_2}
+	\caption{100,000 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_3}
+	\caption{200,000 time steps}
+	\end{subfigure} \\
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_4}
+	\caption{300,000 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_5}
+	\caption{400,000 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_6}
+	\caption{500,000 time steps}
+	\end{subfigure}
+	\end{matrix}\)
+	\caption{Taking \(a=b=c=d=\frac{3}{4}\) evolving in time steps of 100,000 from left to right.
+	Each subfigure is a heat-map of the log-odds on the lattice.}\label{fig:unbiased}
+\end{figure}
+We can further examine this behaviour in \cref{fig:unbhist} in which we have histograms for the log-odds of the configurations in \cref{fig:unbiased}.
+We see that as system evolves the log-odds spread out from the initial distribution around 0 and then collect into a set of peaks symmetric around 0.
+We have two peaks of extreme opinions, two peaks of more moderate opinions and a peak of near zero opinions.
+\begin{figure}[h]
+	\(\begin{matrix}
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_hist_1}
+	\caption{0 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_hist_2}
+	\caption{100,000 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_hist_3}
+	\caption{200,000 time steps}
+	\end{subfigure} \\
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_hist_4}
+	\caption{300,000 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_hist_5}
+	\caption{400,000 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_hist_6}
+	\caption{500,000 time steps}
+	\end{subfigure}
+	\end{matrix}\)
+	\caption{Same configurations as \cref{fig:unbiased} however here we plot a histogram of log-odds.}\label{fig:unbhist}
+\end{figure}
+Before we continue with further discussion of this behaviour we consider four other distinct regimes with which we can compare. 
+
+The four regimes we will consider are as follows, under the example of a vertex \(v\in V\) and neighbour \(u\in V(v)\).
+\begin{enumerate}[label=(\alph*)]
+	\item Setting \(a=c > b=d\) we have that the \emph{negative direction is favoured}. 
+	In this regime the change of the opinion of \(v\) is independent of \(\sigma_v\) and the change when \(\sigma_u=-1\) is larger in magnitude compared to when \(\sigma_u=1\).
+\item Setting \(a=b>c=d\) we have that \emph{disagreement is favoured}.
+		In this regime the magnitude of the change of the opinion of \(v\) is only dependent on if \(\sigma_u\ne \sigma_v\) or \(\sigma_u=\sigma_v\), i.e the magnitude depends only on agreement vs disagreement with their neighbour.
+		Further the magnitude of the change when \(\sigma_u\ne \sigma_v\) is larger then when \(\sigma_u=\sigma_v\).
+	\item Setting \(a=c<b=d\) we have that the \emph{positive direction is favoured}.
+		This regime has the same independence of regime (a) however the change when \(\sigma_u=1\) is larger in magnitude compared to when \(\sigma_u=-1\).
+	\item Setting \(a=b<c=d\) we have that \emph{agreement is favoured}.
+		This regime has the same independence of regime (b) however the magnitude of the change when \(\sigma_u=\sigma_v\) is larger then when \(\sigma_u\ne \sigma_v\).
+\end{enumerate}
+We see examples of how each of these regimes behave in \cref{fig:4}.
+We acknowledge that these regimes do not cover all choices of our variables however they provide us with a good look at the different kinds of behaviour this process can exhibit.
+
+\def\figS{0.35}
+\begin{figure}[H]
+	\(\begin{matrix}
+		\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[scale=\figS]{figures/coda/negative}
+		\includegraphics[scale=\figS]{figures/coda/negative_hist}
+		\caption{Favouring negative, \(a = c = 19/20,\) and \(b=d=11/20\).}
+	\end{subfigure} \\
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[scale=\figS]{figures/coda/disagree}
+		\includegraphics[scale=\figS]{figures/coda/disagree_hist}
+		\caption{Favouring disagreement, \(a=b= 19/20\), and \(c=d=11/20\).}
+	\end{subfigure} \\
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[scale=\figS]{figures/coda/positive}
+		\includegraphics[scale=\figS]{figures/coda/positive_hist}
+		\caption{Favouring positive, \(a=c=11/20\), and \(b=d=19/20\).}
+	\end{subfigure} \\
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[scale=\figS]{figures/coda/agree}
+		\includegraphics[scale=\figS]{figures/coda/agree_hist}
+		\caption{Favouring agreement, \(a=b=11/20\), and \(c=d=19/20\).}
+	\end{subfigure}
+	\end{matrix}\)
+	\caption{Four extreme regimes after 1,000,000 time steps. On the left a heat map of the configuration and on the right a histogram of the log-odds.}\label{fig:4}
+\end{figure}
+
+In regimes (a) and (c) the heat maps are qualitatively still just noise however they have become very negative or very positive respectively.
+We can explain this behaviour as follows.
+We consider the transformed process for \(v\in V\) after \(t\) time steps, 
+\be 
+\zeta_v(t)=\eta_v(t)-\frac{t}{2}\left(\log\frac{a}{1-d}-\log\frac{d}{1-a}\right),
+\ee
+where \(\eta_v(t)\) is the standard CODA process after \(t\) time steps.
+So the update rule for \(\zeta\) is for \(v\in V\) and \(u\in V(v)\),
+\be
+\begin{align*}
+	\zeta_v(t+1)-\zeta(t)&=\eta(t+1)-\eta(t)-\frac{1}{2}\left(\log\frac{a}{1-d}-\log\frac{d}{1-a}\right)\\
+						 &=
+\begin{cases}
+	\frac{1}{2}\left(\log\frac{a}{1-d}+\log\frac{d}{1-a}\right), & \text{if}\quad \sigma_u=1\\
+	-\frac{1}{2}\left(\log\frac{a}{1-d}+\log\frac{d}{1-a}\right), & \text{if}\quad \sigma_u=-1\\
+\end{cases}
+\end{align*}
+\ee
+which can be rewritten as
+\be
+\zeta_v'=\begin{cases}
+	\zeta_v+\frac{1}{2}\left(\log\frac{a}{1-d}+\log\frac{d}{1-a}\right), & \text{if}\quad \sigma_u=1\\
+	\zeta_v-\frac{1}{2}\left(\log\frac{a}{1-d}+\log\frac{d}{1-a}\right), & \text{if}\quad \sigma_u=-1\\
+\end{cases}.
+\ee
+At first glance one would think that this is equivalent under rescaling of variables to the unbiased case we introduced earlier in which \(a=b=c=d\).
+However recall that the value of \(\sigma_u\) is dependent on the sign of \(\eta_u\) since we have a drift in either the positive or negative direction after enough time we conject that all vertices will become negative and thus the process will always evolve by moving in the biased direction.
+This is why we see the histogram we do, initial the process is able to spread somewhat as it has similar dynamics to the unbiased case however after enough time the drift causes all vertices to have the same sign at which point the shape of the histogram becomes qualitatively static and the process continuous to drift away from \(0\).
+
+In regimes (b) and (d) we have the same symmetry around \(0\) that we observed in the unbiased case. 
+For regime (b) we observe qualitatively that the regions of agreement seem to be larger and the boundaries between these regions thicker.
+The latter of which is manifest in our histogram in which there is a much higher peak at \(0\) compared to the unbiased case.
+We also see that there is only two peaks of non-zero log-odds compared to the four peaks we had in the unbiased case.
+This is quite different to the behaviour in regime (d) in which we have much slimmer regions of agreement with very thin boundaries between them.
+In the histogram the peak at 0 is almost gone and there are a set of six non-zero peaks.
+
+
+\section{Phase Transition}
+In this section we will consider a statistic with which we can further analyse this models.
+\subsection{\(\ell^1\) Distance}
+Recall in \cref{def:lattice} we defined a metric, \(d\), on the square integer lattice \(\ZZ^2\).
+We can create an analogous metric on the square integer torus \(\{0,\dots,N-1\}^2\) with \(N\in\NN\) as follows.
+For \((x,y),(a,b)\in\{0,\dots,N-1\}^2\) we then define
+\be
+d(x,y)= \min\{\lvert x-a\rvert,\,N-\lvert x-a\rvert \}+\min\{\lvert y-b\rvert,\,N-\lvert y-b\rvert\}.
+\ee
+In words this distance will give us the smallest number of edges needed to traverse from a vertex \(v\in\{0,\dots,N-1\}^2\) to another vertex \(u\in\{0,\dots,N-1\}^2\) on the integer torus graph.
+For a configuration \(\eta\) we define the statistic
+\be
+B_\eta=\frac{1}{N^2}\sum_{v\in\{0,\dots,N-1\}^2}\min\left(\left\{d(v,u)\mid \sigma_v\ne\sigma_u\right\}\cup \{2N\}\right).
+\ee
+\(B_\eta\) is the distance from a vertex \(v\) to the closest vertex \(u\) which disagrees with \(v\), averaged over all \(v\) on the lattice.
+We add \(2N\) to the set we are taking the minimum over in case all vertices on the lattice agree, as this will force \(B_\eta=2N\), noting that this is strictly larger then it could be if there was any disagreement in \(\eta\).
+To examine how this statistic is dependent on the parameters of the process we consider the following continuous curve in the parameter space for \(t\in(0,\frac{1}{2})\)
+\be
+(a,b,c,d)=\gamma(t)=\left(t+\frac{1}{2},\,\max\{1-t,\,t+\frac{1}{2}\},\,\min\{1-t,\,t+\frac{1}{2}\},\,1-t\right).
+\ee
+One can see that for \(t=\frac{1}{4}\) this curve lies in the unbiased regime, for \(t<\frac{1}{4}\) it is in the favouring negative regime, and for \(t>\frac{1}{4}\) it is in the favouring disagreement regime.
+We then consider \(B_\eta\) after 100,000 time steps averaged over samples of initial conditions in \cref{fig:avgdist}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{figures/coda/avgDist2}
+	\caption{Averaged over \(10\) randomly sampled initial conditions with grid size \(40\times 40\).}\label{fig:avgdist}
+\end{figure}
+
+We see that for \(t>\frac{1}{4}\) we have that the average \(B_\eta\) is quite low, less then \(5\).
+This agrees with our intuition, as for these values of \(t\) we have that the process will be in the favouring disagreement regime and thus we expect there to be a mix of vertices with positive and negative log-odds, giving a relatively low \(B_\eta\). 
+For \(t<\frac{1}{4}\) since we are in the favouring negative regime we expect \(B_\eta\) to be at \(2N=80\), as after enough time steps all vertices should agree.
+To the contrary we observe that this jump does not in fact kick in until the \(t=0.2\) mark.
+We explain this as follows.
+As we approach the unbiased regime from within the favouring negative regime we expect the time it takes for a given state to be in agreement to increase and approach infinity.
+Thus the jump to \(2N\) occurs a bit earlier then we expect, as our simulation only runs for a finite time.
+We can observe some evidence for this as in \cref{fig:avgdist2} we do the same plot but taking 1,000,000 time steps.
+Due to computation limitations we do not average over multiple initial configurations for this plot.
+We see that the jump has moved to \(t=0.3\), closer to the expected \(t=0.5\) value.
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{figures/coda/avgDist}
+	\caption{For a fixed initial condition with grid size \(40\times 40\).}\label{fig:avgdist2}
+\end{figure}
+
+
+\section{Variant Model}
+Here we define a modification to the coda model introduced in \cite{martins2010} and replicate the observations made by Martins.
+In his paper he considers a process where a log-odds configuration \(\eta\) is updated according to the rule
+\be
+	\eta_v'=\eta_v+\eta_u
+\ee
+for uniformly sampled \(v\in V\) and neighbour \(u\in V(v)\).
+This definition aims to reflect the idea that someone who is less sure about their beliefs, corresponding to being closer to zero, are less effective in convincing others of said beliefs.
+
+\subsection{Behaviour}
+We agree with the results of \cite{martins2010} concluding that after sufficiently many time steps any initial configuration will reach consensus.
+We observe this in \cref{fig:varhist} where after 200,000 time steps all vertices have a positive log-odd associated with them.
+It seems that as time progresses vertices with extreme opinions appear and begin to dominate the lattice, causing the rest of the lattice to get brought into consensus with them. 
+\begin{figure}[h]
+	\(\begin{matrix}
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_var_hist_1}
+	\caption{0 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_var_hist_2}
+	\caption{40,000 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_var_hist_3}
+	\caption{80,000 time steps}
+	\end{subfigure} \\
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_var_hist_4}
+	\caption{120,000 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_var_hist_5}
+	\caption{160,000 time steps}
+	\end{subfigure} &
+	\begin{subfigure}{0.3\textwidth}
+	\includegraphics[scale=0.3]{figures/coda/coda_var_hist_6}
+	\caption{200,000 time steps}
+	\end{subfigure}
+	\end{matrix}\)
+	\caption{Histogram of log-odds from a randomly sampled initial configuration over time.}\label{fig:varhist}
+\end{figure}

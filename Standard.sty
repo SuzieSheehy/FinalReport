@@ -1,0 +1,67 @@
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+%\usepackage{cite}
+%\usepackage{natbib}
+\usepackage[style=alphabetic, sorting=ynt]{biblatex}
+\usepackage[english]{babel}
+\usepackage[colorlinks,linkcolor=blue,urlcolor=black]{hyperref}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{comment}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\def\RR{\mathbb{R}}
+\def\CC{\mathbb{C}}
+\def\NN{\mathbb{N}}
+\def\ZZ{\mathbb{Z}}
+
+\def\i{{\rm i}}
+\def\d{{\rm d}}
+\def\e{{\rm e}}
+\def\id{{\rm id}}
+
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\im}{im}
+
+\def\be{\begin{equation}}
+\def\ee{\end{equation}}
+
+\newcommand\bra[1]{{\left\langle#1\right\rvert}}
+\newcommand\ket[1]{{\left\lvert#1\right\rangle}}
+
+
+\usepackage[capitalize,nameinlink,noabbrev,nosort]{cleveref}
+
+\theoremstyle{definition}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{eg}[thm]{Example}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{conj}[thm]{Conjecture}
+
+\numberwithin{thm}{section} 
+\numberwithin{equation}{section}
+
+\crefname{lem}{Lemma}{Lemmas}
+\crefname{cor}{Corollary}{Corollaries}
+\crefname{defn}{Definition}{Definitions}
+\crefname{prop}{Proposition}{Propositions}
+\crefname{thm}{Theorem}{Theorems}
+\crefname{figure}{Figure}{Figures}
+
+\AddToHook{env/lem/begin}{\crefalias{thm}{lem}}
+\AddToHook{env/cor/begin}{\crefalias{thm}{cor}}
+\AddToHook{env/defn/begin}{\crefalias{thm}{defn}}
+\AddToHook{env/eg/begin}{\crefalias{thm}{eg}}
+\AddToHook{env/remark/begin}{\crefalias{thm}{remark}}
+\AddToHook{env/prop/begin}{\crefalias{thm}{prop}}
+\AddToHook{env/conj/begin}{\crefalias{thm}{conj}}
+\AddToHook{env/figure/begin}{\crefalias{figure}{figure}}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}

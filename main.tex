@@ -1,9 +1,14 @@
 \documentclass[a4paper, 10.5pt, oneside]{report}
 %------------PREAMBLE
-\include{preamble}
+\usepackage{Standard}
+
+%\include{preamble}
+
 \usepackage{morefloats}
 %---------------------------
                                           
+\addbibresource{biblio.bib}
+
 \begin{document}
 
 %---------------------------TITLE PAGE
@@ -14,20 +19,28 @@
 \tableofcontents
 %---------------------------
 
+\chapter{Introduction}
+Opinion dynamics sits at the intersection of the social sciences, mathematics and physics - in which the tools of stochastic modelling and statistical physics can be used to study models for the behaviour of people in social systems, such as the dissemination of information and preference in a population \cite{Castellano_2009, S_rbu_2016}.
+In this paper we consider two models in particular, the threshold voter model and the CODA model, both simulate how opinions propagate in a population.
+The models differ in that the voter model only allows `discrete opinions' i.e you either agree or you disagree, all or nothing.
+The CODA model on the other hand allows for `continuous opinions' and thus shades of grey.
+We will implement simulations of these models and conduct some computational experiments in regards to their behaviour.
+We will consider techniques from statistical mechanics of finding scale invariants and phase transitions to analyse behaviour as we vary parameters.
 %---------------------------MAIN BODY
-\input{chapter1}
+\input{voter}
+
+\input{coda}
 %---------------------------
 
 %---------------------------APPENDICES
-\begin{appendices}
- \input{appendix1}
-\end{appendices}
+%\begin{appendices}
+%\input{appendix1}
+%\end{appendices}
 %---------------------------
 
 %---------------------------BIBLIOGRAPHY
 \addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{abbrv}
-\bibliography{biblio}
+\printbibliography
 %---------------------------
 
 \end{document}
