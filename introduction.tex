@@ -1,0 +1,210 @@
+\chapter{Introduction}\label{ch:introduction}
+
+\section{Abstract}\label{sec:abstract}
+
+Electron orbital behaviour within both atomic and cyclic-molecular systems was investigated using approximate Hamiltonians of varying complexities. When compared with experimental results \cite{szwacki_aromatic_2009}\cite{neto_electronic_2009}, the Hückel method \cite{yates_huckel_2012} produced accurate electronic wavefunctions for both cyclic-planar Benzene molecules and periodic Graphene crystals. The Hartree-Fock algorithm \cite{laaksonen_fully_1986}\cite{quiney_art_nodate} produced accurate $s$-type Hydrogen energies in both analytical and numerical forms, but required computationally-expensive resolutions for accurate fully-numerical orbitals. An error was found in the algorithm used for the Hartree-Fock potential $G^{(HF)}$, and as a result, molecular Hartree-Fock results for both Benzene and Graphene could not be compared to those from the Hückel method. Therefore, of the methods successfully tested, the Hückel method most accurately described the complex orbitals within Graphene.
+
+
+
+\section{Motivations}\label{sec:motivations}
+
+Understanding the behaviour of electrons within atomic and molecular systems has been essential towards designing and manufacturing a large proportion of the electronic devices we use and rely on today \cite{nalewajski_perspectives_2012}. Additionally, having accurate and efficient models of these behaviours allows us to more easily understand them, and develop more advanced tools using them. One particularly interesting group of these quantum systems is that of Graphene crystals, which have a variety of useful electronic properties for devices, including high electron mobilities and lattice stability, and accessible chemical doping \cite{lu_semiconducting_2013}. Therefore, by comparing the qualities of our existing models of Graphene electron orbitals, we can interpret their relative utilities.
+
+\section{Aim and Expectations}
+
+The aim of this study is to analyse the behaviour and accuracy of two orbital electron models within atomic and cyclic-planar molecular potentials, particularly in the periodic structure of Graphene. This will be achieved computationally using the Hückel \cite{yates_huckel_2012} and Hartree-Fock \cite{quiney_art_nodate} algorithms, which approximately model cyclic-planar and general molecular potentials, respectively. We expect to see calculated atomic energies closely aligning with well-known values, such as for ground-state Hydrogen \cite{pinke_origin_2025} and Helium \cite{nascimento_determination_2005}, but predict that molecular results may diverge from experimental values by varying degrees, due to the simplifying assumptions used by each algorithm. 
+
+\chapter{Background}\label{ch:background}
+
+\section{Electron Wavefunctions}\label{sec:electronwavefunction}
+
+In quantum mechanics, the behaviour of particles within a static potential $\hat{V}(\boldsymbol{r})$ can be modelled with the time-independent Schrödinger equation, an operator eigenvalue equation that acts on the energy-dependent quantum states $|\psi\rangle$ of the particles with the Hamiltonian operator $\hat{H}$, to find the total energy eigenvalue $E$ of each state \cite{nalewajski_perspectives_2012}:
+
+\begin{equation}
+\hat{H}\thinspace|\psi\rangle=E\thinspace|\psi\rangle
+\end{equation}
+
+By applying an orthonormal basis of position states $|\boldsymbol{r}\rangle$ to this equation, it can be rewritten in terms of the inner product of these states instead, their position-dependent state wavefunctions: $\psi(\boldsymbol{r})=\langle\boldsymbol{r}|\psi\rangle$ \cite{nalewajski_perspectives_2012}. Then, the Schrödinger equation for an electron in a static potential has the following form, in terms of the kinetic and potential energy operators, $\hat{K}$ and $\hat{V}(\boldsymbol{r})$ \cite{quiney_art_nodate}:
+
+\begin{equation}
+\hat{H}\thinspace\psi(\boldsymbol{r})=\hat{K}\thinspace\psi(\boldsymbol{r})+\hat{V}(\boldsymbol{r})\thinspace\psi(\boldsymbol{r})=(E_k+E_V)\thinspace\psi(\boldsymbol{r})=E\thinspace\psi(\boldsymbol{r})
+\end{equation}
+
+
+\section{Basis States and Eigenvalue Equations}\label{sec:basisstates}
+
+Just as quantum states can be described with the weighted sum of basis states $|\boldsymbol{r}\rangle$, particle wavefunctions can be written as the weighted sum of a complete set of position-dependent basis functions, $f(\boldsymbol{r})$ \cite{quiney_art_nodate}. Then, with the choice of an accurate basis for each wavefunction, they can be approximated with the sum of a finite, incomplete set of $N$ basis functions. Using this, we can describe the wavefunction of an atomic electron with the following equation, weighted by the state-specific expansion coefficients, $c_{ai}$ \cite{quiney_art_nodate}:
+
+\begin{equation}\label{eq:Wavefunction}
+\Psi_k(\boldsymbol{r})\approx\sum_{i}^{N} c_{ki} \cdot f_i(\boldsymbol{r})
+\end{equation}
+
+One accurate basis for atomic electron orbitals is the Slater basis, of functions $f_i(\boldsymbol{r_i})$ \cite{quiney_art_nodate}. These functions have the following form, where $l_i$ and $m_i$ are the orbital angular momentum (azimuthal) and magnetic angular momentum quantum numbers of the atom, $\lambda_i$ are real-valued parameters, and $Y_{l_i}^{m_i}(\theta_i,\phi_i)$ are the spherical-harmonic basis functions \cite{dai_spherical_2013}:
+
+\begin{equation}\label{eq:Slater}
+f_i(\boldsymbol{r_i})=N_ir_i^{l_i}\exp[-\lambda_ir_i]Y_{l_i}^{m_i}(\theta_i,\phi_i), \quad \mathrm{with} \quad N_i=\sqrt{\frac{(2\lambda_i)^{l_i+3/2}}{(2l_i+2)!}}
+\end{equation}
+\clearpage
+
+Another commonly chosen basis is the Gaussian basis, which has the following, similar form. Here, $\lambda_i$ are a basis of $n$ parameters such as the geometric basis, with $\lambda_i=\alpha\beta^{i-1}$ for some $\alpha$ and $\beta$, and $\Gamma(z)$ is the mathematical Gamma function. This basis is less accurate to the shapes of electron orbitals, but has a significant advantage in the Gaussian product theorem \cite{besalu_general_2011}, which allows the Gaussian components $\exp[-\lambda_ir_i^2]$ of these functions to be multiplied together to produce another Gaussian, significantly simplifying integration of their products \cite{quiney_art_nodate}.
+
+\begin{equation}\label{eq:Gaussian}
+f_i(\boldsymbol{r_i})=N_ir_i^{l_i}\exp[-\lambda_ir_i^2]Y_{l_i}^{m_i}(\theta_i,\phi_i), \quad \mathrm{with} \quad N_i=\sqrt{\frac{2(2\lambda_i)^{l_i+3/2}}{\Gamma(l_i+3/2)}}
+\end{equation}
+
+
+Finally, with the electron wavefunctions represented in terms of these basis functions, we can separate the Schrödinger eigenvalue equation into smaller components, and instead solve for the expansion coefficients $\vec{c}_k$ using the following generalised eigenvalue equation, where $\hat{S}$ and $\hat{F}$ are the degrees of spatial overlap and interaction between each pair of basis functions respectively, and $\epsilon_k$ is the $k^{th}$ energy eigenvalue \cite{quiney_art_nodate}:
+
+\begin{equation}\label{eq:eigenvalue}
+\hat{F}\thinspace c_k=\epsilon_k \hat{S} \thinspace c_k
+\end{equation}
+
+These can be solved numerically using the finite-difference method, where the operators and basis functions are replaced by finite-sized matrices $\boldsymbol{F}$ and $\boldsymbol{S}$, and vectors $\vec{c}_k$ respectively. There are various approximations available to the electron Hamiltonian for different atomic and molecular systems, and each have corresponding interaction and overlap matrices $\boldsymbol{F}$ and $\boldsymbol{S}$. We will explore some of these in this project.
+
+
+\section{Hückel Approximation}\label{sec:huckel}
+
+One such approximation is the Hückel molecular orbital approximation, which models the behaviour of the $\pi$-electrons of cyclic-planar compounds using an identity $\boldsymbol{S}$ matrix, and a $\boldsymbol{F}$ matrix made of two parameters, $\alpha$ and $\beta$ \cite{quiney_art_nodate}. This is a simple approximation, and is only valid for the quantum numbers $l=1$, $m=0$, but can give accurate results for these limited states \cite{yates_huckel_2012}. The Hückel matrix elements are selected using the nearest atomic neighbours of each atom in the modelled compound. The $\alpha$ parameters lie on the diagonals of the matrix, and represent atomic interactions, while the $\beta$ parameters are placed at $(i,j)$ indices where the $i^{th}$ and $j^{th}$ atoms are neighbours, and interact more strongly. Therefore, as an example, the Hückel matrix for a ring-shaped molecule has the following structure \cite{quiney_art_nodate}:\\
+
+\begin{equation}\label{eq:HuckelMatrix}
+\vect{F^{(ring-shaped)}} = 
+  \left(\begin{array}{c c c c c c}
+    \alpha & \beta & 0 & \ldots & 0 & \beta \\
+    \beta & \alpha & \beta & \ldots & 0 & 0 \\
+    0 & \beta & \alpha & \ldots & 0 & 0 \\
+    \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+    0 & 0 & 0 & \ldots & \alpha & \beta \\
+    \beta & 0 & 0 & \ldots & \beta & \alpha \\
+  \end{array}\right)
+\end{equation}
+\clearpage
+
+
+\section{Hartree-Fock Approximation}\label{sec:hartreefock}
+
+Another, more in-depth approximation is the Hartree-Fock method, used for general atomic and molecular systems. Here, the interaction matrix $\boldsymbol{F}$ is modelled as the sum of the single-particle kinetic energy $\boldsymbol{T}$, the nuclear Coulomb potential $\boldsymbol{V}$, and a self-consistent electron self-interaction (or Hartree-Fock) potential, $\boldsymbol{G}^{(HF)}$ \cite{laaksonen_fully_1986}:
+
+\begin{equation}\label{eq:HartreeFockHamiltonian}
+\boldsymbol{F}=\boldsymbol{T}+\boldsymbol{V}+\boldsymbol{G}^{(HF)}
+\end{equation}
+
+In this approximation, the overlap and kinetic energy matrices $\boldsymbol{S}$ and $\boldsymbol{T}$ have the following index forms, as integrals over the basis functions $f_i(\boldsymbol{r})$ \cite{quiney_art_nodate}: 
+
+\vspace{-0.7cm}
+\begin{center}
+\begin{tabular}{p{7cm}p{9.4cm}}
+
+\begin{equation}\label{eq:HartreeFockS}
+S_{ij}=\int_{}^{}f_i^*(\boldsymbol{r})f_{j}(\boldsymbol{r}) \thickspace d\boldsymbol{r}
+\end{equation}
+
+&
+
+\begin{equation}\label{eq:HartreeFockT}
+T_{ij}=-\frac{\hbar^2}{2m}\int_{}^{}f_i^*(\boldsymbol{r})\nabla^2f_{j}(\boldsymbol{r}) \thickspace d\boldsymbol{r}
+\end{equation}
+
+\end{tabular}
+\end{center}
+
+Then, the nuclear potential matrix $\boldsymbol{V}$ has the following index form, as a sum over distance-weighted atomic charges, within another integral over the basis functions $f_i(\boldsymbol{r})$ \cite{quiney_art_nodate}:
+
+\begin{equation}\label{eq:HartreeFockV}
+V_{ij}=\frac{e^2}{4\pi\epsilon_0}\int f_i^*(\boldsymbol{r})\left( \sum_{I=1}^{M}-\frac{Z_I}{\left| \boldsymbol{r}-\boldsymbol{R}_I \right|} \right)f_j(\boldsymbol{r})\thickspace d\boldsymbol{r}
+\end{equation}
+
+Finally, if the system modelled has more than one electron, the Hartree-Fock potential $\boldsymbol{G}^{(HF)}$ has the following index form, as the sum over the $\boldsymbol{J}$ and $\boldsymbol{K}$ inverse-distance matrices, multiplied by the expansion-coefficient density matrix $\boldsymbol{D}$. Note that the $\boldsymbol{J}$ and $\boldsymbol{K}$ matrices are equal under the index swap $ij,kl$ to $il,kj$ \cite{quiney_art_nodate}:
+
+\vspace{-0.7cm}
+\begin{center}
+\begin{tabular}{p{10cm}p{6.4cm}}
+
+\begin{equation}\label{eq:HartreeFockG}
+G_{ij}^{(HF)}=\sum_{k=1}^{N}\sum_{l=1}^{N}(2J_{ij,kl}-K_{ij,kl})\thickspace D_{kl}
+\end{equation}
+
+&
+
+\begin{equation}\label{eq:HartreeFockD}
+D_{kl}=2\sum_{a=1}^{N}c_{ka}^*\cdot c_{la}
+\end{equation}
+
+\end{tabular}
+\end{center}
+
+
+\begin{equation}\label{eq:HartreeFockJ}
+J_{ij,kl}=\frac{e^2}{4\pi\epsilon_0}\iint f_i^*(\boldsymbol{r})f_{j}(\boldsymbol{r}) \frac{1}{\left| \boldsymbol{r}-\boldsymbol{s} \right|} f_{k}^*(\boldsymbol{s})f_{l}(\boldsymbol{s})\thickspace d\boldsymbol{r} \thickspace d\boldsymbol{s}, \quad \textbf{and} \quad K_{ij,kl}=J_{il,kj}
+\end{equation}
+
+
+Conveniently, by using Gaussian basis functions $f_i(\boldsymbol{r_i})$ and applying a combination of the Gaussian product theorem and the multi-centre Boys' integrals, these operator matrix integrals can be analytically evaluated \cite{quiney_art_nodate}. For single-atom systems, this results in the following significantly simplified forms for each Hartree-Fock matrix:
+
+\vspace{-0.7cm}
+\begin{center}
+\begin{tabular}{p{7cm}p{9.4cm}}
+
+\begin{equation}\label{eq:AtomicS}
+S_{ij}^{(atomic)}=\frac{(4\lambda_i\lambda_j)^{3/4}}{(\lambda_i+\lambda_j)^{3/2}}
+\end{equation}
+
+&
+
+\begin{equation}\label{eq:AtomicT}
+T_{ij}^{(atomic)}=\frac{3}{4}\frac{(4\lambda_i\lambda_j)^{7/4}}{(\lambda_i+\lambda_j)^{5/2}}
+\end{equation}
+
+\end{tabular}
+\begin{tabular}{p{7cm}p{9.4cm}}
+
+\begin{equation}\label{eq:AtomicV}
+V_{ij}^{(atomic)}=-\frac{\sqrt{32}Z}{\sqrt{\pi}}\frac{(\lambda_i\lambda_j)^{3/4}}{(\lambda_i+\lambda_j)}
+\end{equation}
+
+&
+
+\begin{equation}\label{eq:AtomicJ}
+J_{ij,kl}^{(atomic)}=\frac{16}{\sqrt{\pi}}\frac{(\lambda_i\lambda_j\lambda_k\lambda_l)^{3/4}}{(\lambda_i+\lambda_j)(\lambda_k+\lambda_l)\sqrt{\lambda_{ijkl}}}
+\end{equation}\\
+
+\end{tabular}
+\end{center}
+
+\clearpage
+
+
+Then, using the same method, the integrals for the $\boldsymbol{S}$, $\boldsymbol{T}$ and $\boldsymbol{V}$ Hartree-Fock matrices reduce to the following forms in molecular systems, for each atomic combination, AB. Note that $\boldsymbol{A}$ and $\boldsymbol{B}$ here are the 3D positions of each atom in the AB pair \cite{quiney_art_nodate}:
+
+\begin{equation}\label{eq:MolecularS}
+S_{ij}^{AB\thinspace(molecular)}=\frac{(4\lambda_i\lambda_j)^{3/4}}{(\lambda_i+\lambda_j)^{3/2}}R_{ij}^{AB}, \quad \textbf{with} \quad R_{ij}^{AB}=\exp\left[ -\frac{\lambda_i\lambda_j}{\lambda_i+\lambda_j} \boldsymbol{|}\boldsymbol{A}-\boldsymbol{B}\boldsymbol{|}^2\right]
+\end{equation}
+
+\begin{equation}\label{eq:MolecularT}
+T_{ij}^{AB \thinspace(molecular)}=\frac{3(4\lambda_i\lambda_j)^{7/4}}{4(\lambda_i+\lambda_j)^{5/2}}R_{ij}^{AB}\left[1-\frac{2\lambda_i\lambda_j}{3(\lambda_i+\lambda_j))} \boldsymbol{|} \boldsymbol{A}-\boldsymbol{B} \boldsymbol{|}^2\right]
+\end{equation}
+
+\begin{equation}\label{eq:MolecularV}
+V_{ij}^{AB \thinspace(molecular)}=-\frac{(4\lambda_i\lambda_j)^{3/4}}{(\lambda_i+\lambda_j)}R_{ij}^{AB}\sum_{I=1}^{M}Z_I\frac{\text{erf}\left[ \sqrt{v_{il,kj}^{AB,I}} \right]}{\sqrt{v_{ij}^{AB,I}}},
+\end{equation}
+
+\begin{equation*}
+\textbf{with}\quad v_{ij}^{AB,I}=(\lambda_i+\lambda_j)\boldsymbol{|}\boldsymbol{P}^{AB}-\boldsymbol{R}_I\boldsymbol{|}^2, \quad \mathbf{and} \quad \boldsymbol{P}^{AB}=\frac{\lambda_i \boldsymbol{A}+\lambda_j \boldsymbol{B}}{\lambda_i + \lambda_j}
+\end{equation*}\\
+
+Finally, the $\boldsymbol{J}$ and $\boldsymbol{K}$ matrices have the following forms (through index swaps), contributing to a Hartree-Fock potential matrix $\boldsymbol{G^{(HF)}}$ for each atomic combination, AB \cite{quiney_art_nodate}:
+
+\begin{equation}\label{eq:MolecularJ}
+J_{ij,kl}^{AB\thinspace(molecular)}=8\sum_{C=1}^{M}\sum_{D=1}^{M}R_{ij}^{AB}R_{kl}^{CD}\frac{(\lambda_i\lambda_j\lambda_k\lambda_l)^{3/4}}{(\lambda_i+\lambda_j)(\lambda_k+\lambda_l)\sqrt{\lambda_{ijkl}}}\frac{\text{erf}\left[ \sqrt{v_{il,kj}^{AB,CD}} \right]}{\sqrt{v_{ij,kl}^{AB,CD}}},
+\end{equation}
+
+\begin{equation*}
+\textbf{with}\quad v_{ij,kl}^{AB,CD}=\frac{(\lambda_i+\lambda_j)(\lambda_k+\lambda_l)}{\lambda_{ijkl}}\boldsymbol{|}\boldsymbol{P}^{AB}-\boldsymbol{Q}^{CD}\boldsymbol{|}^2
+\end{equation*}\\
+
+For each of these, the $v_{ij}^{AB,I}$ and $v_{ij,kl}^{AB,CD}$ matrices have all values equal to zero for the atomic combinations $A=B$, and $A=B=C=D$, respectively. In these cases, to avoid inaccurate calculations in the $\boldsymbol{V}$, $\boldsymbol{J}$ and $\boldsymbol{K}$ matrices, we use the following limit \cite{quiney_art_nodate}:
+
+\begin{equation*}
+\lim_{x \to 0} \left( \frac{\text{erf}[\sqrt{x}]}{\sqrt{x}} \right)=\frac{2}{\sqrt{\pi}}
+\end{equation*}
+
+Together, each of these equations allows us to construct both the atomic and molecular Hartree-Fock methods as efficient numerical algorithms. These approximations and their numerical implementations will be further explored in the rest of this report.

@@ -1,4 +1,4 @@
-\documentclass[a4paper, 10.5pt, oneside]{report}
+\documentclass[a4paper, 12pt, oneside]{report}
 %------------PREAMBLE
 \include{preamble}
 \usepackage{morefloats}
@@ -15,19 +15,23 @@
 %---------------------------
 
 %---------------------------MAIN BODY
-\input{chapter1}
-%---------------------------
-
-%---------------------------APPENDICES
-\begin{appendices}
- \input{appendix1}
-\end{appendices}
+\input{introduction}
+\input{method}
+\input{resultsanddiscussion}
+\input{conclusion}
 %---------------------------
 
 %---------------------------BIBLIOGRAPHY
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliographystyle{abbrv}
-\bibliography{biblio}
+\bibliography{bibliography}
 %---------------------------
+
+%---------------------------APPENDICES
+%\begin{appendices}
+%end{appendices}
+%---------------------------
+
+%\input{chapter1backup}
 
 \end{document}

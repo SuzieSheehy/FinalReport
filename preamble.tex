@@ -8,7 +8,7 @@
 %\usepackage{pxfonts}                   %use my usual font style
 %\usepackage{abstract}                  %putting an abstract somewhere
 \usepackage[usenames,dvipsnames]{color} %needs no justification
-%\usepackage{titlesec}                  %change the properties of titles
+\usepackage{titlesec}                   %change the properties of titles
 \usepackage[titletoc]{appendix}         %customise appendices
 \usepackage{pdfpages}                   %insert other pdfs into the document
 \usepackage{enumerate}                  %gives the enumerate environment an optional argument
@@ -17,6 +17,22 @@
 \usepackage{appendix}                   %appendices
 \setcounter{tocdepth}{1}                %level of detail in the table of contents
 
+%Remove chapter numbers from main document, keeping 'Report' formatting
+\makeatletter
+\def\@makechapterhead#1{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+      \if@mainmatter
+        \Huge\bfseries\space\thechapter\space\space
+      \fi
+    \fi
+    \interlinepenalty\@M
+    \Huge \bfseries #1\par\nobreak
+    \vskip 40\p@
+  }}
+\makeatother
+
 %-----------MATH, TABULAR AND GRAPHICS PACKAGES
 \usepackage{amsfonts}                   %extra fonts in math mode
 \usepackage{slashed}                    %for Feynman slash notation
@@ -24,7 +40,7 @@
 \usepackage{array}                      %used to extend the array and tabular environments
 \usepackage{multirow}                   %make a table entry that will span multiple rows
 \usepackage{graphicx}           %optional arguments for the \includegraphics command
-\usepackage[hang,small,bf]{caption}     %captions under figures
+\usepackage[small,bf]{caption}     %captions under figures
 \usepackage{subcaption}                 %subcaptions
 \usepackage{wrapfig}                    %makes for nicer captions under figures
 \usepackage{sidecap}                    %side captions
